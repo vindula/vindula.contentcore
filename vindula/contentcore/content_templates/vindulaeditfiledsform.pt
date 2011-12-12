@@ -1,0 +1,39 @@
+<html>
+	<head>
+		
+	</head>
+	<body metal:use-macro="here/main_template/macros/master">
+		<div metal:fill-slot="content" tal:define="form_data view/load_form | python:{};
+		                          				   errors form_data/errors | python:{};
+									  			   form_values form_data/data | python:{};">
+		    
+		    <div id="content" >
+		    		<h1 tal:content="string:Editar o Campo '${form_values/name_field|nothing}' do formularios"> </h1>
+					<div id="interna" >    		
+				        <form name="edit-fields" id="edit-fields" enctype="multipart/form-data" class="enableAutoFocus" action="vindula-edit-fields-form" method="POST">
+				        	<!-- Id campo -->
+							<input type="hidden" name="id_fields" id="id_fields" value="" tal:attributes="value context/REQUEST/id_fields|nothing">
+				            <fieldset>
+				            	<legend>Dados do Campo</legend>
+								<tal:def define="html python:view.geraCampos(form_data)">
+									<tal:rep repeat="x html">
+										<div tal:content="structure x"/>
+									</tal:rep>
+								</tal:def>
+								
+							</fieldset>	
+							<!-- Botões de ação -->	 	
+						   	<fieldset>
+						   		<br/>
+								<div style="float:left; width:100%">
+									<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
+									<input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited">
+								</div>
+							</fieldset>
+						</form>
+					</div>
+				
+		    </div>
+		</div>  
+	</body>
+</html>

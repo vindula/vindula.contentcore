@@ -1,0 +1,54 @@
+<html>
+	<head>
+		
+	</head>
+	<body metal:use-macro="here/main_template/macros/master">
+		<div metal:fill-slot="content">
+		    <div id="content" tal:define="form view/get_Form|python:{};
+										  id_form form/id|nothing">
+				<h1 tal:content="form/name_form|nothing">Titulo Formulario</h1>
+				<p tal:content="form/description_form|nothing">Descrição do formulario</p>
+				<div id="interna" >    		
+		            <fieldset>
+		            	<legend>Cadastrar novo registro</legend>
+						<a alt="Adicionar novo registro" title="Adicionar novo registro"
+						   tal:attributes="href string:load-form?forms_id=${id_form}">Adicionar novo registro</a>
+
+					</fieldset>
+					<fieldset>
+		            	<legend>Listagems do registros</legend>
+						<table width="100%">
+							<tr tal:define="fields python:view.get_Form_fields(id_form)" style="border: 1px solid #000000;">
+								<tal:rep repeat="campo fields|nothing">
+									<td tal:content="campo/title|nothing"></td>	
+								</tal:rep>
+							</tr>
+							<tal:rep repeat="item python:view.get_FormValues(id_form)">
+								<tr style="border: 1px solid #000000;">
+									<tal:def tal:define="fields python:view.get_Form_fields(id_form)">
+										<tal:rep repeat="campo fields|nothing">
+											<tal:def tal:define="valor python: item.find(fields=campo.name_field).one()">
+												<td tal:condition="python:campo.type_fields!='list'" 
+													tal:content="valor/value|nothing"></td>
+												
+												<td tal:condition="python:campo.type_fields=='list'" 
+													tal:define="x valor/value|nothing"
+													tal:content="python:view.decodePickle(x)"></td>
+											</tal:def>
+										</tal:rep>
+									</tal:def>
+									<td>
+										<a tal:attributes="href python:'help-desk-edit-ticket?id_instance='+str(item[0].instance_id)"
+											alt="Editar registro" title="Editar Ticket">
+											Editar regsitro</a>
+									</td>
+								</tr>
+							</tal:rep>		
+						</table>
+					
+					</fieldset>
+				</div>
+		    </div>
+		</div>  
+	</body>
+</html>

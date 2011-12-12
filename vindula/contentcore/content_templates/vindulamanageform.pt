@@ -1,0 +1,56 @@
+<html>
+	<head>
+		
+	</head>
+	<body metal:use-macro="here/main_template/macros/master">
+		<div metal:fill-slot="content" tal:define="data view/load_form | python:{};">
+		    
+		    <div id="content" >
+				<h1>Criação de Formularios do Vindula</h1>	
+				<div id="interna" >
+					<!-- Botões de ação--> 	
+				   	<fieldset>
+				   		<br/>
+						<div style="float:left; width:100%">
+							<a href="@@vindula-control-panel" alt="Voltar" title="Voltar"> Voltar
+								<!--input style="width:100px" class="button-erp" type="botton" value="Voltar" name="form.voltar"-->
+							</a>
+							<a href="add-form"  alt="Adicionar novo formulario" title="Adicionar novo formulario">Adicionar novo formulario							
+								<!--input style="width:100px;" class="button-erp" type="botton" value="Adicionar novo formulario" name="form.submited"-->
+							</a>
+						</div>
+					</fieldset>
+			        <fieldset>
+		            	<legend>Formularios Cadastrados</legend>
+							<div id="list-forns" tal:condition="data">
+								<table width="100%">
+									<tr>
+										<td width="80%">Ver Formulario</td>
+										<td width="20%">Editar Formulario</td>
+									</tr>
+									<tal:rep repeat="item data">
+									<tr>
+										<td>
+											<a tal:attributes="href string:${here/portal_url}/view-form?forms_id=${item/id|nothing}"
+												alt="Visualizar formulario" title="Visualizar formulario">
+											<span tal:content="item/name_form|nothing"></span></a>
+											<p tal:content="item/description_form|nothing"></p>	
+										</td>
+										<td>
+											<a tal:attributes="href string:${here/portal_url}/edit-form?forms_id=${item/id|nothing}"
+												alt="Editar Formulario" title="Editar Formulario">Editar</a>
+										</td>	
+									</tr>
+									
+								</tal:rep>	
+									
+									
+								</table>
+								
+							</div>
+					</fieldset>
+				</div>
+		    </div>
+		</div>  
+	</body>
+</html>

@@ -1,0 +1,38 @@
+<html>
+	<head>
+		
+	</head>
+	<body metal:use-macro="here/main_template/macros/master">
+		<div metal:fill-slot="content" tal:define="form_data view/load_form | python:{};
+		                          				   errors form_data/errors | python:{};
+									  			   form_values form_data/data | python:{};">
+		    
+		    <div id="content" >
+		    		<h1> Adicionar Novo Chamado</h1>
+					<div id="interna" >    		
+				        <form name="add-form" id="add-form" enctype="multipart/form-data" class="enableAutoFocus" action="help-desk-add-ticket" method="POST">
+				            <fieldset>
+				            	<legend>Dados do Chamado</legend>
+								<tal:def define="html python:view.geraCampos(form_data)">
+									<tal:rep repeat="x html">
+										<div tal:content="structure x"/>
+									</tal:rep>
+								</tal:def>
+								
+								
+							</fieldset>	
+							<!-- Botões de ação -->	 	
+						   	<fieldset>
+						   		<br/>
+								<div style="float:left; width:100%">
+									<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
+									<input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited">
+								</div>
+							</fieldset>
+						</form>
+					</div>
+				
+		    </div>
+		</div>  
+	</body>
+</html>
