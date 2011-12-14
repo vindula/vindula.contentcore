@@ -1,8 +1,10 @@
-<html>
+<html metal:use-macro="here/main_template/macros/master">
 	<head>
-		
+		<metal:styleslot fill-slot="style_slot">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
+		</metal:styleslot>
 	</head>
-	<body metal:use-macro="here/main_template/macros/master">
+	<body>
 		<div metal:fill-slot="content" tal:define="data view/load_form | python:{};">
 		    
 		    <div id="content" >
@@ -10,13 +12,13 @@
 				<div id="interna" >
 					<!-- Botões de ação--> 	
 				   	<fieldset>
-				   		<br/>
+				   		<legend>A&ccedil;&atilde;o</legend>
 						<div style="float:left; width:100%">
-							<a href="@@vindula-control-panel" alt="Voltar" title="Voltar"> Voltar
-								<!--input style="width:100px" class="button-erp" type="botton" value="Voltar" name="form.voltar"-->
+							<a class="button" href="@@vindula-control-panel" alt="Voltar" title="Voltar">
+								<input style="width:100px" class="button-erp" type="button" value="Voltar" name="form.voltar">
 							</a>
-							<a href="add-form"  alt="Adicionar novo formulario" title="Adicionar novo formulario">Adicionar novo formulario							
-								<!--input style="width:100px;" class="button-erp" type="botton" value="Adicionar novo formulario" name="form.submited"-->
+							<a class="button" href="add-form"  alt="Adicionar novo formulario" title="Adicionar novo formulario">							
+								<input class="button-erp" type="button" value="Adicionar novo formulario" name="form.submited">
 							</a>
 						</div>
 					</fieldset>
@@ -25,26 +27,23 @@
 							<div id="list-forns" tal:condition="data">
 								<table width="100%">
 									<tr>
-										<td width="80%">Ver Formulario</td>
-										<td width="20%">Editar Formulario</td>
+										<th width="80%">Ver Formulario</th>
+										<th width="20%">Editar Formulario</th>
 									</tr>
 									<tal:rep repeat="item data">
-									<tr>
-										<td>
-											<a tal:attributes="href string:${here/portal_url}/view-form?forms_id=${item/id|nothing}"
-												alt="Visualizar formulario" title="Visualizar formulario">
-											<span tal:content="item/name_form|nothing"></span></a>
-											<p tal:content="item/description_form|nothing"></p>	
-										</td>
-										<td>
-											<a tal:attributes="href string:${here/portal_url}/edit-form?forms_id=${item/id|nothing}"
-												alt="Editar Formulario" title="Editar Formulario">Editar</a>
-										</td>	
-									</tr>
-									
-								</tal:rep>	
-									
-									
+										<tr>
+											<td>
+												<a tal:attributes="href string:${here/portal_url}/view-form?forms_id=${item/id|nothing}"
+													alt="Visualizar formulario" title="Visualizar formulario" class="edit-link">
+												<span tal:content="item/name_form|nothing"></span></a>
+												<p tal:content="item/description_form|nothing"></p>	
+											</td>
+											<td>
+												<a tal:attributes="href string:${here/portal_url}/edit-form?forms_id=${item/id|nothing}"
+													alt="Editar Formulario" title="Editar Formulario">Editar</a>
+											</td>	
+										</tr>
+									</tal:rep>	
 								</table>
 								
 							</div>

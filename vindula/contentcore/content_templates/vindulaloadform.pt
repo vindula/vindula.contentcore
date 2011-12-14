@@ -1,8 +1,10 @@
-<html>
+<html metal:use-macro="here/main_template/macros/master">
 	<head>
-		
+		<metal:styleslot fill-slot="style_slot">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
+		</metal:styleslot>
 	</head>
-	<body metal:use-macro="here/main_template/macros/master">
+	<body >
 		<div metal:fill-slot="content" tal:define="form_data view/load_form | python:{};
 		                          				   errors form_data/errors | python:{};
 									  			   form_values form_data/data | python:{};">
@@ -10,9 +12,16 @@
 		    <div id="content" >
 		    		<h1> Adicionar Novo Chamado</h1>
 					<div id="interna" >    		
-				        <form name="add-form" id="add-form" enctype="multipart/form-data" class="enableAutoFocus" action="help-desk-add-ticket" method="POST">
+				        <form name="load-form" id="load-form" enctype="multipart/form-data" 
+							  class="enableAutoFocus" action="load-form" method="POST">
+							<!-- Id Form -->
+							<input type="hidden" name="forms_id" id="forms_id" value="" tal:attributes="value request/forms_id|nothing">
+							<!-- Id instancia -->
+							<input tal:condition="request/id_instance|nothing" 
+								   type="hidden" name="id_instance" id="id_instance" value="" tal:attributes="value request/id_instance|nothing">
+							
 				            <fieldset>
-				            	<legend>Dados do Chamado</legend>
+				            	<legend>Dados do registro</legend>
 								<tal:def define="html python:view.geraCampos(form_data)">
 									<tal:rep repeat="x html">
 										<div tal:content="structure x"/>

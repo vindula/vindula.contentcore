@@ -1,4 +1,4 @@
-<html  metal:use-macro="here/main_template/macros/master">
+<html metal:use-macro="here/main_template/macros/master">
 	<head>
 		<metal:js fill-slot="javascript_head_slot">
     		<script type="text/javascript" tal:attributes="src string:${view/static}/list_fields.js"></script>
@@ -10,12 +10,14 @@
 									  			   form_values form_data/data | python:{};">
 		    
 		    <div id="content" >
-		    		<h1 condition="python: form_values!={}"  tal:content="string:Editar o Campo '${form_values/name_field|nothing}' do formularios"> </h1>
-		    		<h1 condition="python: form_values=={}"> Adicionar Novo Campo ao formulario</h1>
+		    		<h1 tal:condition="request/id_fields|nothing"  
+						tal:content="string:Editar o Campo '${form_values/name_field|nothing}' do formularios"> </h1>
+		    		<h1 tal:condition="not: request/id_fields|nothing"> Adicionar Novo Campo ao formulario</h1>
+					
 					<div id="interna" >    		
 				        <form enctype="multipart/form-data" class="enableAutoFocus" action="add-fields-form" method="POST">
 				        	<!-- Id campo -->
-							<input	tal:condition="request/id_fields" 
+							<input	tal:condition="python:request.get('id_fields',None)" 
 									type="hidden" name="id_fields" id="id_fields" value="" tal:attributes="value request/id_fields|nothing">
 							
 				            <fieldset>

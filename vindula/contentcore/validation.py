@@ -6,6 +6,8 @@ import re
 from decimal import Decimal
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from zope.component import getUtility
+#from plone.scale import scale
+#from plone.namedfile.scaling import ImageScaling
 import pickle
 
 def to_utf8(value):
@@ -13,7 +15,7 @@ def to_utf8(value):
 
          
 
-def valida_form(configuracao, form):
+def valida_form(ctx, configuracao, form):
     # metodo que valida um sequencia de campos e retorna um dicionario
     # com os valores, erros e mensagem de erro
     
@@ -96,7 +98,16 @@ def valida_form(configuracao, form):
                 L = []
                 L.append(valor)
                 valor_convert = pickle.dumps(L)
-                convertidos[campo] = to_utf8(valor_convert)        
+                convertidos[campo] = to_utf8(valor_convert)
+                
+        elif configuracao[campo]['type'] == 'img':
+            data = valor.read()
+            if len(data) != 0 : 
+                valor_convert = pickle.dumps(data)
+                convertidos[campo] = to_utf8(valor_convert)
+            else:
+                 convertidos[campo] = ''
+           
         
         elif configuracao[campo]['type'] == 'textarea':
             if type(valor) == unicode:

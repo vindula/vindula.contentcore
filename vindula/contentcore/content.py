@@ -5,11 +5,11 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.layout.navigation.interfaces import INavigationRoot
 
 from vindula.contentcore.base import BaseFunc
-from vindula.contentcore.models import RegistrationCreateForm, ModelsForm, RegistrationCreateFields,ModelsFormFields, RegistrationLoadForm    
+from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormValues    
+from vindula.contentcore.registration import RegistrationCreateForm, RegistrationCreateFields,RegistrationLoadForm    
 
 
-
-#Views--------------------------------------------------    
+#Views registros Form--------------------------------------------------    
 class VindulaManageForm(grok.View, BaseFunc):
     grok.context(INavigationRoot)
     grok.require('cmf.ManagePortal')
@@ -44,11 +44,33 @@ class VindulaLoadForm(grok.View, BaseFunc):
     def load_form(self):
         return RegistrationLoadForm().registration_processes(self)
     
+class VindulaFormImage(grok.View, BaseFunc):
+    grok.context(Interface)
+    grok.require('zope2.View')
+    grok.name('form-image')
+    
+    def render(self):
+        pass
+    
+    def update(self):
+        form = self.request.form
+        if 'id' in form.keys():
+            id = form.get('id','0')
+            if id != 'None':
+                campo_image = ModelsFormValues().get_Values_byID(int(id))
+                valor = campo_image.value
+                valor_blob = campo_image.value_blob
+                                
+                if valor:
+                    x = self.decodePickle(valor)
+                else:
+                    x = self.decodePickle(valor_blob)
+                
+                self.request.response.setHeader("Content-Type", "image/jpeg", 0)
+                self.request.response.write(x)                
 
 
-
-
-
+#Views Forms ---------------------------------------------------
 class VindulaCreateForm(grok.View, BaseFunc):
     grok.context(INavigationRoot)
     grok.require('cmf.ManagePortal')
@@ -64,6 +86,13 @@ class VindulaEditForm(grok.View, BaseFunc):
     
     def load_form(self):
         return RegistrationCreateForm().registration_processes(self)
+    
+    def list_form(self,id_form):
+        return ModelsForm().get_Forns_byId(int(id_form))
+    
+    def list_fields(self,id_form):
+        return ModelsFormFields().get_Fields_ByIdForm(int(id_form))
+    
     
 class VindulaAddFieldsForm(grok.View, BaseFunc):
     grok.context(INavigationRoot)

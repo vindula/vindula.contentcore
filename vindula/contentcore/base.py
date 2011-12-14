@@ -1,6 +1,8 @@
 # coding: utf-8
 from vindula.myvindula.user import BaseStore
+from vindula.contentcore.models import ModelsFormValues
 import pickle
+import datetime
 
 
 class BaseFunc(BaseStore):
@@ -15,6 +17,16 @@ class BaseFunc(BaseStore):
                  return 'field'
         else:
               return 'field'
+
+    def TypesFields(self,type):
+        D = {'text':'campo de texto','textarea':'campo text area','bool':'campo booleano',
+             'choice':'campo de seleção', 'list':'campo de seleção multipla','hidden':'campo Oculto',
+             'img':'Campo de Upload de Imagem'}
+        if type:
+            return D.get(type)
+        else:
+            return None
+
           
     def checaEstado(self,config, campo):
         if config:
@@ -58,6 +70,39 @@ class BaseFunc(BaseStore):
                 return default
             else:
                 return []    
+            
+    def getPhoto(self,campo,request,data):
+        if campo in request.keys():
+            if request.get(campo, None):
+                return ''
+            else:
+                id_form = int(request.get('forms_id','0'))
+                id_instance = int(request.get('id_instance','0'))
+                field = campo
+                result = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(id_form,id_instance,field)
+                if result:
+                    return '../form-image?id=%s' % result.id
+            
+        elif campo in data.keys():
+            id_form = int(request.get('forms_id','0'))
+            id_instance = int(request.get('id_instance','0'))
+            field = campo
+            result = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(id_form,id_instance,field)
+            if result:
+                return '../form-image?id=%s' % result.id
+
+            else:
+                return ''
+        else:
+            return ''     
+        
+    def getRequestPhoto(self,campo,request):
+        if campo in request.keys():
+            return request.get(campo, '')
+
+        else:
+            return ''                       
+            
         
     def getParametersFromURL(self, ctx):
         traverse = ctx.context.REQUEST.get('traverse_subpath')
@@ -128,6 +173,17 @@ class BaseFunc(BaseStore):
             return ''
 
 
+    def geraHTMLContent(self,id,tipo,valor):
+        if tipo == 'list':
+            return self.decodePickle(valor)
+        
+        elif tipo == 'img':
+            return '<img width="100px" src="../form-image?id=%s">' % id
+        
+        else:
+            return valor
+
+
     def geraCampos(self,form_data):
         if type(form_data) == dict:
             errors = form_data.get('errors',None)
@@ -149,9 +205,6 @@ class BaseFunc(BaseStore):
                 tmp += "<!-- Campo %s -->"%(campo)
                 tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo),campo)
                 
-                if type_campo == 'hidden':
-                    tmp += "<input id='%s' type='hidden' value='%s' name='%s' size='25'/>"%(campo,self.getValue(campo,self.request,data,default_value),campo)
-                
                 if type_campo != 'hidden':
                     tmp += "   <label for='%s'>%s</label>"%(campo,campos[campo]['label'])
                     if campos[campo]['required'] == True and type_campo != 'hidden':
@@ -160,13 +213,16 @@ class BaseFunc(BaseStore):
                     tmp += "   <div class='formHelp'>%s.</div>"%(campos[campo]['decription'])   
                     tmp += "   <div >%s</div>"%(errors.get(campo,''))
                 
-                if type_campo == 'img':
+                if type_campo == 'hidden':
+                    tmp += "<input id='%s' type='hidden' value='%s' name='%s' size='25'/>"%(campo,self.getValue(campo,self.request,data,default_value),campo)
+                
+                elif type_campo == 'img':
                     if errors:
                         if data:
                             tmp += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
                     else: 
                          tmp += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
-                    tmp += "<input id='photograph' type='file' value='%s' name='photograph' size='25' />"%(self.getPhoto(campo,self.request,data))
+                    tmp += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getRequestPhoto(campo,self.request),campo)
                 
                 elif type_campo == 'date':
                     tmp += """<input id='%s' type='text' maxlength='10' onKeyDown='Mascara(this,Data);' onKeyPress='Mascara(this,Data);' onKeyUp='Mascara(this,Data);'
@@ -198,10 +254,8 @@ class BaseFunc(BaseStore):
                             tmp +="<option value='%s'>%s</option>"%(item, value_choice[campo][item])
                                     
                     tmp += "</select>"
-                   
                     
-                elif type_campo != 'hidden':
-                    #import pdb;pdb.set_trace()
+                else:
                     tmp += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo,self.getValue(campo,self.request,data,default_value),campo)
 
                 tmp += "</div>"

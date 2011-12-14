@@ -1,8 +1,10 @@
-<html>
+<html metal:use-macro="here/main_template/macros/master">
 	<head>
-		
+		<metal:styleslot fill-slot="style_slot">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
+		</metal:styleslot>
 	</head>
-	<body metal:use-macro="here/main_template/macros/master">
+	<body>
 		<div metal:fill-slot="content">
 		    <div id="content" tal:define="form view/get_Form|python:{};
 										  id_form form/id|nothing">
@@ -18,29 +20,37 @@
 					<fieldset>
 		            	<legend>Listagems do registros</legend>
 						<table width="100%">
-							<tr tal:define="fields python:view.get_Form_fields(id_form)" style="border: 1px solid #000000;">
+							<tr tal:define="fields python:view.get_Form_fields(id_form)">
 								<tal:rep repeat="campo fields|nothing">
-									<td tal:content="campo/title|nothing"></td>	
+									<th tal:condition="campo/flag_ativo|nothing"
+										tal:content="campo/title|nothing" />	
 								</tal:rep>
+								<th width="20%">Editar Registro</th>
 							</tr>
 							<tal:rep repeat="item python:view.get_FormValues(id_form)">
-								<tr style="border: 1px solid #000000;">
+								<tr>
 									<tal:def tal:define="fields python:view.get_Form_fields(id_form)">
 										<tal:rep repeat="campo fields|nothing">
-											<tal:def tal:define="valor python: item.find(fields=campo.name_field).one()">
-												<td tal:condition="python:campo.type_fields!='list'" 
-													tal:content="valor/value|nothing"></td>
-												
-												<td tal:condition="python:campo.type_fields=='list'" 
-													tal:define="x valor/value|nothing"
-													tal:content="python:view.decodePickle(x)"></td>
-											</tal:def>
+											<tal:cond condition="campo/flag_ativo|nothing">
+												<tal:def tal:define="data python: item.find(fields=campo.name_field).one()">
+
+													<td tal:define="tipo campo/type_fields|nothing;
+																	valor data/value|nothing;
+																	valor_blob data/value_blob|nothing;
+																	id_campo data/id|nothing;"
+														tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)"></td>
+													
+													
+													
+												</tal:def>
+											</tal:cond>
+											
 										</tal:rep>
 									</tal:def>
-									<td>
-										<a tal:attributes="href python:'help-desk-edit-ticket?id_instance='+str(item[0].instance_id)"
+									<td width="20%">
+										<a tal:attributes="href python:'load-form?forms_id='+str(id_form)+'&id_instance='+str(item[0].instance_id)"
 											alt="Editar registro" title="Editar Ticket">
-											Editar regsitro</a>
+											Editar</a>
 									</td>
 								</tr>
 							</tal:rep>		
