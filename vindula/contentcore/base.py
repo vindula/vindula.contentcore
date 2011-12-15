@@ -21,7 +21,7 @@ class BaseFunc(BaseStore):
     def TypesFields(self,type):
         D = {'text':'campo de texto','textarea':'campo text area','bool':'campo booleano',
              'choice':'campo de seleção', 'list':'campo de seleção multipla','hidden':'campo Oculto',
-             'img':'Campo de Upload de Imagem'}
+             'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos'}
         if type:
             return D.get(type)
         else:
@@ -44,10 +44,8 @@ class BaseFunc(BaseStore):
             else:
                 return ''
         elif campo in data.keys():
-            if data.get(campo, None):
-                return data.get(campo,'')
-            else:
-                return ''
+            return data.get(campo,'')
+            
         else:
             default = eval(default_value.get(campo,'None'))
             if default: 
@@ -94,15 +92,32 @@ class BaseFunc(BaseStore):
             else:
                 return ''
         else:
-            return ''     
-        
-    def getRequestPhoto(self,campo,request):
+            return ''  
+    
+    def getFile(self,campo,request,data):
         if campo in request.keys():
-            return request.get(campo, '')
-
-        else:
-            return ''                       
+            if request.get(campo, None):
+                return ''
+            else:
+                id_form = int(request.get('forms_id','0'))
+                id_instance = int(request.get('id_instance','0'))
+                field = campo
+                result = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(id_form,id_instance,field)
+                if result:
+                    return '../form-file?id=%s' % result.id
             
+        elif campo in data.keys():
+            id_form = int(request.get('forms_id','0'))
+            id_instance = int(request.get('id_instance','0'))
+            field = campo
+            result = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(id_form,id_instance,field)
+            if result:
+                return '../form-file?id=%s' % result.id
+
+            else:
+                return ''
+        else:
+            return ''     
         
     def getParametersFromURL(self, ctx):
         traverse = ctx.context.REQUEST.get('traverse_subpath')
@@ -178,7 +193,16 @@ class BaseFunc(BaseStore):
             return self.decodePickle(valor)
         
         elif tipo == 'img':
-            return '<img width="100px" src="../form-image?id=%s">' % id
+            if id:
+                return '<img width="100px" src="../form-image?id=%s">' % id
+            else:
+                return ''
+        
+        elif tipo == 'file':
+            if id:
+                return '<a href="../form-file?id=%s" target="_blank">Download do Arquivo</a><br />'% id
+            else:
+                return ''
         
         else:
             return valor
@@ -221,8 +245,18 @@ class BaseFunc(BaseStore):
                         if data:
                             tmp += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
                     else: 
-                         tmp += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
-                    tmp += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getRequestPhoto(campo,self.request),campo)
+                        if self.getPhoto(campo,self.request,data):
+                            tmp += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
+                    tmp += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getPhoto(campo,self.request,data),campo)
+                
+                elif type_campo == 'file':
+                    if errors:
+                        if data:
+                            tmp += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(campo,self.request,data))
+                    else:
+                        if self.getFile(campo,self.request,data):
+                            tmp += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(campo,self.request,data))
+                    tmp += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getFile(campo,self.request,data),campo)
                 
                 elif type_campo == 'date':
                     tmp += """<input id='%s' type='text' maxlength='10' onKeyDown='Mascara(this,Data);' onKeyPress='Mascara(this,Data);' onKeyUp='Mascara(this,Data);'

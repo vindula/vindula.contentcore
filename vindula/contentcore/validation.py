@@ -32,7 +32,7 @@ def valida_form(ctx, configuracao, form):
             if configuracao[campo]['required'] == True: # configuracao: campo e obrigatorio
                 if valor == '' or valor.isspace(): # se o campo estiver vazio
                     errors[campo] = u'Este campo é obrigatório' # indica o campo vazio
-                            
+
         if configuracao[campo]['type'] == date:
             if valor != '':   
                 try:       
@@ -63,10 +63,6 @@ def valida_form(ctx, configuracao, form):
                 convertidos[campo] = True
             else:
                 convertidos[campo] = False        
-        
-        #logica para converter campos tipo File
-        elif configuracao[campo]['type'] == 'file':
-            convertidos[campo] = valor
         
         elif configuracao[campo]['type'] == int:
             convertidos[campo] = int(valor)
@@ -107,7 +103,15 @@ def valida_form(ctx, configuracao, form):
                 convertidos[campo] = to_utf8(valor_convert)
             else:
                  convertidos[campo] = ''
-           
+
+        #logica para converter campos tipo File           
+        elif configuracao[campo]['type'] == 'file':
+            data = valor.read()
+            if len(data) != 0 : 
+                valor_convert = pickle.dumps(data)
+                convertidos[campo] = to_utf8(valor_convert)
+            else:
+                 convertidos[campo] = ''           
         
         elif configuracao[campo]['type'] == 'textarea':
             if type(valor) == unicode:
@@ -136,7 +140,7 @@ def valida_form(ctx, configuracao, form):
                     if type(valor) == unicode:
                         convertidos[campo] = valor.strip()
                     else:
-                        convertidos[campo] = configuracao[campo]['type'](valor.strip()) # conversao do campo
+                        convertidos[campo] = to_utf8(valor.strip()) # conversao do campo
                     # "(valor)" == "(def __call__(self, *args, **kwargs):", callable
                 except:
                     # Falhou ao converter para o tipo requerido

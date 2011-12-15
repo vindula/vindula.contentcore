@@ -13,7 +13,8 @@ vindula.contentcore.egg-info/requires.txt
 vindula.contentcore.egg-info/top_level.txt
 vindula/contentcore/__init__.py
 vindula/contentcore/base.py
-vindula/contentcore/contentform.py
+vindula/contentcore/content.py
 vindula/contentcore/models.py
+vindula/contentcore/registration.py
 vindula/contentcore/tests.py
 vindula/contentcore/validation.py

@@ -4,7 +4,7 @@ from vindula.contentcore import MessageFactory as _
 from vindula.contentcore.base import BaseFunc
 from datetime import date , datetime 
 from vindula.contentcore.validation import valida_form
-from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormValues
+from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormValues, ModelsFormInstance
 
 
 class RegistrationCreateForm(BaseFunc):
@@ -122,32 +122,30 @@ class RegistrationCreateForm(BaseFunc):
 class RegistrationCreateFields(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
-       
-    campos = {'name_field'            : {'required': True,  'type':'key',     'label':'Nome do Campo',                'decription':u'Digite o nome para o campo',                                       'ordem':0},
-              'type_fields'           : {'required': True,  'type':'choice',  'label':'Tipo do Campo',                'decription':u'Selecione o tipo da informação deste campos',                      'ordem':1},
-              'list_values'           : {'required': False, 'type':'textarea','label':'Lista de dados para o select', 'decription':u'Digite um item por linha no padrão [ID] | [Valor]',                'ordem':2},
-              'title'                 : {'required': True,  'type':to_utf8,   'label':'Titulo',                       'decription':u'Digite o titulo para o campo',                                     'ordem':3},
-              'description_fields'    : {'required': False, 'type':'textarea','label':'Descrição',                    'decription':u'Digite a descrição para o campo',                                  'ordem':4},
-              'value_default'         : {'required': False, 'type':to_utf8,   'label':'Valor Padrão',                 'decription':u'Digite o comando ou o valor padrão para preenchimento este campo', 'ordem':5},
-              'required'              : {'required': False, 'type':'bool',    'label':'Campo Requerido',              'decription':u'Marque esta opção se o campo for obrigadorio',                     'ordem':6},
-              'ordenacao'             : {'required': False, 'type':'hidden',  'label':'ordenacao',                    'decription':u'',                                                                 'ordem':7},
-              'flag_ativo'            : {'required': False, 'type':'bool',    'label':'Campo ativo',                  'decription':u'Marque esta opção se o campo estará atvo para o usuario',          'ordem':8},
-              'forms_id'              : {'required': False, 'type':'hidden',  'label':'id form',                      'decription':u'',                                                                 'ordem':9}}
-              
                          
     def registration_processes(self,context):
         form = context.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
         form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
-        campos = self.campos
-        lista_itens = {'type_fields':{'text':'campo de texto',
-                                      'textarea':'campo text area',
-                                      'bool':'campo booleano',
-                                      'choice':'campo de seleção',
-                                      'list':'campo de seleção multipla',
-                                      'hidden':'campo Oculto',
-                                      'img':'Campo de Upload de Imagem'}
+        #campos = self.campos
+        
+        campos = {'name_field'            : {'required': True,  'type':'key',       'label':'Nome do Campo',                'decription':u'Digite o nome para o campo',                                       'ordem':0},
+                  'type_fields'           : {'required': True,  'type':'choice',    'label':'Tipo do Campo',                'decription':u'Selecione o tipo da informação deste campos',                      'ordem':1},
+                  'list_values'           : {'required': False, 'type':'textarea',  'label':'Lista de dados para o select', 'decription':u'Digite um item por linha no padrão [ID] | [Valor]',                'ordem':2},
+                  'title'                 : {'required': True,  'type':self.to_utf8,'label':'Titulo',                       'decription':u'Digite o titulo para o campo',                                     'ordem':3},
+                  'description_fields'    : {'required': False, 'type':'textarea',  'label':'Descrição',                    'decription':u'Digite a descrição para o campo',                                  'ordem':4},
+                  'value_default'         : {'required': False, 'type':self.to_utf8,'label':'Valor Padrão',                 'decription':u'Digite o comando ou o valor padrão para preenchimento este campo', 'ordem':5},
+                  'required'              : {'required': False, 'type':'bool',      'label':'Campo Requerido',              'decription':u'Marque esta opção se o campo for obrigadorio',                     'ordem':6},
+                  'ordenacao'             : {'required': False, 'type':'hidden',    'label':'ordenacao',                    'decription':u'',                                                                 'ordem':7},
+                  'flag_ativo'            : {'required': False, 'type':'bool',      'label':'Campo ativo',                  'decription':u'Marque esta opção se o campo estará atvo para o usuario',          'ordem':8},
+                  'forms_id'              : {'required': False, 'type':'hidden',    'label':'id form',                      'decription':u'',                                                                 'ordem':9}}    
+            
+        
+        lista_itens = {'type_fields':{'text':'campo de texto','textarea':'campo text area',
+                                      'bool':'campo booleano','choice':'campo de seleção',
+                                      'list':'campo de seleção multipla','hidden':'campo Oculto',
+                                      'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos'}
                        }
-
+        
         # divisao dos dicionarios "errors" e "convertidos"
         form_data = {
             'errors': {},
@@ -292,7 +290,6 @@ class RegistrationLoadForm(BaseFunc):
                     # editando...
                     id_form = int(id_form)
                     id_instance = int(form.get('id_instance',0))
-                    
                     results = ModelsFormValues().get_FormValues_byForm_and_Instance(id_form,id_instance)
                     if results:
                         for campo in campos.keys():

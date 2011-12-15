@@ -13,6 +13,7 @@
 				<div id="interna" >    		
 		            <fieldset>
 		            	<legend>Cadastrar novo registro</legend>
+						
 						<a alt="Adicionar novo registro" title="Adicionar novo registro"
 						   tal:attributes="href string:load-form?forms_id=${id_form}">Adicionar novo registro</a>
 

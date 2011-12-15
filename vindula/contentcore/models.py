@@ -93,7 +93,6 @@ class ModelsFormFields(Storm, BaseStore):
             return data
         else:
             return None
-            
     
     
     def check_fields(self,campo,form):

@@ -69,6 +69,31 @@ class VindulaFormImage(grok.View, BaseFunc):
                 self.request.response.setHeader("Content-Type", "image/jpeg", 0)
                 self.request.response.write(x)                
 
+class VindulaFormFile(grok.View, BaseFunc):
+    grok.context(Interface)
+    grok.require('zope2.View')
+    grok.name('form-file')
+    
+    def render(self):
+        pass
+    
+    def update(self):
+        form = self.request.form
+        if 'id' in form.keys():
+            id = form.get('id','0')
+            if id != 'None':
+                campo_image = ModelsFormValues().get_Values_byID(int(id))
+                valor = campo_image.value
+                valor_blob = campo_image.value_blob
+                                
+                if valor:
+                    x = self.decodePickle(valor)
+                else:
+                    x = self.decodePickle(valor_blob)
+                
+                self.request.response.setHeader("Content-Type", "type/file", 0)
+                self.request.response.write(x)                
+
 
 #Views Forms ---------------------------------------------------
 class VindulaCreateForm(grok.View, BaseFunc):
