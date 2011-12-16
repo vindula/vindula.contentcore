@@ -1,21 +1,25 @@
-<html  metal:use-macro="here/main_template/macros/master">
+<html metal:use-macro="here/main_template/macros/master">
 	<head>
 		<metal:styleslot fill-slot="style_slot">
     		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
 		</metal:styleslot>
-		
 	</head>
-	<body>
+	<body >
 		<div metal:fill-slot="content" tal:define="form_data view/load_form | python:{};
 		                          				   errors form_data/errors | python:{};
 									  			   form_values form_data/data | python:{};">
 		    
 		    <div id="content" >
-		    		<h1> Adicionar Novo formularios</h1>
+		    		<h1> Adicionar Novo Chamado</h1>
 					<div id="interna" >    		
-				        <form name="add-form" id="add-form" enctype="multipart/form-data" class="enableAutoFocus" action="add-form" method="POST">
+				        <form name="add-defaut-value" id="add-defaut-value" enctype="multipart/form-data" 
+							  class="enableAutoFocus" action="add-defaut-value" method="POST">
+							<!-- Id -->
+							<input type="hidden" tal:condition="request/id|nothing"
+												 name="id" id="id" value="" tal:attributes="value request/id|nothing">
+							
 				            <fieldset>
-				            	<legend>Dados do Formulario</legend>
+				            	<legend>Dados do valor</legend>
 								<tal:def define="html python:view.geraCampos(form_data)">
 									<tal:rep repeat="x html">
 										<div tal:content="structure x"/>

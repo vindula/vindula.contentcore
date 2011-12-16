@@ -1,0 +1,44 @@
+<html metal:use-macro="here/main_template/macros/master">
+	<head>
+		<metal:styleslot fill-slot="style_slot">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
+		</metal:styleslot>
+	</head>
+	<body>
+		<div metal:fill-slot="content">
+		    <div id="content" >
+				<h1>Excluir Valor Padrão</h1>
+				<div id="interna" >
+					    		
+		            <fieldset>
+		            	<legend>Excluir Valor</legend>
+						<p>Realmente dejesa escluir este registro ?</p>
+						<table width="100%" tal:define="data_default view/list_default|python:{}">
+							<tr>
+								<th>Metodo</th>
+								<th>Nome do metodo</th>
+							</tr>
+							<tr>
+								<td tal:content="data_default/value|nothing" />
+								<td tal:content="data_default/lable|nothing" />
+							</tr>
+	
+						</table>
+					</fieldset>
+					<!-- Botões de ação -->
+					<form method="post" enctype="multipart/form-data" action="excluir-default-value">	 
+						<!-- Id -->
+						<input type="hidden" name="id" id="id" value="" tal:attributes="value request/id|nothing">
+					   	<fieldset>
+					   		<br/>
+							<div style="float:left; width:100%">
+								<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
+								<input style="width:100px;" class="button-erp" type="submit" value="Sim, Excluir" name="form.submited">
+							</div>
+						</fieldset>
+					</form>
+				</div>
+		    </div>
+		</div>  
+	</body>
+</html>

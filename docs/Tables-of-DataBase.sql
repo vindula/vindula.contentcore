@@ -12,9 +12,9 @@ DROP TABLE IF EXISTS `myvindulaDB`.`vin_contentcore_forms` ;
 
 CREATE  TABLE IF NOT EXISTS `myvindulaDB`.`vin_contentcore_forms` (
   `id` INT NOT NULL AUTO_INCREMENT ,
-  `name_form` VARCHAR(45) NULL DEFAULT NULL ,
-  `date_creation` VARCHAR(45) NULL DEFAULT NULL ,
-  `description_form` VARCHAR(45) NULL DEFAULT NULL ,
+  `name_form` VARCHAR(45) NOT NULL ,
+  `date_creation` VARCHAR(45) NOT NULL ,
+  `description_form` VARCHAR(45) NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
@@ -85,7 +85,6 @@ CREATE  TABLE IF NOT EXISTS `myvindulaDB`.`vin_contentcore_from_values` (
   `forms_id` INT NOT NULL ,
   `instance_id` INT NOT NULL ,
   `fields` VARCHAR(45) NOT NULL ,
-  `vin_contentcore_from_valuescol` VARCHAR(45) NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_vin_helpdesk_from_values_vin_helpdesk_forms1` (`forms_id` ASC) ,
   CONSTRAINT `fk_vin_helpdesk_from_values_vin_helpdesk_forms1`
@@ -98,7 +97,23 @@ AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = latin1;
 
 
+-- -----------------------------------------------------
+-- Table `myvindulaDB`.`vin_contentcore_default_value`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `myvindulaDB`.`vin_contentcore_default_value` ;
+
+CREATE  TABLE IF NOT EXISTS `myvindulaDB`.`vin_contentcore_default_value` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `value` TEXT NOT NULL ,
+  `lable` VARCHAR(45) NOT NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = latin1;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+

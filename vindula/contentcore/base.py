@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 from vindula.myvindula.user import BaseStore
 from vindula.contentcore.models import ModelsFormValues
 import pickle
@@ -44,14 +44,20 @@ class BaseFunc(BaseStore):
             else:
                 return ''
         elif campo in data.keys():
-            return data.get(campo,'')
-            
-        else:
-            default = eval(default_value.get(campo,'None'))
-            if default: 
-                return default
+            if data.get(campo,None) != None:
+                return data.get(campo,'')
             else:
-                return '' 
+                return ''
+
+        else:
+            try:
+                default = eval(default_value.get(campo,'None'))
+                if default: 
+                    return default
+                else:
+                    return '' 
+            except:
+                return ''
     
     def getValueList(self,campo,request,data,default_value):
         if campo in request.keys():
@@ -223,77 +229,99 @@ class BaseFunc(BaseStore):
                 i+=1
             
             for campo in campos.keys():
-                type_campo = campos[campo]['type']
                 index = campos[campo].get('ordem',0)
                 tmp = ""
-                tmp += "<!-- Campo %s -->"%(campo)
-                tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo),campo)
-                
-                if type_campo != 'hidden':
-                    tmp += "   <label for='%s'>%s</label>"%(campo,campos[campo]['label'])
-                    if campos[campo]['required'] == True and type_campo != 'hidden':
-                        tmp += "   <span class='fieldRequired' title='Obrigatório'>(Obrigatório)</span>"
-    
-                    tmp += "   <div class='formHelp'>%s.</div>"%(campos[campo]['decription'])   
-                    tmp += "   <div >%s</div>"%(errors.get(campo,''))
-                
-                if type_campo == 'hidden':
-                    tmp += "<input id='%s' type='hidden' value='%s' name='%s' size='25'/>"%(campo,self.getValue(campo,self.request,data,default_value),campo)
-                
-                elif type_campo == 'img':
-                    if errors:
-                        if data:
-                            tmp += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
-                    else: 
-                        if self.getPhoto(campo,self.request,data):
-                            tmp += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
-                    tmp += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getPhoto(campo,self.request,data),campo)
-                
-                elif type_campo == 'file':
-                    if errors:
-                        if data:
-                            tmp += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(campo,self.request,data))
-                    else:
-                        if self.getFile(campo,self.request,data):
-                            tmp += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(campo,self.request,data))
-                    tmp += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getFile(campo,self.request,data),campo)
-                
-                elif type_campo == 'date':
-                    tmp += """<input id='%s' type='text' maxlength='10' onKeyDown='Mascara(this,Data);' onKeyPress='Mascara(this,Data);' onKeyUp='Mascara(this,Data);'
-                                     value='%s' name='%s' size='25'/>"""%(campo,self.converte_data(self.getValue(campo,self.request,data,default_value),True),campo)
-    
-                elif type_campo == 'textarea':
-                    tmp += "<textarea id='%s' name='%s' style='width: 100; height: 81px;'>%s</textarea>"%(campo, campo, self.getValue(campo,self.request,data,default_value)) 
-                
-                elif type_campo == 'bool':
-                    tmp += "<input id='%s' type='checkbox' value='%s' name='%s' size='25' %s/>"%(campo,'True',campo,self.checked(campo,self.request,data,default_value))
-                
-                elif type_campo == 'list':
-                    tmp += "<div class='boxSelecao' name='%s'>"%(campo)
-                    for item in value_choice[campo]:
-                        lable =  value_choice[campo][item]
-                        if item in self.getValueList(campo,self.request,data,default_value):
-                            tmp += "<input value='%s' type='checkbox' checked name='%s'/><label>%s</label><br/>"%(item,campo,lable)
-                        else:
-                            tmp += "<input value='%s' type='checkbox' name='%s'/><label>%s</label><br/>"%(item,campo,lable)
-                    tmp += "</div>" 
-                
-                elif type_campo == 'choice':
-                    tmp += "<select name='%s'>"%(campo)
-                    tmp += "<option value="">-- Selecione --</option>"
-                    for item in value_choice[campo]:
-                        if item == self.getValue(campo,self.request,data,default_value):
-                            tmp +="<option value='%s' selected>%s</option>"%(item, value_choice[campo][item])
-                        else:
-                            tmp +="<option value='%s'>%s</option>"%(item, value_choice[campo][item])
-                                    
-                    tmp += "</select>"
+                if not 'outro' in campo:
+                    type_campo = campos[campo]['type']
                     
-                else:
-                    tmp += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo,self.getValue(campo,self.request,data,default_value),campo)
+                    tmp += "<!-- Campo %s -->"%(campo)
+                    tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo),campo)
+                    
+                    if type_campo != 'hidden':
+                        tmp += "   <label for='%s'>%s</label>"%(campo,campos[campo]['label'])
+                        if campos[campo]['required'] == True and type_campo != 'hidden':
+                            tmp += "   <span class='fieldRequired' title='Obrigatório'>(Obrigatório)</span>"
+        
+                        tmp += "   <div class='formHelp'>%s.</div>"%(campos[campo]['decription'])   
+                        tmp += "   <div >%s</div>"%(errors.get(campo,''))
+                    
+                    if type_campo == 'hidden':
+                        tmp += "<input id='%s' type='hidden' value='%s' name='%s' size='25'/>"%(campo,self.getValue(campo,self.request,data,default_value),campo)
+                    
+                    elif type_campo == 'img':
+                        if errors:
+                            if self.getPhoto(campo,self.request,data):
+                                tmp += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
+                        else: 
+                            if self.getPhoto(campo,self.request,data):
+                                tmp += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
+                        tmp += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getPhoto(campo,self.request,data),campo)
+                    
+                    elif type_campo == 'file':
+                        if errors:
+                            if self.getFile(campo,self.request,data):
+                                tmp += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(campo,self.request,data))
+                        else:
+                            if self.getFile(campo,self.request,data):
+                                tmp += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(campo,self.request,data))
+                        tmp += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getFile(campo,self.request,data),campo)
+                    
+                    elif type_campo == 'date':
+                        tmp += """<input id='%s' type='text' maxlength='10' onKeyDown='Mascara(this,Data);' onKeyPress='Mascara(this,Data);' onKeyUp='Mascara(this,Data);'
+                                         value='%s' name='%s' size='25'/>"""%(campo,self.converte_data(self.getValue(campo,self.request,data,default_value),True),campo)
+        
+                    elif type_campo == 'textarea':
+                        tmp += "<textarea id='%s' name='%s' style='width: 100; height: 81px;'>%s</textarea>"%(campo, campo, self.getValue(campo,self.request,data,default_value)) 
+                    
+                    elif type_campo == 'bool':
+                        tmp += "<input id='%s' type='checkbox' value='%s' name='%s' size='25' %s/>"%(campo,'True',campo,self.checked(campo,self.request,data,default_value))
+                    
+                    elif type_campo == 'combo':
+                        select = False
+                        tmp += "<select name='%s'>"%(campo)
+                        tmp += "<option value="">-- Selecione --</option>"
+                        for item in value_choice[campo]:
+                            if item == self.getValue(campo,self.request,data,default_value):
+                                select = True
+                                tmp +="<option value='%s' selected>%s</option>"%(item, value_choice[campo][item])
+                            else:
+                                tmp +="<option value='%s'>%s</option>"%(item, value_choice[campo][item])
+                        tmp += "</select>"
+                        if select:
+                            tmp += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo,'', campo)
+                        else:
+                            tmp += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo, self.getValue(campo, self.request,data, default_value), campo)
+                    
+                    elif type_campo == 'list':
+                        tmp += "<div class='boxSelecao' name='%s'>"%(campo)
+                        for item in value_choice[campo]:
+                            lable =  value_choice[campo][item]
+                            if item in self.getValueList(campo,self.request,data,default_value):
+                                tmp += "<input value='%s' type='checkbox' checked name='%s'/><label>%s</label><br/>"%(item,campo,lable)
+                            else:
+                                tmp += "<input value='%s' type='checkbox' name='%s'/><label>%s</label><br/>"%(item,campo,lable)
+                        tmp += "</div>" 
+                    
+                    elif type_campo == 'choice':
+                        tmp += "<select name='%s'>"%(campo)
+                        tmp += "<option value="">-- Selecione --</option>"
+                        for item in value_choice[campo]:
+                            if item == self.getValue(campo,self.request,data,default_value):
+                                tmp +="<option value='%s' selected>%s</option>"%(item, value_choice[campo][item])
+                            else:
+                                tmp +="<option value='%s'>%s</option>"%(item, value_choice[campo][item])
 
-                tmp += "</div>"
+                        tmp += "</select>"
+                    
+                    else:
+                        tmp += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo, self.getValue(campo, self.request,data, default_value), campo)
+    
+                    tmp += "</div>"
                 
+                else:
+                    tmp += ''
+                
+                    
                 html.pop(index)
                 html.insert(index, tmp)    
             

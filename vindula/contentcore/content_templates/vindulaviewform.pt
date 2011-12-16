@@ -26,7 +26,8 @@
 									<th tal:condition="campo/flag_ativo|nothing"
 										tal:content="campo/title|nothing" />	
 								</tal:rep>
-								<th width="20%">Editar Registro</th>
+								<th width="10%">Editar Registro</th>
+								<th width="10%">Excluir Registro</th>
 							</tr>
 							<tal:rep repeat="item python:view.get_FormValues(id_form)">
 								<tr>
@@ -48,10 +49,15 @@
 											
 										</tal:rep>
 									</tal:def>
-									<td width="20%">
+									<td width="10%">
 										<a tal:attributes="href python:'load-form?forms_id='+str(id_form)+'&id_instance='+str(item[0].instance_id)"
-											alt="Editar registro" title="Editar Ticket">
+											alt="Editar registro" title="Editar registro">
 											Editar</a>
+									</td>
+									<td width="10%">
+										<a tal:attributes="href python:'excluir-registro-form?forms_id='+str(id_form)+'&id_instance='+str(item[0].instance_id)"
+											alt="Excluir registro" title="Excluir registro">
+											Excluir</a>
 									</td>
 								</tr>
 							</tal:rep>		

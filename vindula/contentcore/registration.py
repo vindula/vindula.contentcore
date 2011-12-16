@@ -4,15 +4,16 @@ from vindula.contentcore import MessageFactory as _
 from vindula.contentcore.base import BaseFunc
 from datetime import date , datetime 
 from vindula.contentcore.validation import valida_form
-from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormValues, ModelsFormInstance
+from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormValues, ModelsFormInstance, ModelsDefaultValue
 
 
 class RegistrationCreateForm(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
       
-    campos = {'name_form'        : {'required': True,  'type' : to_utf8, 'label':'Titulo',   'decription':u'Digite o titulo do formulario',    'ordem':0},
-              'description_form' : {'required': False, 'type' : to_utf8, 'label':'Descrição','decription':u'Digite a descrição do formulario', 'ordem':1}}
+    campos = {'name_form'          : {'required': True,  'type' : to_utf8,    'label':'Titulo',          'decription':u'Digite o titulo do formulario',    'ordem':0},
+              'description_form'   : {'required': False, 'type' : to_utf8,    'label':'Descrição',       'decription':u'Digite a descrição do formulario', 'ordem':1},
+              }
                         
     def registration_processes(self,context):
         success_voltar = context.context.absolute_url() +  '/manage-form'
@@ -49,14 +50,14 @@ class RegistrationCreateForm(BaseFunc):
                             setattr(result, campo, value)
                     
                     IStatusMessage(context.request).addStatusMessage(_(u"Formulario editado com susseço"), "info")
-                    url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(id_form)
+                    url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(result.id)
                     context.request.response.redirect(url)
 
                 else:
                     #adicionando...
                     id = ModelsForm().set_Form(**data)
                     IStatusMessage(context.request).addStatusMessage(_(u"Formulario adcionado com susseço"), "info")
-                    url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(id_form)
+                    url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(id)
                     context.request.response.redirect(url)
                                    
             else:
@@ -127,13 +128,15 @@ class RegistrationCreateFields(BaseFunc):
         form = context.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
         form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
         #campos = self.campos
+        id_form = int(form.get('forms_id','0'))
         
         campos = {'name_field'            : {'required': True,  'type':'key',       'label':'Nome do Campo',                'decription':u'Digite o nome para o campo',                                       'ordem':0},
                   'type_fields'           : {'required': True,  'type':'choice',    'label':'Tipo do Campo',                'decription':u'Selecione o tipo da informação deste campos',                      'ordem':1},
                   'list_values'           : {'required': False, 'type':'textarea',  'label':'Lista de dados para o select', 'decription':u'Digite um item por linha no padrão [ID] | [Valor]',                'ordem':2},
                   'title'                 : {'required': True,  'type':self.to_utf8,'label':'Titulo',                       'decription':u'Digite o titulo para o campo',                                     'ordem':3},
                   'description_fields'    : {'required': False, 'type':'textarea',  'label':'Descrição',                    'decription':u'Digite a descrição para o campo',                                  'ordem':4},
-                  'value_default'         : {'required': False, 'type':self.to_utf8,'label':'Valor Padrão',                 'decription':u'Digite o comando ou o valor padrão para preenchimento este campo', 'ordem':5},
+                  'value_default'         : {'required': False, 'type':'combo',     'label':'Valor Padrão',                 'decription':u'''Digite o comando ou o valor padrão para preenchimento este campo,\n
+                                                                                                                                             este campo funciona com interpretação python''',                 'ordem':5},
                   'required'              : {'required': False, 'type':'bool',      'label':'Campo Requerido',              'decription':u'Marque esta opção se o campo for obrigadorio',                     'ordem':6},
                   'ordenacao'             : {'required': False, 'type':'hidden',    'label':'ordenacao',                    'decription':u'',                                                                 'ordem':7},
                   'flag_ativo'            : {'required': False, 'type':'bool',      'label':'Campo ativo',                  'decription':u'Marque esta opção se o campo estará atvo para o usuario',          'ordem':8},
@@ -146,6 +149,13 @@ class RegistrationCreateFields(BaseFunc):
                                       'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos'}
                        }
         
+        dados_defaul =  ModelsDefaultValue().get_DefaultValues()
+        D={}
+        for i in dados_defaul:
+            D[i.value] = i.lable
+        lista_itens['value_default'] = D
+        
+        
         # divisao dos dicionarios "errors" e "convertidos"
         form_data = {
             'errors': {},
@@ -153,7 +163,7 @@ class RegistrationCreateFields(BaseFunc):
             'campos':campos,
             'lista_itens':lista_itens}
         
-        id_form = int(form.get('forms_id','0'))
+        
         result_form = ModelsFormFields().get_Fields_ByIdForm(id_form)
         
         # se clicou no botao "Voltar"
@@ -236,6 +246,7 @@ class RegistrationLoadForm(BaseFunc):
         campos = {}
         lista_itens = {}
         default_value = {}
+        n = 0
         fields = ModelsForm().get_Forns_byId(int(id_form))
         if fields:
             for field in fields.fields:
@@ -247,6 +258,9 @@ class RegistrationLoadForm(BaseFunc):
                     M['decription'] = field.description_fields
                     M['ordem'] = field.ordenacao
                     campos[field.name_field] = M
+                else:
+                    campos['outro'+str(n)] = {'ordem':field.ordenacao}     
+                    n += 1
                     
                 if field.type_fields == 'choice':
                     items = field.list_values.splitlines()
@@ -293,56 +307,66 @@ class RegistrationLoadForm(BaseFunc):
                     results = ModelsFormValues().get_FormValues_byForm_and_Instance(id_form,id_instance)
                     if results:
                         for campo in campos.keys():
-                           for result in results:
-                               if result.fields == campo:
-                                   valor = data[campo]
-                                   if valor:
-                                       if len(valor) < 65000:
-                                           if type(valor) == unicode:
-                                               result.value = valor.strip()
+                            if not 'outro' in campo:
+                               for result in results:
+                                   if result.fields == campo:
+                                       valor = data[campo]
+                                       if valor:
+                                           if len(valor) < 65000:
+                                               if type(valor) == unicode:
+                                                   result.value = valor.strip()
+                                                   result.value_blob = None
+                                               else:
+                                                   result.value = unicode(str(valor), 'utf-8')
+                                                   result.value_blob = None
                                            else:
-                                               result.value = unicode(str(valor), 'utf-8')
-                                       else:
-                                           result.value_blob = valor    
-                                       
-                                       result.date_creation = datetime.now()
-                                       self.store.commit()            
+                                               result.value_blob = valor   
+                                               result.value = None 
+                                           
+                                           result.date_creation = datetime.now()
+                                           self.store.commit()            
                                 
                                else:
-                                   if results.find(fields=campo).count() == 0:
-                                        D={}
-                                        D['forms_id'] = id_form
-                                        D['instance_id'] = id_instance
-                                        D['fields'] = campo
+                                   if results.find(fields=campo).count() == 0 and not 'outro' in campo:
                                         valor = data[campo]
-                                        if len(valor) < 65000:
-                                            if type(valor) == unicode:
-                                                D['value'] = valor.strip()
+                                        if valor:
+                                            D={}
+                                            D['forms_id'] = id_form
+                                            D['instance_id'] = id_instance
+                                            D['fields'] = campo
+                                            
+                                            if len(valor) < 65000:
+                                                if type(valor) == unicode:
+                                                    D['value'] = valor.strip()
+                                                    D['value_blob'] = None
+                                                else:
+                                                    D['value'] = unicode(str(valor), 'utf-8')
+                                                    D['value_blob'] = None
                                             else:
-                                                D['value'] = unicode(str(valor), 'utf-8')
-                                        else:
-                                            D['value_blob'] = valor
-                                        
-                                        ModelsFormValues().set_FormValues(**D)
+                                                D['value'] = None
+                                                D['value_blob'] = valor
+                                            
+                                            ModelsFormValues().set_FormValues(**D)
 
                 else:
                     #adicionando...
                     id_instance = ModelsFormInstance().set_FormInstance(id_form)
                     for field in data:
-                        D={}
-                        D['forms_id'] = int(id_form)
-                        D['instance_id'] = id_instance
-                        D['fields'] = field
                         valor = data[field]
-                        if len(valor) < 65000:
-                            if type(valor) == unicode:
-                                D['value'] = valor.strip()
+                        if valor:
+                            D={}
+                            D['forms_id'] = int(id_form)
+                            D['instance_id'] = id_instance
+                            D['fields'] = field
+                            if len(valor) < 65000:
+                                if type(valor) == unicode:
+                                    D['value'] = valor.strip()
+                                else:
+                                    D['value'] = unicode(str(valor), 'utf-8')
                             else:
-                                D['value'] = unicode(str(valor), 'utf-8')
-                        else:
-                            D['value_blob'] = valor
-                    
-                        ModelsFormValues().set_FormValues(**D)
+                                D['value_blob'] = valor
+                        
+                            ModelsFormValues().set_FormValues(**D)
                     
                 #Redirect back to the front page with a status message
                 #IStatusMessage(context.request).addStatusMessage(_(u"Thank you for your order. We will contact you shortly"), "info")
@@ -372,3 +396,123 @@ class RegistrationLoadForm(BaseFunc):
         
         else:
             return form_data
+        
+        
+class RegistrationExcluirForm(BaseFunc):
+
+    def exclud_processes(self,ctx):        
+        form = ctx.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
+        form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
+        id_form = form.get('forms_id','0')
+        id_instance = int(form.get('id_instance',''))
+        success_url = ctx.context.absolute_url() +  '/view-form?forms_id=' + str(id_form)
+        
+        # se clicou no botao "Voltar"
+        if 'form.voltar' in form_keys:
+            ctx.request.response.redirect(success_url)
+          
+        # se clicou no botao "Salvar"
+        elif 'form.submited' in form_keys:
+            # Inicia o processamento do formulario
+            records = ModelsFormValues().get_FormValues_byForm_and_Instance(int(id_form),id_instance)
+            for record in records:
+                self.store.remove(record)
+                self.store.flush()
+            
+            IStatusMessage(ctx.request).addStatusMessage(_(u"Registro removido com sucesso.", "info"))  
+            ctx.request.response.redirect(success_url)
+
+class RegistrationAddDefaultValue(BaseFunc):
+    def to_utf8(value):
+        return unicode(value, 'utf-8')
+      
+    campos = {'value': {'required': True, 'type' : to_utf8,    'label':'Medoto ou Valor Padrão', 'decription':u'Digite um metodo ou valor padão em formato python','ordem':0},
+              'lable': {'required': True, 'type' : to_utf8,    'label':'Nome do metodo',         'decription':u'Digite a descrição do formulario',                 'ordem':1},}
+                        
+    def registration_processes(self,context):
+        success = context.context.absolute_url() +  '/manage-form'
+        form = context.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
+        form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
+        campos = self.campos
+        
+        # divisao dos dicionarios "errors" e "convertidos"
+        form_data = {
+            'errors': {},
+            'data': {},
+            'campos':campos,}
+
+        # se clicou no botao "Voltar"
+        if 'form.voltar' in form_keys:
+            context.request.response.redirect(success)
+          
+        # se clicou no botao "Salvar"
+        elif 'form.submited' in form_keys:
+            # Inicia o processamento do formulario
+            # chama a funcao que valida os dados extraidos do formulario (valida_form) 
+            errors, data = valida_form(context, campos, context.request.form)  
+
+            if not errors:
+                if 'id' in form_keys:
+                    # editando...
+                    id = int(form.get('id',''))
+                    result = ModelsDefaultValue().get_DefaultValue_byId(id)
+                    if result:
+                        for campo in campos.keys():
+                            value = data.get(campo, None)
+                            setattr(result, campo, value)
+                    
+                    IStatusMessage(context.request).addStatusMessage(_(u"Valor editado com susseço"), "info")
+                    context.request.response.redirect(success)
+
+                else:
+                    #adicionando...
+                    id = ModelsDefaultValue().set_DefaultValue(**data)
+                    IStatusMessage(context.request).addStatusMessage(_(u"Valor adcionado com susseço"), "info")
+                    context.request.response.redirect(success)
+                                   
+            else:
+                form_data['errors'] = errors
+                form_data['data'] = data
+                return form_data
+
+            
+        # se for um formulario de edicao 
+        elif 'id' in form_keys:
+            id = int(form.get('id',''))
+            data = ModelsDefaultValue().get_DefaultValue_byId(id)
+            
+            if data:
+                D = {}
+                for campo in campos.keys():
+                    D[campo] = getattr(data, campo, '') 
+                
+                form_data['data'] = D
+                return form_data
+            else:
+               return form_data
+            
+        #se for um formulario de adição
+        else:
+            return form_data
+
+class RegistrationExcluirDefault(BaseFunc):
+
+    def exclud_processes(self,ctx):        
+        form = ctx.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
+        form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
+        id = int(form.get('id','0'))
+        success_url = ctx.context.absolute_url() +  '/manage-form'
+        
+        # se clicou no botao "Voltar"
+        if 'form.voltar' in form_keys:
+            ctx.request.response.redirect(success_url)
+          
+        # se clicou no botao "Salvar"
+        elif 'form.submited' in form_keys:
+            # Inicia o processamento do formulario
+            record = ModelsDefaultValue().get_DefaultValue_byId(id)
+            self.store.remove(record)
+            self.store.flush()
+            
+            IStatusMessage(ctx.request).addStatusMessage(_(u'Valor removido com sucesso.', 'info'))  
+            ctx.request.response.redirect(success_url)

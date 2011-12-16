@@ -5,7 +5,8 @@
 		</metal:styleslot>
 	</head>
 	<body>
-		<div metal:fill-slot="content" tal:define="data view/load_form | python:{};">
+		<div metal:fill-slot="content" tal:define="data view/load_form | python:{};
+												   data_default view/list_default|python:{}">
 		    
 		    <div id="content" >
 				<h1>Criação de Formularios do Vindula</h1>	
@@ -19,6 +20,9 @@
 							</a>
 							<a class="button" href="add-form"  alt="Adicionar novo formulario" title="Adicionar novo formulario">							
 								<input class="button-erp" type="button" value="Adicionar novo formulario" name="form.submited">
+							</a>
+							<a class="button" href="add-defaut-value"  alt="Adicionar valor padrão" title="Adicionar valor padrão">							
+								<input class="button-erp" type="button" value="Adicionar valor padrão" name="form.submited">
 							</a>
 						</div>
 					</fieldset>
@@ -46,6 +50,34 @@
 									</tal:rep>	
 								</table>
 								
+							</div>
+					</fieldset>
+					<fieldset>
+		            	<legend>Lista de Valor Padrão</legend>
+							<div id="list-forns" tal:condition="data_default">
+								<table width="100%">
+									<tr>
+										<th>Metodo</th>
+										<th>Nome do metodo</th>
+										<th width="10%">Editar </th>
+										<th width="10%">Excluir </th>
+									</tr>
+									<tal:rep repeat="item data_default">
+										<tr>
+											<td tal:content="item/value|nothing" />
+											<td tal:content="item/lable|nothing" />
+											
+											<td>
+												<a tal:attributes="href string:${here/portal_url}/edit-defaut-value?id=${item/id|nothing}"
+													alt="Editar Valor Padrão" title="Editar Valor Padrão">Editar</a>	
+											</td>
+											<td>
+												<a tal:attributes="href string:${here/portal_url}/excluir-default-value?id=${item/id|nothing}"
+													alt="Excluir Valor Padrão" title="Excluir Valor Padrão">Excluir</a>
+											</td>	
+										</tr>
+									</tal:rep>	
+								</table>
 							</div>
 					</fieldset>
 				</div>
