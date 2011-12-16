@@ -19,7 +19,7 @@
        in Plone -->
   <genericsetup:registerProfile
       name="default"
-      title="Vindula ContentForm"
+      title="Vindula ContentCore"
       directory="profiles/default"
       description="Produto para Criação de formularios dinamicamente"
       provides="Products.GenericSetup.interfaces.EXTENSION"
