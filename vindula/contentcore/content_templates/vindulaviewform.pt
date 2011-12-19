@@ -5,17 +5,15 @@
 		</metal:styleslot>
 	</head>
 	<body>
-		<div metal:fill-slot="content">
-		    <div id="content" tal:define="form view/get_Form|python:{};
-										  id_form form/id|nothing">
-				<h1 tal:content="form/name_form|nothing">Titulo Formulario</h1>
-				<p tal:content="form/description_form|nothing">Descrição do formulario</p>
+		<div metal:fill-slot="main">
+		    <div tal:define="form view/get_Form|python:{};id_form form/id|nothing">
+				<!--h1 tal:content="form/name_form|nothing">Titulo Formul&aacute;rio</h1>
+				<p tal:content="form/description_form|nothing">Descrição do formul&aacute;rio</p-->
 				<div id="interna" >    		
 		            <fieldset>
 		            	<legend>Cadastrar novo registro</legend>
-						
 						<a alt="Adicionar novo registro" title="Adicionar novo registro"
-						   tal:attributes="href string:load-form?forms_id=${id_form}">Adicionar novo registro</a>
+						   tal:attributes="href string:${context/absolute_url|nothing}/load-form">Adicionar novo registro</a>
 
 					</fieldset>
 					<fieldset>
@@ -42,27 +40,23 @@
 																	id_campo data/id|nothing;"
 														tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)"></td>
 													
-													
-													
 												</tal:def>
 											</tal:cond>
-											
 										</tal:rep>
 									</tal:def>
 									<td width="10%">
-										<a tal:attributes="href python:'load-form?forms_id='+str(id_form)+'&id_instance='+str(item[0].instance_id)"
+										<a tal:attributes="href python:context.absolute_url()+'?id_instance='+str(item[0].instance_id)"
 											alt="Editar registro" title="Editar registro">
 											Editar</a>
 									</td>
 									<td width="10%">
-										<a tal:attributes="href python:'excluir-registro-form?forms_id='+str(id_form)+'&id_instance='+str(item[0].instance_id)"
+										<a tal:attributes="href python:context.absolute_url()+'/excluir-registro-form'+'?id_instance='+str(item[0].instance_id)"
 											alt="Excluir registro" title="Excluir registro">
 											Excluir</a>
 									</td>
 								</tr>
 							</tal:rep>		
 						</table>
-					
 					</fieldset>
 				</div>
 		    </div>

@@ -11,12 +11,11 @@ class RegistrationCreateForm(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
       
-    campos = {'name_form'          : {'required': True,  'type' : to_utf8,    'label':'Titulo',          'decription':u'Digite o titulo do formulario',    'ordem':0},
-              'description_form'   : {'required': False, 'type' : to_utf8,    'label':'Descrição',       'decription':u'Digite a descrição do formulario', 'ordem':1},
-              }
+    campos = {'name_form'          : {'required': True,  'type' : to_utf8,'label':'Titulo',    'decription':u'Digite o titulo do formulario',    'ordem':0},
+              'description_form'   : {'required': False, 'type' : to_utf8,'label':'Descrição', 'decription':u'Digite a descrição do formulario', 'ordem':1}}
                         
     def registration_processes(self,context):
-        success_voltar = context.context.absolute_url() +  '/manage-form'
+        success_voltar = context.context.absolute_url() #+  '/manage-form'
         form = context.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
         form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
         campos = self.campos
@@ -27,7 +26,8 @@ class RegistrationCreateForm(BaseFunc):
             'data': {},
             'campos':campos,}
 
-        id_form = int(form.get('forms_id','0'))
+    
+        id_form = int(context.context.forms_id) #form.get('forms_id','0'))
         result_form = ModelsFormFields().get_Fields_ByIdForm(id_form)
         
         # se clicou no botao "Voltar"
@@ -35,35 +35,35 @@ class RegistrationCreateForm(BaseFunc):
             context.request.response.redirect(success_voltar)
           
         # se clicou no botao "Salvar"
-        elif 'form.submited' in form_keys:
-            # Inicia o processamento do formulario
-            # chama a funcao que valida os dados extraidos do formulario (valida_form) 
-            errors, data = valida_form(context, campos, context.request.form)  
-
-            if not errors:
-                if 'forms_id' in form_keys:
-                    # editando...
-                    result = ModelsForm().get_Forns_byId(id_form)
-                    if result:
-                        for campo in campos.keys():
-                            value = data.get(campo, None)
-                            setattr(result, campo, value)
-                    
-                    IStatusMessage(context.request).addStatusMessage(_(u"Formulario editado com susseço"), "info")
-                    url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(result.id)
-                    context.request.response.redirect(url)
-
-                else:
-                    #adicionando...
-                    id = ModelsForm().set_Form(**data)
-                    IStatusMessage(context.request).addStatusMessage(_(u"Formulario adcionado com susseço"), "info")
-                    url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(id)
-                    context.request.response.redirect(url)
-                                   
-            else:
-                form_data['errors'] = errors
-                form_data['data'] = data
-                return form_data
+#        elif 'form.submited' in form_keys:
+#            # Inicia o processamento do formulario
+#            # chama a funcao que valida os dados extraidos do formulario (valida_form) 
+#            errors, data = valida_form(context, campos, context.request.form)  
+#
+#            if not errors:
+#                if 'forms_id' in form_keys:
+#                    # editando...
+#                    result = ModelsForm().get_Forns_byId(id_form)
+#                    if result:
+#                        for campo in campos.keys():
+#                            value = data.get(campo, None)
+#                            setattr(result, campo, value)
+#                    
+#                    IStatusMessage(context.request).addStatusMessage(_(u"Formulário editado com sucesso"), "info")
+#                    url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(result.id)
+#                    context.request.response.redirect(url)
+#
+#                else:
+#                    #adicionando...
+#                    id = ModelsForm().set_Form(**data)
+#                    IStatusMessage(context.request).addStatusMessage(_(u"Formulario adcionado com sucesso"), "info")
+#                    url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id)
+#                    context.request.response.redirect(url)
+#                                   
+#            else:
+#                form_data['errors'] = errors
+#                form_data['data'] = data
+#                return form_data
 
         #se for Ordenação de campos
         elif 'position'in form_keys and 'id_field' in form_keys:
@@ -80,7 +80,7 @@ class RegistrationCreateForm(BaseFunc):
                 self.store.commit()
                 
                 IStatusMessage(context.request).addStatusMessage(_(u"Campo Movindo para cima"), "info")
-                url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(id_form)
+                url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id_form)
                 context.request.response.redirect(url)
                 
             elif position == 'down':
@@ -95,15 +95,16 @@ class RegistrationCreateForm(BaseFunc):
                 self.store.commit()
                 
                 IStatusMessage(context.request).addStatusMessage(_(u"Campo Movindo para baixo"), "info")
-                url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(id_form)
+                url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id_form)
                 context.request.response.redirect(url)
             
             else:
-                url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(id_form)
+                url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id_form)
                 context.request.response.redirect(url)
             
         # se for um formulario de edicao 
-        elif 'forms_id' in form_keys:
+        #elif 'forms_id' in form_keys:
+        else:
             data = ModelsForm().get_Forns_byId(id_form)
             
             if data:
@@ -117,8 +118,8 @@ class RegistrationCreateForm(BaseFunc):
                return form_data
             
         #se for um formulario de adição
-        else:
-            return form_data
+        #else:
+        #    return form_data
 
 class RegistrationCreateFields(BaseFunc):
     def to_utf8(value):
@@ -128,7 +129,10 @@ class RegistrationCreateFields(BaseFunc):
         form = context.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
         form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
         #campos = self.campos
-        id_form = int(form.get('forms_id','0'))
+        
+        id_form = int(context.context.forms_id)
+        context.request.form['forms_id'] = id_form
+        #id_form = int(form.get('forms_id','0'))
         
         campos = {'name_field'            : {'required': True,  'type':'key',       'label':'Nome do Campo',                'decription':u'Digite o nome para o campo',                                       'ordem':0},
                   'type_fields'           : {'required': True,  'type':'choice',    'label':'Tipo do Campo',                'decription':u'Selecione o tipo da informação deste campos',                      'ordem':1},
@@ -168,7 +172,7 @@ class RegistrationCreateFields(BaseFunc):
         
         # se clicou no botao "Voltar"
         if 'form.voltar' in form_keys:
-            success_voltar = context.context.absolute_url() +  '/edit-form?forms_id='+str(id_form)
+            success_voltar = context.context.absolute_url() +  '/edit-form' #?forms_id='+str(id_form)
             context.request.response.redirect(success_voltar)
           
         # se clicou no botao "Salvar"
@@ -187,21 +191,21 @@ class RegistrationCreateFields(BaseFunc):
                             value = data.get(campo, None)
                             setattr(result_fields, campo, value)
                         
-                        IStatusMessage(context.request).addStatusMessage(_(u"Formulario editado com com susseço"), "info")
-                        url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(id_form)
+                        IStatusMessage(context.request).addStatusMessage(_(u"Campo editado com com sucesso"), "info")
+                        url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id_form)
                         context.request.response.redirect(url)
 
                 else:
                     if ModelsFormFields().check_fields(data['name_field'],id_form): 
                         #adicionando...
                         ModelsFormFields().set_FormFields(**data)
-                        IStatusMessage(context.request).addStatusMessage(_(u"Formulario adcionado com susseço"), "info")
-                        url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(id_form)
+                        IStatusMessage(context.request).addStatusMessage(_(u"Campo adicionado com sucesso"), "info")
+                        url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id_form)
                         context.request.response.redirect(url)
                     
                     else:
-                        IStatusMessage(context.request).addStatusMessage(_(u"Ja existem um campo com este nome"), "info")
-                        url = context.context.absolute_url() +  '/edit-form?forms_id='+ str(id_form)
+                        IStatusMessage(context.request).addStatusMessage(_(u"Já existe um campo com este nome"), "info")
+                        url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id_form)
                         context.request.response.redirect(url)
                                    
             else:
@@ -210,7 +214,7 @@ class RegistrationCreateFields(BaseFunc):
                 return form_data
           
         # se for um formulario de edicao 
-        elif 'forms_id'in form_keys and 'id_fields' in form_keys:
+        elif 'id_fields' in form_keys: #'forms_id'in form_keys and :
             id_fields = int(form.get('id_fields','0'))
             data = ModelsFormFields().get_Fields_byId(int(id_form),int(id_fields))
             campos['name_field'] = {'required': True,  'type':'hidden','label':'Nome do Campo', 'decription':u'', 'ordem':0}
@@ -240,8 +244,10 @@ class RegistrationLoadForm(BaseFunc):
     def registration_processes(self,context):
         form = context.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
         form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
-        id_form = context.request.get('forms_id','0')
-        success_url = context.context.absolute_url() +  '/view-form?forms_id=' + str(id_form)
+        
+        id_form = int(context.context.forms_id) #context.request.get('forms_id','0')
+        
+        success_url = context.context.absolute_url()  # '/view-form?forms_id=' + str(id_form)
         
         campos = {}
         lista_itens = {}
@@ -290,14 +296,18 @@ class RegistrationLoadForm(BaseFunc):
         
         # se clicou no botao "Voltar"
         if 'form.voltar' in form_keys:
-            context.request.response.redirect(success_url)
-          
+            if 'id_instance' in form_keys:
+                context.request.response.redirect(success_url+'/view-form')
+            else:
+                context.request.response.redirect(success_url)
+                
         # se clicou no botao "Salvar"
         elif 'form.submited' in form_keys:
             # Inicia o processamento do formulario
             # chama a funcao que valida os dados extraidos do formulario (valida_form) 
             errors, data = valida_form(context, campos, context.request.form)  
-
+            
+            
             if not errors:
                 
                 if 'id_instance' in form_keys:
@@ -347,6 +357,8 @@ class RegistrationLoadForm(BaseFunc):
                                                 D['value_blob'] = valor
                                             
                                             ModelsFormValues().set_FormValues(**D)
+                        
+                        context.request.response.redirect(success_url+'/view-form')
 
                 else:
                     #adicionando...
@@ -368,9 +380,9 @@ class RegistrationLoadForm(BaseFunc):
                         
                             ModelsFormValues().set_FormValues(**D)
                     
-                #Redirect back to the front page with a status message
-                #IStatusMessage(context.request).addStatusMessage(_(u"Thank you for your order. We will contact you shortly"), "info")
-                context.request.response.redirect(success_url)
+                    #Redirect back to the front page with a status message
+                    #IStatusMessage(context.request).addStatusMessage(_(u"Thank you for your order. We will contact you shortly"), "info")
+                    context.request.response.redirect(success_url)
                                    
             else:
                 form_data['errors'] = errors
@@ -403,9 +415,10 @@ class RegistrationExcluirForm(BaseFunc):
     def exclud_processes(self,ctx):        
         form = ctx.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
         form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
-        id_form = form.get('forms_id','0')
+        #id_form = form.get('forms_id','0')
+        id_form = int(ctx.context.forms_id)
         id_instance = int(form.get('id_instance',''))
-        success_url = ctx.context.absolute_url() +  '/view-form?forms_id=' + str(id_form)
+        success_url = ctx.context.absolute_url() +  '/view-form' #?forms_id=' + str(id_form)
         
         # se clicou no botao "Voltar"
         if 'form.voltar' in form_keys:
@@ -426,8 +439,8 @@ class RegistrationAddDefaultValue(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
       
-    campos = {'value': {'required': True, 'type' : to_utf8,    'label':'Medoto ou Valor Padrão', 'decription':u'Digite um metodo ou valor padão em formato python','ordem':0},
-              'lable': {'required': True, 'type' : to_utf8,    'label':'Nome do metodo',         'decription':u'Digite a descrição do formulario',                 'ordem':1},}
+    campos = {'value': {'required': True, 'type' : to_utf8,'label':'Médoto ou Valor Padrão', 'decription':u'Digite um método ou valor padão em formato python','ordem':0},
+              'lable': {'required': True, 'type' : to_utf8,'label':'Nome do método',         'decription':u'Digite a descrição do método',                     'ordem':1},}
                         
     def registration_processes(self,context):
         success = context.context.absolute_url() +  '/manage-form'
@@ -461,13 +474,13 @@ class RegistrationAddDefaultValue(BaseFunc):
                             value = data.get(campo, None)
                             setattr(result, campo, value)
                     
-                    IStatusMessage(context.request).addStatusMessage(_(u"Valor editado com susseço"), "info")
+                    IStatusMessage(context.request).addStatusMessage(_(u"Valor editado com sucesso"), "info")
                     context.request.response.redirect(success)
 
                 else:
                     #adicionando...
                     id = ModelsDefaultValue().set_DefaultValue(**data)
-                    IStatusMessage(context.request).addStatusMessage(_(u"Valor adcionado com susseço"), "info")
+                    IStatusMessage(context.request).addStatusMessage(_(u"Valor adicionado com sucesso"), "info")
                     context.request.response.redirect(success)
                                    
             else:

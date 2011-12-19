@@ -15,8 +15,8 @@
 						<p>Realmente dejesa escluir este registro ?</p>
 						<table width="100%" tal:define="data_default view/list_default|python:{}">
 							<tr>
-								<th>Metodo</th>
-								<th>Nome do metodo</th>
+								<th>M&eacute;todo</th>
+								<th>Nome do m&eacute;todo</th>
 							</tr>
 							<tr>
 								<td tal:content="data_default/value|nothing" />
@@ -26,7 +26,7 @@
 						</table>
 					</fieldset>
 					<!-- Botões de ação -->
-					<form method="post" enctype="multipart/form-data" action="excluir-default-value">	 
+					<form method="post" enctype="multipart/form-data" tal:attributes="action string:${context/absolute_url|nothing}/excluir-default-value">	 
 						<!-- Id -->
 						<input type="hidden" name="id" id="id" value="" tal:attributes="value request/id|nothing">
 					   	<fieldset>

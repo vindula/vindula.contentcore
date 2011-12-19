@@ -1,98 +1,90 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
-		
 		<metal:styleslot fill-slot="style_slot">
     		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
-			
 		</metal:styleslot>
-		
 	</head>
-	<body >
-		
-		<metal:block fill-slot="top_slot">
-			<tal:dummy tal:define="dummy python:request.set('disable_border',1)" />
-		</metal:block>
-
+	<body>
 		<div metal:fill-slot="main" tal:define="form_data view/load_form | python:{};
 		                          				errors form_data/errors | python:{};
 									  			form_values form_data/data | python:{};
-												id_form request/forms_id|nothing">
+												forms_id context/forms_id|nothing">
 		    
-	    		<h1 tal:content="string:Editar o formulario ${form_values/name_form|nothing}"></h1>
-				<div id="interna" >    		
-			        <form name="edit-form" id="edit-form" enctype="multipart/form-data" class="enableAutoFocus" action="edit-form" method="POST">
-			        	<!-- Id Form -->
-						<input	tal:condition="request/forms_id" 
-								type="hidden" name="forms_id" id="forms_id" value="" tal:attributes="value request/forms_id|nothing">
-					
-			            <fieldset>
-			            	<legend>Dados do Formulario</legend>
-							<tal:def define="html python:view.geraCampos(form_data)">
-								<tal:rep repeat="x html">
-									<div tal:replace="structure x"/>
-								</tal:rep>
-							</tal:def>
-						</fieldset>
-						
-						<!-- Botões de ação --> 	
-					   	<fieldset>
-					   		<br/>
-							<div style="float:left; width:100%">
-								<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
-								<input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited">
-								<a class="button" tal:attributes="href string:add-fields-form?forms_id=${id_form}">		
-									<input class="button-erp" type="button" value="Adicionar novo campo ao formulario" name="form.submited">
-								</a>
-							</div>
-						</fieldset>
-					</form>
-					<fieldset>
-		            	<legend>Listagems dos campos do Formulario</legend>
-						<tal:def define="campos python:view.list_fields(id_form) or {}">
-							<table>
-								<tr>
-									<th>Nome Campos</th>
-									<th>Tipo Campos</th>
-									<th>Titulo do Campos</th>
-									<th>Descrição do Campos</th>
-									<th>Campo ativo</th>
-									<th>Campo obrigatorio</th>
-									<th colspan="2">Ordenar Campos</th>
-								</tr>
-								<tal:rep repeat="item campos">
-									<tr>
-										<td>
-											<strong>
-												<a tal:attributes="href string:edit-fields-form?forms_id=${id_form}&id_fields=${item/id|nothing}"
-													title="Alterar campo" alt="Alterar campo" tal:content="item/name_field|nothing" />
-											</strong>
-										</td>
-										<td tal:define="type item/type_fields|nothing" tal:content="python: view.TypesFields(type)" />
-										<td tal:content="item/title|nothing" />
-										<td tal:content="item/description_fields|nothing" />
-										
-										<td tal:define="check item/flag_ativo|nothing" >
-											<img tal:attributes="src string:${view/static}/icone-${check}.png" />
-										</td>
-										<td tal:define="check item/required|nothing" align="center">
-											<img tal:attributes="src string:${view/static}/icone-${check}.png" />
-										</td>
-										<td class="draggable" align="center">
-							                <a title="Mover item para cima" 
-											   tal:condition="not:repeat/item/start"
-											   tal:attributes="href string:${here/portal_url}/edit-form?position=up&id_field=${item/id}&forms_id=${id_form}">▲</a>
-										</td>
-										<td class="draggable" align="center">
-							                <a title="Mover item para baixo"
-											   tal:condition="not:repeat/item/end" 
-											   tal:attributes="href string:${here/portal_url}/edit-form?position=down&id_field=${item/id}&forms_id=${id_form}">▼</a>
-							              </td>
-									</tr>
-								</tal:rep>
-							</table>								
+    		<h1 tal:content="string:Editar o formul&aacute;rio: '${form_values/name_form|nothing}'"></h1>
+			<div id="interna" >    		
+		        <form name="edit-form" id="edit-form" enctype="multipart/form-data" class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/edit-form" method="POST">
+		        	<!-- Id Form 
+					<input	tal:condition="context/forms_id" 
+							type="hidden" name="forms_id" id="forms_id" value="" tal:attributes="value context/forms_id|nothing">
+				
+		            <fieldset>
+		            	<legend>Dados do Formul&aacute;rio</legend>
+						<tal:def define="html python:view.geraCampos(form_data)">
+							<tal:rep repeat="x html">
+								<div tal:replace="structure x"/>
+							</tal:rep>
 						</tal:def>
+					</fieldset>-->
+					
+					<!-- Botões de ação --> 	
+				   	<fieldset>
+				   		<legend>A&ccedil;&atilde;o</legend>
+						<div style="float:left; width:100%">
+							<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
+							<!--input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited"-->
+							<a class="button" tal:attributes="href string:${context/absolute_url|nothing}/add-fields-form">		
+								<input class="button-erp" type="button" value="Adicionar novo campo ao formulário" name="form.submited">
+							</a>
+						</div>
 					</fieldset>
-				</div>
+				</form>
+				<fieldset>
+	            	<legend>Listagems dos campos do Formul&aacute;rio</legend>
+					<tal:def define="campos python:view.list_fields(forms_id) or {}">
+						<table>
+							<tr>
+								<th>Nome Campos</th>
+								<th>Tipo Campos</th>
+								<th>Titulo do Campos</th>
+								<th>Descrição do Campos</th>
+								<th>Campo ativo</th>
+								<th>Campo obrigatorio</th>
+								<th colspan="2">Ordenar Campos</th>
+							</tr>
+							<tal:rep repeat="item campos">
+								<tr>
+									<td>
+										<strong>
+											<a tal:attributes="href string:${context/absolute_url|nothing|nothing}/edit-fields-form?id_fields=${item/id|nothing}"
+												title="Alterar campo" alt="Alterar campo" tal:content="item/name_field|nothing" />
+										</strong>
+									</td>
+									<td tal:define="type item/type_fields|nothing" tal:content="python: view.TypesFields(type)" />
+									<td tal:content="item/title|nothing" />
+									<td tal:content="item/description_fields|nothing" />
+									
+									<td tal:define="check item/flag_ativo|nothing" >
+										<img tal:attributes="src string:${view/static}/icone-${check}.png" />
+									</td>
+									<td tal:define="check item/required|nothing" align="center">
+										<img tal:attributes="src string:${view/static}/icone-${check}.png" />
+									</td>
+									<td class="draggable" align="center">
+						                <a title="Mover item para cima" 
+										   tal:condition="not:repeat/item/start"
+										   tal:attributes="href string:${context/absolute_url|nothing}/edit-form?position=up&id_field=${item/id}">▲</a>
+									</td>
+									<td class="draggable" align="center">
+						                <a title="Mover item para baixo"
+										   tal:condition="not:repeat/item/end" 
+										   tal:attributes="href string:${context/absolute_url|nothing}/edit-form?position=down&id_field=${item/id}">▼</a>
+						              </td>
+								</tr>
+							</tal:rep>
+						</table>								
+					</tal:def>
+				</fieldset>
+			</div>
 		</div>  
 	</body>
 </html>

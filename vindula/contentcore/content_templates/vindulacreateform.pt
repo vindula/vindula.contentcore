@@ -11,11 +11,11 @@
 									  			   form_values form_data/data | python:{};">
 		    
 		    <div id="content" >
-		    		<h1> Adicionar Novo formularios</h1>
+		    		<h1> Adicionar Novo formul&aacute;rios</h1>
 					<div id="interna" >    		
 				        <form name="add-form" id="add-form" enctype="multipart/form-data" class="enableAutoFocus" action="add-form" method="POST">
 				            <fieldset>
-				            	<legend>Dados do Formulario</legend>
+				            	<legend>Dados do Formul&aacute;rio</legend>
 								<tal:def define="html python:view.geraCampos(form_data)">
 									<tal:rep repeat="x html">
 										<div tal:content="structure x"/>

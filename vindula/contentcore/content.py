@@ -4,6 +4,7 @@ from zope.interface import Interface
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.layout.navigation.interfaces import INavigationRoot
 
+from vindula.contentcore.formulario import IFormularioPadrao 
 from vindula.contentcore.base import BaseFunc
 from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormValues, ModelsDefaultValue    
 from vindula.contentcore.registration import RegistrationCreateForm, RegistrationCreateFields,RegistrationLoadForm, RegistrationExcluirForm ,\
@@ -24,14 +25,15 @@ class VindulaManageForm(grok.View, BaseFunc):
         return ModelsDefaultValue().get_DefaultValues()
     
 class VindulaViewForm(grok.View, BaseFunc):
-    grok.context(Interface)
+    grok.context(IFormularioPadrao)
     grok.require('zope2.View')
     grok.name('view-form')
     
     def get_Form(self):
-        form = self.request.form
-        if 'forms_id' in form.keys():
-            return ModelsForm().get_Forns_byId(int(form.get('forms_id','0')))
+        id_form = int(self.context.forms_id)
+        #form = self.request.form
+        if id_form:# 'forms_id' in form.keys():
+            return ModelsForm().get_Forns_byId(int(id_form))
         else:
             return {}
     
@@ -42,7 +44,7 @@ class VindulaViewForm(grok.View, BaseFunc):
         return ModelsFormFields().get_Fields_ByIdForm(int(id_form))
     
 class VindulaLoadForm(grok.View, BaseFunc):
-    grok.context(Interface)
+    grok.context(IFormularioPadrao)
     grok.require('zope2.View')
     grok.name('load-form')
     
@@ -50,30 +52,31 @@ class VindulaLoadForm(grok.View, BaseFunc):
         return RegistrationLoadForm().registration_processes(self)
     
 class VindulaExcluirRegistroForm(grok.View, BaseFunc):
-    grok.context(Interface)
+    grok.context(IFormularioPadrao)
     grok.require('zope2.View')
     grok.name('excluir-registro-form')
     
     def get_Form_fields(self):
-        form = self.request.form
-        if 'forms_id' in form.keys():
-            forms_id = int(form.get('forms_id',''))
-        return ModelsFormFields().get_Fields_ByIdForm(forms_id)
+        #form = self.request.form
+        id_form = int(self.context.forms_id)
+        if id_form:# 'forms_id' in form.keys():
+            return ModelsFormFields().get_Fields_ByIdForm(int(id_form))
     
     def update(self):
         return RegistrationExcluirForm().exclud_processes(self)
     
     def list_registro(self):
         form = self.request.form
-        if 'forms_id' in form.keys() and 'id_instance' in form.keys():
-            forms_id = int(form.get('forms_id',''))
+        if  'id_instance' in form.keys(): #'forms_id' in form.keys() and
+            #forms_id = int(form.get('forms_id',''))
+            id_form = int(self.context.forms_id)
             id_instance = int(form.get('id_instance',''))
-            return ModelsFormValues().get_FormValues_byForm_and_Instance(forms_id,id_instance)
-        
+            return ModelsFormValues().get_FormValues_byForm_and_Instance(id_form,id_instance)
         else:
-        
             return None
-    
+
+
+#Views de renderização dos objetos do Image e Arquivo ---------------------------------------------------   
 class VindulaFormImage(grok.View, BaseFunc):
     grok.context(Interface)
     grok.require('zope2.View')
@@ -128,7 +131,7 @@ class VindulaFormFile(grok.View, BaseFunc):
 
 #Views Forms ---------------------------------------------------
 class VindulaCreateForm(grok.View, BaseFunc):
-    grok.context(INavigationRoot)
+    grok.context(IFormularioPadrao)
     grok.require('cmf.ManagePortal')
     grok.name('add-form')    
     
@@ -136,7 +139,7 @@ class VindulaCreateForm(grok.View, BaseFunc):
         return RegistrationCreateForm().registration_processes(self)
     
 class VindulaEditForm(grok.View, BaseFunc):
-    grok.context(INavigationRoot)
+    grok.context(IFormularioPadrao)
     grok.require('cmf.ManagePortal')
     grok.name('edit-form')    
     
@@ -151,7 +154,7 @@ class VindulaEditForm(grok.View, BaseFunc):
     
     
 class VindulaAddFieldsForm(grok.View, BaseFunc):
-    grok.context(INavigationRoot)
+    grok.context(IFormularioPadrao)
     grok.require('cmf.ManagePortal')
     grok.name('add-fields-form')    
     
@@ -159,7 +162,7 @@ class VindulaAddFieldsForm(grok.View, BaseFunc):
         return RegistrationCreateFields().registration_processes(self)
     
 class VindulaEditFieldsForm(grok.View, BaseFunc):
-    grok.context(INavigationRoot)
+    grok.context(IFormularioPadrao)
     grok.require('cmf.ManagePortal')
     grok.name('edit-fields-form')
     
@@ -171,9 +174,13 @@ class VindulaEditFieldsForm(grok.View, BaseFunc):
     
     def render(self):
         return self.index()
-    
+
+
+
+
+#------View Default Value ----------------
 class VindulaAddDefaultValue(grok.View, BaseFunc):
-    grok.context(INavigationRoot)
+    grok.context(Interface)
     grok.require('cmf.ManagePortal')
     grok.name('add-defaut-value')
     
@@ -181,7 +188,7 @@ class VindulaAddDefaultValue(grok.View, BaseFunc):
         return RegistrationAddDefaultValue().registration_processes(self) 
 
 class VindulaEditDefaultValue(grok.View, BaseFunc):
-    grok.context(INavigationRoot)
+    grok.context(Interface)
     grok.require('cmf.ManagePortal')
     grok.name('edit-defaut-value')
     
@@ -199,7 +206,6 @@ class VindulaExcluirDefaultValue(grok.View, BaseFunc):
     grok.require('zope2.View')
     grok.name('excluir-default-value')
     
-    
     def update(self):
         return RegistrationExcluirDefault().exclud_processes(self)
     
@@ -208,8 +214,6 @@ class VindulaExcluirDefaultValue(grok.View, BaseFunc):
         if 'id' in form.keys():
             id = int(form.get('id','0'))
             return ModelsDefaultValue().get_DefaultValue_byId(id)
-        
         else:
-        
             return None
     

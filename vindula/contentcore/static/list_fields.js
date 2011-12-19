@@ -1,6 +1,11 @@
 $j = jQuery.noConflict();
 
 $j(document).ready(function(){
+	/* Aba de edição do conteudo*/
+	$j('#contentview-form').addClass('selected');
+	$j('#contentview-view').removeClass('selected');
+	
+	/* Exibição do campo de list value*/
 	$j('div#list_values').hide();
 	$j("select[name='type_fields']").change(function(){
 		val = this.value;
@@ -10,4 +15,8 @@ $j(document).ready(function(){
 			$j('div#list_values').hide();
 		};  
 	});
+	
+	
+	
+	
 });

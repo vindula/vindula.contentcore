@@ -5,56 +5,53 @@
 		</metal:styleslot>
 	</head>
 	<body>
-		<div metal:fill-slot="content">
-		    <div id="content" >
-				<h1>Excluir registro</h1>
-				<div id="interna" >
-					    		
-		            <fieldset>
-		            	<legend>Excluir registro</legend>
-						<p>Realmente dejesa escluir este registro ?</p>
-						<table width="100%">
-							<tr tal:define="fields view/get_Form_fields|nothing">
+		<div metal:fill-slot="main">
+			<h1>Excluir registro</h1>
+			<div id="interna" >
+	            <fieldset>
+	            	<legend>Excluir registro</legend>
+					<p>Realmente dejesa escluir este registro ?</p>
+					<table width="100%">
+						<tr tal:define="fields view/get_Form_fields|nothing">
+							<tal:rep repeat="campo fields|nothing">
+								<th tal:condition="campo/flag_ativo|nothing"
+									tal:content="campo/title|nothing" />	
+							</tal:rep>
+						</tr>
+						<tr>
+							<tal:def tal:define="fields view/get_Form_fields">
 								<tal:rep repeat="campo fields|nothing">
-									<th tal:condition="campo/flag_ativo|nothing"
-										tal:content="campo/title|nothing" />	
-								</tal:rep>
-							</tr>
-							<tr>
-								<tal:def tal:define="fields view/get_Form_fields">
-									<tal:rep repeat="campo fields|nothing">
-										<tal:rep repeat="item view/list_registro|nothing">
-											<tal:cond condition="campo/flag_ativo|nothing">
-												<tal:cond condition="python: item.fields==campo.name_field">
-													<td tal:define="tipo item/type_fields|nothing;
-																	valor item/value|nothing;
-																	valor_blob item/value_blob|nothing;
-																	id_campo item/id|nothing;"
-														tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)"></td>
-												</tal:cond>
+									<tal:rep repeat="item view/list_registro|nothing">
+										<tal:cond condition="campo/flag_ativo|nothing">
+											<tal:cond condition="python: item.fields==campo.name_field">
+												<td tal:define="tipo item/type_fields|nothing;
+																valor item/value|nothing;
+																valor_blob item/value_blob|nothing;
+																id_campo item/id|nothing;"
+													tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)"></td>
 											</tal:cond>
-										</tal:rep>										
-									</tal:rep>
-								</tal:def>
-							</tr>		
-						</table>
+										</tal:cond>
+									</tal:rep>										
+								</tal:rep>
+							</tal:def>
+						</tr>		
+					</table>
+				</fieldset>
+				<!-- Botões de ação -->
+				<form method="post" enctype="multipart/form-data" tal:attributes="action string:${context/absolute_url|nothing}/excluir-registro-form">	 
+					<!-- Id Form -->
+					<input type="hidden" name="forms_id" id="forms_id" value="" tal:attributes="value context/forms_id|nothing">
+					<!-- Id instancia -->
+					<input type="hidden" name="id_instance" id="id_instance" value="" tal:attributes="value request/id_instance|nothing">	
+				   	<fieldset>
+				   		<br/>
+						<div style="float:left; width:100%">
+							<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
+							<input style="width:100px;" class="button-erp" type="submit" value="Sim, Excluir" name="form.submited">
+						</div>
 					</fieldset>
-					<!-- Botões de ação -->
-					<form method="post" enctype="multipart/form-data" action="excluir-registro-form">	 
-						<!-- Id Form -->
-						<input type="hidden" name="forms_id" id="forms_id" value="" tal:attributes="value request/forms_id|nothing">
-						<!-- Id instancia -->
-						<input type="hidden" name="id_instance" id="id_instance" value="" tal:attributes="value request/id_instance|nothing">	
-					   	<fieldset>
-					   		<br/>
-							<div style="float:left; width:100%">
-								<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
-								<input style="width:100px;" class="button-erp" type="submit" value="Sim, Excluir" name="form.submited">
-							</div>
-						</fieldset>
-					</form>
-				</div>
-		    </div>
+				</form>
+			</div>
 		</div>  
 	</body>
 </html>

@@ -53,7 +53,14 @@ class ModelsForm(Storm, BaseStore):
         self.store.flush()
         return form.id       
     
-    
+    def get_NextForm(self):
+        table = 'vin_contentcore_forms'
+        data = self.store.execute("SELECT Auto_increment FROM information_schema.tables WHERE table_name='%s'AND table_schema = DATABASE();"%(table))
+
+        if data.rowcount != 0:
+            x = data.get_one()
+            return int(x[0])
+       
     
 class ModelsFormFields(Storm, BaseStore):
     __storm_table__ = 'vin_contentcore_fields'

@@ -10,7 +10,7 @@
 									  			   form_values form_data/data | python:{};">
 		    
 		    <div id="content" >
-		    		<h1> Adicionar Novo Chamado</h1>
+		    		<h1> Adicionar Novo Valor Padrão</h1>
 					<div id="interna" >    		
 				        <form name="add-defaut-value" id="add-defaut-value" enctype="multipart/form-data" 
 							  class="enableAutoFocus" action="add-defaut-value" method="POST">

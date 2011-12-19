@@ -13,7 +13,7 @@
 		    <div id="content" >
 		    		<h1 tal:content="string:Editar o Campo '${form_values/name_field|nothing}' do formularios"> </h1>
 					<div id="interna" >    		
-				        <form name="edit-fields" id="edit-fields" enctype="multipart/form-data" class="enableAutoFocus" action="vindula-edit-fields-form" method="POST">
+				        <form name="edit-fields" id="edit-fields" enctype="multipart/form-data" class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/vindula-edit-fields-form" method="POST">
 				        	<!-- Id campo -->
 							<input type="hidden" name="id_fields" id="id_fields" value="" tal:attributes="value context/REQUEST/id_fields|nothing">
 				            <fieldset>

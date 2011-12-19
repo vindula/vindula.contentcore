@@ -9,7 +9,7 @@
 												   data_default view/list_default|python:{}">
 		    
 		    <div id="content" >
-				<h1>Criação de Formularios do Vindula</h1>	
+				<h1>Criação de Formul&aacute;rios do Vindula</h1>	
 				<div id="interna" >
 					<!-- Botões de ação--> 	
 				   	<fieldset>
@@ -18,21 +18,21 @@
 							<a class="button" href="@@vindula-control-panel" alt="Voltar" title="Voltar">
 								<input style="width:100px" class="button-erp" type="button" value="Voltar" name="form.voltar">
 							</a>
-							<a class="button" href="add-form"  alt="Adicionar novo formulario" title="Adicionar novo formulario">							
-								<input class="button-erp" type="button" value="Adicionar novo formulario" name="form.submited">
-							</a>
+							<!--a class="button" href="add-form"  alt="Adicionar novo formulário" title="Adicionar novo formulário">							
+								<input class="button-erp" type="button" value="Adicionar novo formulário" name="form.submited">
+							</a-->
 							<a class="button" href="add-defaut-value"  alt="Adicionar valor padrão" title="Adicionar valor padrão">							
 								<input class="button-erp" type="button" value="Adicionar valor padrão" name="form.submited">
 							</a>
 						</div>
 					</fieldset>
-			        <fieldset>
-		            	<legend>Formularios Cadastrados</legend>
+			        <!--fieldset>
+		            	<legend>Formulários Cadastrados</legend>
 							<div id="list-forns" tal:condition="data">
 								<table width="100%">
 									<tr>
-										<th width="80%">Ver Formulario</th>
-										<th width="20%">Editar Formulario</th>
+										<th width="80%">Ver Formulário</th>
+										<th width="20%">Editar Formulário</th>
 									</tr>
 									<tal:rep repeat="item data">
 										<tr>
@@ -51,14 +51,14 @@
 								</table>
 								
 							</div>
-					</fieldset>
+					</fieldset-->
 					<fieldset>
 		            	<legend>Lista de Valor Padrão</legend>
 							<div id="list-forns" tal:condition="data_default">
 								<table width="100%">
 									<tr>
-										<th>Metodo</th>
-										<th>Nome do metodo</th>
+										<th>Mátodo</th>
+										<th>Nome do mátodo</th>
 										<th width="10%">Editar </th>
 										<th width="10%">Excluir </th>
 									</tr>
