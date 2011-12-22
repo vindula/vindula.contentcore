@@ -240,14 +240,13 @@ class RegistrationCreateFields(BaseFunc):
 class RegistrationLoadForm(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
-                        
+                            
     def registration_processes(self,context):
         form = context.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
         form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
         
-        id_form = int(context.context.forms_id) #context.request.get('forms_id','0')
-        
-        success_url = context.context.absolute_url()  # '/view-form?forms_id=' + str(id_form)
+        id_form = int(context.context.forms_id)
+        success_url = context.context.absolute_url()
         
         campos = {}
         lista_itens = {}
@@ -307,87 +306,129 @@ class RegistrationLoadForm(BaseFunc):
             # chama a funcao que valida os dados extraidos do formulario (valida_form) 
             errors, data = valida_form(context, campos, context.request.form)  
             
-            
             if not errors:
                 
-                if 'id_instance' in form_keys:
-                    # editando...
-                    id_form = int(id_form)
-                    id_instance = int(form.get('id_instance',0))
-                    results = ModelsFormValues().get_FormValues_byForm_and_Instance(id_form,id_instance)
-                    if results:
-                        for campo in campos.keys():
-                            if not 'outro' in campo:
-                               for result in results:
-                                   if result.fields == campo:
-                                       valor = data[campo]
-                                       if valor:
-                                           if len(valor) < 65000:
-                                               if type(valor) == unicode:
-                                                   result.value = valor.strip()
-                                                   result.value_blob = None
-                                               else:
-                                                   result.value = unicode(str(valor), 'utf-8')
-                                                   result.value_blob = None
-                                           else:
-                                               result.value_blob = valor   
-                                               result.value = None 
-                                           
-                                           result.date_creation = datetime.now()
-                                           self.store.commit()            
+                acoes = context.context.acao_saida
+                for acao in acoes:
+                    if acao == 'savedb':
+                        if 'id_instance' in form_keys:
+                            # editando...
+                            id_form = int(id_form)
+                            id_instance = int(form.get('id_instance',0))
+                            results = ModelsFormValues().get_FormValues_byForm_and_Instance(id_form,id_instance)
+                            if results:
+                                for campo in campos.keys():
+                                    if not 'outro' in campo:
+                                       for result in results:
+                                           if result.fields == campo:
+                                               valor = data[campo]
+                                               if valor:
+                                                   if len(valor) < 65000:
+                                                       if type(valor) == unicode:
+                                                           result.value = valor.strip()
+                                                           result.value_blob = None
+                                                       else:
+                                                           result.value = unicode(str(valor), 'utf-8')
+                                                           result.value_blob = None
+                                                   else:
+                                                       result.value_blob = valor   
+                                                       result.value = None 
+                                                   
+                                                   result.date_creation = datetime.now()
+                                                   self.store.commit()            
+                                        
+                                       else:
+                                           if results.find(fields=campo).count() == 0 and not 'outro' in campo:
+                                                valor = data[campo]
+                                                if valor:
+                                                    D={}
+                                                    D['forms_id'] = id_form
+                                                    D['instance_id'] = id_instance
+                                                    D['fields'] = campo
+                                                    
+                                                    if len(valor) < 65000:
+                                                        if type(valor) == unicode:
+                                                            D['value'] = valor.strip()
+                                                            D['value_blob'] = None
+                                                        else:
+                                                            D['value'] = unicode(str(valor), 'utf-8')
+                                                            D['value_blob'] = None
+                                                    else:
+                                                        D['value'] = None
+                                                        D['value_blob'] = valor
+                                                    
+                                                    ModelsFormValues().set_FormValues(**D)
                                 
-                               else:
-                                   if results.find(fields=campo).count() == 0 and not 'outro' in campo:
-                                        valor = data[campo]
-                                        if valor:
-                                            D={}
-                                            D['forms_id'] = id_form
-                                            D['instance_id'] = id_instance
-                                            D['fields'] = campo
-                                            
-                                            if len(valor) < 65000:
-                                                if type(valor) == unicode:
-                                                    D['value'] = valor.strip()
-                                                    D['value_blob'] = None
-                                                else:
-                                                    D['value'] = unicode(str(valor), 'utf-8')
-                                                    D['value_blob'] = None
-                                            else:
-                                                D['value'] = None
-                                                D['value_blob'] = valor
-                                            
-                                            ModelsFormValues().set_FormValues(**D)
+                                context.request.response.redirect(success_url+'/view-form')
+        
+                        else:
+                            #adicionando...
+                            id_instance = ModelsFormInstance().set_FormInstance(id_form)
+                            for field in data:
+                                valor = data[field]
+                                if valor:
+                                    D={}
+                                    D['forms_id'] = int(id_form)
+                                    D['instance_id'] = id_instance
+                                    D['fields'] = field
+                                    if len(valor) < 65000:
+                                        if type(valor) == unicode:
+                                            D['value'] = valor.strip()
+                                        else:
+                                            D['value'] = unicode(str(valor), 'utf-8')
+                                    else:
+                                        D['value_blob'] = valor
+                                
+                                    ModelsFormValues().set_FormValues(**D)
+                            
+                            #Redirect back to the front page with a status message
+                            #IStatusMessage(context.request).addStatusMessage(_(u"Thank you for your order. We will contact you shortly"), "info")
+                            context.request.response.redirect(success_url)
+                
+                    elif acao == 'email':
+                        emails = context.context.list_email
+                        if emails:
+                            emails = emails.splitlines()
+                        else:
+                            emails = []
+                        assunto = 'E-mail enviado do Formulário - %s'%(context.context.Title())
                         
-                        context.request.response.redirect(success_url+'/view-form')
-
-                else:
-                    #adicionando...
-                    id_instance = ModelsFormInstance().set_FormInstance(id_form)
-                    for field in data:
-                        valor = data[field]
-                        if valor:
-                            D={}
-                            D['forms_id'] = int(id_form)
-                            D['instance_id'] = id_instance
-                            D['fields'] = field
-                            if len(valor) < 65000:
-                                if type(valor) == unicode:
-                                    D['value'] = valor.strip()
-                                else:
-                                    D['value'] = unicode(str(valor), 'utf-8')
-                            else:
-                                D['value_blob'] = valor
+                        msg = []
+                        i=0
+                        while i < len(campos.keys()):
+                            msg.append(i)
+                            i+=1
                         
-                            ModelsFormValues().set_FormValues(**D)
-                    
-                    #Redirect back to the front page with a status message
-                    #IStatusMessage(context.request).addStatusMessage(_(u"Thank you for your order. We will contact you shortly"), "info")
+                        for campo in campos:
+                            index = campos[campo].get('ordem',0)
+                            x = "%s: %s" % (campos[campo]['label'],data.get(campo,''))
+                            
+                            msg.pop(index)
+                            msg.insert(index, x)  
+                        
+                        # Pega o conteudo impresso na tela e define como mensagem
+                        msg = '\n<br>'.join(msg)
+                        
+                        envio = False
+                        for email in emails:
+                            envio = self.envia_email(context,msg, assunto, email)
+                        
+                        if envio:
+                            IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
+                        else:
+                            IStatusMessage(context.request).addStatusMessage(_(u"Não foi possivel enviar o e-mail contate o administrados do portal."), "error")
+                        
+                        context.request.response.redirect(success_url)
+                        
+                if not acoes:
+                    IStatusMessage(context.request).addStatusMessage(_(u"Ação Indisponível, contate o administrados do portal."), "error")
                     context.request.response.redirect(success_url)
-                                   
+             
+             
             else:
                 form_data['errors'] = errors
                 form_data['data'] = data
-                return form_data
+                return form_data           
           
         # se for um formulario de edicao 
         elif 'id_instance' in form_keys:
@@ -432,7 +473,7 @@ class RegistrationExcluirForm(BaseFunc):
                 self.store.remove(record)
                 self.store.flush()
             
-            IStatusMessage(ctx.request).addStatusMessage(_(u"Registro removido com sucesso.", "info"))  
+            IStatusMessage(ctx.request).addStatusMessage(_(u"Registro removido com sucesso."), "info")  
             ctx.request.response.redirect(success_url)
 
 class RegistrationAddDefaultValue(BaseFunc):
@@ -524,8 +565,9 @@ class RegistrationExcluirDefault(BaseFunc):
         elif 'form.submited' in form_keys:
             # Inicia o processamento do formulario
             record = ModelsDefaultValue().get_DefaultValue_byId(id)
-            self.store.remove(record)
-            self.store.flush()
+            if record:
+                self.store.remove(record)
+                self.store.flush()
             
             IStatusMessage(ctx.request).addStatusMessage(_(u'Valor removido com sucesso.', 'info'))  
             ctx.request.response.redirect(success_url)

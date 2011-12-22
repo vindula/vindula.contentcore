@@ -179,6 +179,14 @@ class ModelsFormValues(Storm, BaseStore):
             return data
         else:
             return None
+        
+    def get_FormValues_byForm(self, id_form):
+        data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==id_form)
+        if data.count()>0:
+            return data
+        else:
+            return None
+        
     
 class ModelsDefaultValue(Storm, BaseStore):
     __storm_table__ = 'vin_contentcore_default_value'

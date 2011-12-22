@@ -45,19 +45,19 @@
  <alias from="view" to="(selected layout)"/>
  
   <!-- Actions -->
- <action title="Form Content" action_id="content" category="object" condition_expr=""
-    url_expr="string:${object_url}/view-form" visible="True">
-  <permission value="View"/>
- </action>  
  <action title="View" action_id="view" category="object" condition_expr=""
     url_expr="string:${object_url}" visible="True">
   <permission value="View"/>
  </action>
+ <action title="Conteúdo" action_id="content" category="object" condition_expr=""
+    url_expr="string:${object_url}/view-form" visible="True">
+  <permission value="Modify portal content"/>
+ </action>  
  <action title="Edit" action_id="edit" category="object" condition_expr=""
     url_expr="string:${object_url}/edit" visible="True">
   <permission value="Modify portal content"/>
  </action>
- <action title="Editar Formulário" action_id="form" category="object" condition_expr=""
+ <action title="Editar Campo do Formulário" action_id="form" category="object" condition_expr=""
     url_expr="string:${object_url}/edit-form" visible="True">
   <permission value="Modify portal content"/>
  </action>
