@@ -25,12 +25,6 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
 
-	<subscriber
-    		for="Products.PluggableAuthService.interfaces.events.IUserLoggedInEvent"
-    		handler=".handlers.userupdate"
-    />
-
-
   <!--plone:static directory="static" type="theme" /-->
   <!-- -*- extra stuff goes here -*- -->
 
