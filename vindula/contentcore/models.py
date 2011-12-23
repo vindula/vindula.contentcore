@@ -200,7 +200,7 @@ class ModelsDefaultValue(Storm, BaseStore):
         if data.count() > 0:
             return data
         else:
-            return None
+            return []
     
     def get_DefaultValue_byId(self, id):
         data = self.store.find(ModelsDefaultValue, ModelsDefaultValue.id==int(id)).one()
