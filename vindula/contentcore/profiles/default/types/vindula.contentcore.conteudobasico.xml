@@ -1,28 +1,23 @@
 <?xml version="1.0"?>
-<object name="vindula.contentcore.formulariobasico" 
+<object name="vindula.contentcore.conteudobasico" 
    		meta_type="Dexterity FTI"
    		i18n:domain="vindula.contentcore" 
 		xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  
  <!-- Basic metadata -->
- <property name="title" i18n:translate="">Vindula Formulário Básico</property>
- <property name="description" i18n:translate="">Cria um conteúdo para administração e gerencia de formulários.</property>
- <property name="content_icon">++resource++vindula.contentcore/formulariobasico.png</property>
+ <property name="title" i18n:translate="">Vindula Conteúdo Básico</property>
+ <property name="description" i18n:translate="">Cria um conteúdo para administração e gerencia dos dados dos formulários.</property>
+ <property name="content_icon">++resource++vindula.contentcore/conteudobasico.png</property>
  <property name="allow_discussion">True</property>
- <property name="global_allow">True</property>
+ <property name="global_allow">False</property>
  <property name="filter_content_types">True</property>
- <property name="allowed_content_types">
-    <element value="vindula.contentcore.conteudobasico"/>
- </property>
-  
+ <property name="allowed_content_types" />
+    
  <!-- schema interface -->
- <property name="schema">vindula.contentcore.formulario.IFormularioPadrao</property> 
+ <property name="schema">vindula.contentcore.conteudo_basico.IConteudoBasico</property> 
 
- <!-- add permission -->
- <property name="add_permission">cmf.AddPortalContent</property>
- 
- <!-- class used for content items -->
- <property name="klass">plone.dexterity.content.Container</property>
+ <!-- add permission 
+ <property name="add_permission">cmf.AddPortalContent</property>-->
  
  <!-- enabled behaviors -->
  <property name="behaviors">
@@ -57,24 +52,10 @@
   <permission value="View"/>
  </action>
  
- <action title="Dados" action_id="content" category="object" condition_expr=""
-    url_expr="string:${object_url}/view-form" visible="True">
-  <permission value="Modify portal content"/>
- </action>  
- 
  <action title="Edit" action_id="edit" category="object" condition_expr=""
     url_expr="string:${object_url}/edit" visible="True">
   <permission value="Modify portal content"/>
  </action>
- 
- <action title="Editar Campo" action_id="form" category="object" condition_expr=""
-    url_expr="string:${object_url}/edit-form" visible="True">
-  <permission value="Modify portal content"/>
- </action>
 
- <action title="Editar Parâmetro" action_id="form_parm" category="object" condition_expr="python: context.acao_destino=='parameto'"
-    url_expr="string:${object_url}/edit-parametros" visible="True">
-  <permission value="Modify portal content"/>
- </action>
 
 </object>

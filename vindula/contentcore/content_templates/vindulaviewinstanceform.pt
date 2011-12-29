@@ -1,0 +1,34 @@
+<html metal:use-macro="here/main_template/macros/master">
+	<head>
+		<!--metal:styleslot fill-slot="style_slot">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
+		</metal:styleslot-->
+	</head>
+	<body>
+		<div metal:fill-slot="main">
+			<meta:macro metal:define-macro="page-view">
+			    <div tal:define="view python:context.restrictedTraverse('@@view-instance-form');
+								 id_form context/forms_id|nothing;
+								 id_instance context/instance_id|nothing;
+								 fields python:view.get_Form_fields(id_form);
+								 values python:view.get_FormValues(id_form,id_instance);">
+					<!--h1 tal:content="form/name_form|nothing">Titulo Formul&aacute;rio</h1>
+					<p tal:content="form/description_form|nothing">Descrição do formul&aacute;rio</p-->
+					<div id="interna" >    		
+						<fieldset>
+			            	<legend>Dados do registros</legend>
+							<tal:rep repeat="campo fields|nothing">
+								<p> <span tal:content="campo/title|nothing" /> :
+									<tal:def define="valor python:values.find(fields=campo.name_field).one()">
+										<span tal:content="valor/value|nothing" />	
+									</tal:def>
+									 
+								</p>
+							</tal:rep>
+						</fieldset>
+					</div>
+			    </div>
+			</meta:macro>
+		</div>  
+	</body>
+</html>

@@ -4,11 +4,12 @@ from zope.interface import Interface
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.layout.navigation.interfaces import INavigationRoot
 
-from vindula.contentcore.formulario import IFormularioPadrao 
+from vindula.contentcore.formulario import IFormularioPadrao
+from vindula.contentcore.conteudo_basico import IConteudoBasico 
 from vindula.contentcore.base import BaseFunc
 from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormValues, ModelsDefaultValue    
 from vindula.contentcore.registration import RegistrationCreateForm, RegistrationCreateFields,RegistrationLoadForm, RegistrationExcluirForm ,\
-                                             RegistrationAddDefaultValue, RegistrationExcluirDefault    
+                                             RegistrationAddDefaultValue, RegistrationExcluirDefault, RegistrationParametrosForm    
 
 import datetime
 
@@ -42,6 +43,19 @@ class VindulaViewForm(grok.View, BaseFunc):
     
     def get_Form_fields(self,id_form):
         return ModelsFormFields().get_Fields_ByIdForm(int(id_form))
+
+class VindulaViewInstanceForm(grok.View, BaseFunc):
+    grok.context(IConteudoBasico)
+    grok.require('zope2.View')
+    grok.name('view-instance-form')
+    
+    
+    def get_FormValues(self, id_form,id_instance):
+        return ModelsFormValues().get_FormValues_byForm_and_Instance(int(id_form),int(id_instance))
+    
+    def get_Form_fields(self,id_form):
+        return ModelsFormFields().get_Fields_ByIdForm(int(id_form))
+
     
 class VindulaLoadForm(grok.View, BaseFunc):
     grok.context(IFormularioPadrao)
@@ -175,7 +189,14 @@ class VindulaEditFieldsForm(grok.View, BaseFunc):
     def render(self):
         return self.index()
 
-
+class VindulaEditParametrosForm(grok.View, BaseFunc):
+    grok.context(IFormularioPadrao)
+    grok.require('cmf.ManagePortal')
+    grok.name('edit-parametros')
+    
+    
+    def load_form(self):
+        return RegistrationParametrosForm().registration_processes(self)
 
 
 #------View Default Value ----------------

@@ -9,8 +9,9 @@
 <body>
 <metal:main fill-slot="content-core">
 		
-	<metal:block metal:use-macro="context/load-form/macros/page-view"/>
+	<metal:block metal:use-macro="context/view-instance-form/macros/page-view"/>
 
+	
 </metal:main>
 </body>
 </html>		

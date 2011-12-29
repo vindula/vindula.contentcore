@@ -1,0 +1,80 @@
+<html metal:use-macro="here/main_template/macros/master">
+	<head>
+		<metal:js fill-slot="javascript_head_slot">
+			<script type="text/javascript" tal:attributes="src string:${view/static}/parameters.js"></script>
+		</metal:js>
+	</head>
+	<body>
+		<div metal:fill-slot="main" tal:define="form_data view/load_form | python:{};
+		                          				errors form_data/errors | python:{};
+									  			form_fields form_data/campos | python:{};
+												form_values form_data/data | python:{};
+												
+												forms_id context/forms_id|nothing">
+		    
+    		<h1 tal:content="string:Editar parâmetros do formul&aacute;rio: '${context/Title|nothing}'"></h1>
+			
+			<div id="interna" >    		
+		        <form name="edit-parametros" id="edit-parametros" enctype="multipart/form-data" class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/edit-parametros" method="POST">
+					<fieldset>					
+						<legend>Parâmetros originário dos campos do formulario</legend>
+					
+						<div class="boxSelecao" name="form_fields">
+							<tal:rep repeat="filed form_fields">
+								<tal:def define="id_request request/form_fields | python: [ i.fields_id for i in form_values.get('form_fields',[])] or []">
+									<input type="checkbox" name="form_fields" tal:attributes="value filed/id|nothing;
+																						   	  checked python: filed.id in id_request">
+								
+									<label tal:content="filed/title|nothing" /><br/>
+								</tal:def>
+								
+							</tal:rep>
+						</div>
+					</fieldset>
+					<fieldset>					
+						<legend>Parâmetros originário do campos do formulario</legend>
+						<div class="listParametros" name="parameters">
+							<table id="addParameters">
+								<tr>
+									<th>Parâmetro</th>
+									<th>Valor Padrão</th>
+									<th>Remover</th>										
+								</tr>
+								<tal:rep repeat="item form_values/parameters|nothing">
+									<tr>
+										<td>
+											<input id="parameters" type="text" value="" name='parameters' size='25'
+													tal:attributes="value item/parameters|nothing"/>
+										</td>
+										<td>
+											<input id="value_parameters" type="text" value="" name='value_parameters' size='25'
+													tal:attributes="value item/value_parameters|nothing"/>
+										</td>
+										<td>
+											<a style="cursor:pointer;" onClick="$j(this).parent().parent().remove();">
+												<img alt="Adicionar Parâmetros" title="Adicionar Parâmetros" tal:attributes="src string:${view/static}/icone-False.png" />
+											</a>				
+										</td>
+									</tr>
+								</tal:rep>
+							</table>
+							<a style="cursor:pointer;" onClick="addHTMLParameters();">
+								<img alt="Adicionar Parâmetros" title="Adicionar Parâmetros" tal:attributes="src string:${view/static}/icone-True.png" />
+								Adicionar Parâmetros</a>
+						</div>
+					
+					</fieldset>
+				
+					<!-- Botões de ação -->	
+				   	<fieldset>
+				   		<br/>
+						<div style="float:left; width:100%">
+							<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
+							<input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited">
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>  
+	</body>
+</html>

@@ -73,11 +73,11 @@ DEFAULT CHARACTER SET = latin1;
 
 
 -- -----------------------------------------------------
--- Table `myvindulaDB`.`vin_contentcore_from_values`
+-- Table `myvindulaDB`.`vin_contentcore_form_values`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `myvindulaDB`.`vin_contentcore_from_values` ;
+DROP TABLE IF EXISTS `myvindulaDB`.`vin_contentcore_form_values` ;
 
-CREATE  TABLE IF NOT EXISTS `myvindulaDB`.`vin_contentcore_from_values` (
+CREATE  TABLE IF NOT EXISTS `myvindulaDB`.`vin_contentcore_form_values` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `value` TEXT NULL DEFAULT NULL ,
   `value_blob` LONGBLOB NULL DEFAULT NULL ,
@@ -107,6 +107,35 @@ CREATE  TABLE IF NOT EXISTS `myvindulaDB`.`vin_contentcore_default_value` (
   `value` TEXT NOT NULL ,
   `lable` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+AUTO_INCREMENT = 1
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `myvindulaDB`.`vin_contentcore_parameters`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `myvindulaDB`.`vin_contentcore_parameters` ;
+
+CREATE  TABLE IF NOT EXISTS `myvindulaDB`.`vin_contentcore_parameters` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `forms_id` INT NOT NULL ,
+  `fields_id` INT NULL ,
+  `parameters` VARCHAR(45) NULL ,
+  `value_parameters` VARCHAR(45) NULL ,
+  PRIMARY KEY (`id`, `forms_id`) ,
+  INDEX `fk_vin_contentcore_parameters_vin_contentcore_forms1` (`forms_id` ASC) ,
+  INDEX `fk_vin_contentcore_parameters_vin_contentcore_fields1` (`fields_id` ASC) ,
+  CONSTRAINT `fk_vin_contentcore_parameters_vin_contentcore_forms1`
+    FOREIGN KEY (`forms_id` )
+    REFERENCES `myvindulaDB`.`vin_contentcore_forms` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_vin_contentcore_parameters_vin_contentcore_fields1`
+    FOREIGN KEY (`fields_id` )
+    REFERENCES `myvindulaDB`.`vin_contentcore_fields` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = latin1;

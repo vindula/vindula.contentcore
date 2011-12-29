@@ -85,6 +85,13 @@ class ModelsFormFields(Storm, BaseStore):
         self.store.add(fields)
         self.store.flush()
         #return form.id       
+
+    def get_Fields_byIdField(self, id):
+        data = self.store.find(ModelsFormFields, ModelsFormFields.id==id).one()
+        if data:
+            return data
+        else:
+            return None
         
     def get_Fields_byId(self, id_form,id_fields):
         data = self.store.find(ModelsFormFields, ModelsFormFields.id==id_fields,
@@ -138,7 +145,7 @@ class ModelsFormInstance(Storm, BaseStore):
     
     
 class ModelsFormValues(Storm, BaseStore):
-    __storm_table__ = 'vin_contentcore_from_values'
+    __storm_table__ = 'vin_contentcore_form_values'
     
     id = Int(primary=True)
     value = Unicode()
@@ -186,6 +193,52 @@ class ModelsFormValues(Storm, BaseStore):
             return data
         else:
             return None
+
+class ModelsParametersForm(Storm, BaseStore):
+    __storm_table__ = 'vin_contentcore_parameters'
+    
+    id = Int(primary=True)
+    forms_id = Int()
+    fields_id = Int()
+    
+    parameters = Unicode()
+    value_parameters = Unicode()
+    
+    def get_ParametersForm(self):
+        data = self.store.find(ModelsParametersForm)
+        if data.count() > 0:
+            return data
+        else:
+            return []
+    
+    def get_ParametersForm_byId(self, id):
+        data = self.store.find(ModelsParametersForm, ModelsParametersForm.id==int(id)).one()
+        if data:
+            return data
+        else:
+            return None
+        
+    def get_ParametersForm_byFormId(self, form_id):
+        data = self.store.find(ModelsParametersForm, ModelsParametersForm.forms_id==form_id)
+        if data.count() > 0:
+            return data
+        else:
+            return None
+        
+    def del_ParametersForm(self, form_id):
+        results = self.store.find(ModelsParametersForm, ModelsParametersForm.forms_id==form_id)
+        if results:
+            for result in results:
+                self.store.remove(result)
+                self.store.flush()   
+
+
+    def set_ParametersFor(self,**kwargs):
+        # adicionando...
+        parameter = ModelsParametersForm(**kwargs)
+        self.store.add(parameter)
+        self.store.flush()
+
         
     
 class ModelsDefaultValue(Storm, BaseStore):

@@ -26,9 +26,11 @@ class BaseFunc(BaseStore):
               return 'field'
 
     def TypesFields(self,type):
-        D = {'text':'campo de texto','textarea':'campo text area','bool':'campo booleano',
-             'choice':'campo de seleção', 'list':'campo de seleção multipla','hidden':'campo Oculto',
-             'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos'}
+        D = {'text':'Campo de Texto','textarea':'Campo Texto Multiplas Linhas',
+             'bool':'Campo Verdadeiro/Falso','choice':'Campo de Escolha',
+             'list':'Campo de Seleção Multipla','hidden':'Campo Oculto',
+             'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos'} 
+        
         if type:
             return D.get(type)
         else:

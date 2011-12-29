@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<object name="portal_javascripts">
+ 
+ <javascript id="++resource++vindula.contentcore/fields_content.js"
+    		 cacheable="False" compression="safe" cookable="False" enabled="True" 
+			 expression="python: context.portal_type == 'vindula.contentcore.formulariobasico'" inline="False" authenticated="True" />
+
+</object>
