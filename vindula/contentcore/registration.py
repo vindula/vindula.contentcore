@@ -105,14 +105,14 @@ class RegistrationCreateFields(BaseFunc):
         campos = {'name_field'            : {'required': True,  'type':'key',       'label':'Nome do Campo',                'decription':u'Digite o nome para o campo',                                       'ordem':0},
                   'type_fields'           : {'required': True,  'type':'choice',    'label':'Tipo do Campo',                'decription':u'Selecione o tipo da informação deste campos',                      'ordem':1},
                   'list_values'           : {'required': False, 'type':'textarea',  'label':'Lista de dados para o select', 'decription':u'Digite um item por linha no padrão [ID] | [Valor]',                'ordem':2},
-                  'title'                 : {'required': True,  'type':self.to_utf8,'label':'Titulo',                       'decription':u'Digite o titulo para o campo',                                     'ordem':3},
+                  'title'                 : {'required': True,  'type':self.to_utf8,'label':'Título',                       'decription':u'Digite o título para o campo',                                     'ordem':3},
                   'description_fields'    : {'required': False, 'type':'textarea',  'label':'Descrição',                    'decription':u'Digite a descrição para o campo',                                  'ordem':4},
-                  'value_default'         : {'required': False, 'type':'combo',     'label':'Valor Padrão',                 'decription':u'''Digite o comando ou o valor padrão para preenchimento este campo,\n
+                  'value_default'         : {'required': False, 'type':'combo',     'label':'Valor Padrão',                 'decription':u'''Digite o comando ou o valor padrão para preenchimento deste campo,\n
                                                                                                                                              este campo funciona com interpretação python''',                 'ordem':5},
-                  'required'              : {'required': False, 'type':'bool',      'label':'Campo Requerido',              'decription':u'Marque esta opção se o campo for obrigadorio',                     'ordem':6},
-                  'ordenacao'             : {'required': False, 'type':'hidden',    'label':'ordenacao',                    'decription':u'',                                                                 'ordem':7},
-                  'flag_ativo'            : {'required': False, 'type':'bool',      'label':'Campo ativo',                  'decription':u'Marque esta opção se o campo estará atvo para o usuario',          'ordem':8},
-                  'forms_id'              : {'required': False, 'type':'hidden',    'label':'id form',                      'decription':u'',                                                                 'ordem':9}}    
+                  'required'              : {'required': False, 'type':'bool',      'label':'Campo Obrigatório',            'decription':u'Marque esta opção se o campo for obrigatório',                     'ordem':6},
+                  'ordenacao'             : {'required': False, 'type':'hidden',    'label':'Ordenação',                    'decription':u'',                                                                 'ordem':7},
+                  'flag_ativo'            : {'required': False, 'type':'bool',      'label':'Campo ativo',                  'decription':u'Marque esta opção se o campo estará ativo para o usuário',         'ordem':8},
+                  'forms_id'              : {'required': False, 'type':'hidden',    'label':'Id form',                      'decription':u'',                                                                 'ordem':9}}    
             
         
         lista_itens = {'type_fields':{'text':'Campo de Texto','textarea':'Campo Texto Multiplas Linhas',
