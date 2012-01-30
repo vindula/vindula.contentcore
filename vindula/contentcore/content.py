@@ -194,9 +194,63 @@ class VindulaEditParametrosForm(grok.View, BaseFunc):
     grok.require('cmf.ManagePortal')
     grok.name('edit-parametros')
     
-    
     def load_form(self):
         return RegistrationParametrosForm().registration_processes(self)
+
+
+class VindulaExportRegisterView(grok.View, BaseFunc):
+    grok.context(IFormularioPadrao)
+    grok.require('zope2.View')
+    grok.name('export-form')    
+
+#    def get_Form(self):
+#        id_form = int(self.context.forms_id)
+#        #form = self.request.form
+#        if id_form:# 'forms_id' in form.keys():
+#            return ModelsForm().get_Forns_byId(int(id_form))
+#        else:
+#            return {}
+#    
+#    def get_FormValues(self, id_form):
+#        return ModelsForm().get_FormValues(int(id_form))
+    
+#    def get_Form_fields(self,id_form):
+#        return ModelsFormFields().get_Fields_ByIdForm(int(id_form))
+    def render(self):
+        pass
+
+    
+    def update(self):
+        self.request.response.setHeader("Content-Type", "text/csv", 0)
+        filename = str(self.context.id)+'-export-register.csv'
+        self.request.response.setHeader('Content-Disposition','attachment; filename=%s'%(filename))
+        
+        id_form = int(self.context.forms_id)
+        fields = ModelsFormFields().get_Fields_ByIdForm(int(id_form))
+        types = ['list','img','file']
+        
+        campos_vin = []
+        text = ''
+        if fields:
+            for field in fields:
+                if field.flag_ativo:
+                    campos_vin.append(field.title)
+                    text += field.title + ';'
+            text = text[:-1] + '\n'
+            
+            values = ModelsForm().get_FormValues(id_form)
+            if values:
+                for item in values:
+                    for field in fields:
+                        if field.flag_ativo:
+                            data = item.find(fields=field.name_field).one()
+                            if not field.type_fields in types:
+                                valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', '')
+                                text += '%s;' % (valor)
+           
+                    text += '\n'
+                 
+        self.request.response.write(str(text))
 
 
 #------View Default Value ----------------
@@ -237,4 +291,3 @@ class VindulaExcluirDefaultValue(grok.View, BaseFunc):
             return ModelsDefaultValue().get_DefaultValue_byId(id)
         else:
             return None
-    

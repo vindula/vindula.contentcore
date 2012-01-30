@@ -14,6 +14,11 @@
 		            	<legend>Cadastrar novo registro</legend>
 						<a alt="Adicionar novo registro" title="Adicionar novo registro"
 						   tal:attributes="href string:${context/absolute_url|nothing}/load-form">Adicionar novo registro</a>
+					</fieldset>
+					<fieldset>
+		            	<legend>Exportar registro</legend>
+						<a alt="exportar registro" title="exportar registro"
+						   tal:attributes="href string:${context/absolute_url|nothing}/export-form">Exportar registro existentes via csv</a>
 
 					</fieldset>
 					<fieldset>

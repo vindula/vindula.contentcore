@@ -555,16 +555,7 @@ class RegistrationLoadForm(BaseFunc):
                                                     
                                                     ModelsFormValues().set_FormValues(**D)
                                 
-                                
-#                                caminho = {'query': '/'.join(context.context.getPhysicalPath()), 'depth': 1}
-#                                ctool = getSite().portal_catalog
-#                                menus = ctool(portal_type='vindula.contentcore.conteudobasico',
-#                                              path=caminho,
-#                                               
-#                                              sort_on='getObjPositionInParent')    
-                                
                                 context.request.response.redirect(success_url+'/view-form')
-                                
         
                         else:
                             #adicionando...
@@ -603,15 +594,6 @@ class RegistrationLoadForm(BaseFunc):
                                            'instance_id':id_instance}
 
                                 context.context.invokeFactory(**objects)  
-                                
-                            
-                            
-                            #Redirect back to the front page with a status message
-                            context.request.response.redirect(destino_form)
-                            
-                            
-                            
-                        
                 
                     elif acao == 'email':
                         emails = context.context.list_email
@@ -645,23 +627,52 @@ class RegistrationLoadForm(BaseFunc):
                             IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
                         else:
                             IStatusMessage(context.request).addStatusMessage(_(u"Não foi possivel enviar o e-mail contate o administrados do portal."), "error")
-                        
-                        #reditect para o destino do form
-                        context.request.response.redirect(destino_form)
                     
                     elif acao == 'content_type':
-                        pass
+                        if not 'savedb' in acoes:
+                            #adicionando...
+                            id_instance = ModelsFormInstance().set_FormInstance(id_form)
+                            for field in data:
+                                valor = data[field]
+                                if valor:
+                                    D={}
+                                    D['forms_id'] = int(id_form)
+                                    D['instance_id'] = id_instance
+                                    D['fields'] = field
+                                    if len(valor) < 65000:
+                                        if type(valor) == unicode:
+                                            D['value'] = valor.strip()
+                                        else:
+                                            D['value'] = unicode(str(valor), 'utf-8')
+                                    else:
+                                        D['value_blob'] = valor
+                                
+                                    ModelsFormValues().set_FormValues(**D)
+                            
+                                count = 0
+                                name_file = 'conteudo-'+context.context.id
+                                title_file = 'Conteúdo - '+ context.context.Title()
+                                while name_file in context.context.objectIds():
+                                    name_file = name_file + '-' + str(count)
+                                    title_file = title_file + ' - ' + str(count)
+                                    count +=1
+                                
+                                objects = {'type_name':'vindula.contentcore.conteudobasico',
+                                           'id': name_file,
+                                           'title':name_file,
+                                           
+                                           'forms_id':id_form,
+                                           'instance_id':id_instance}
 
-                      
-                        
-                        #reditect para o destino do form
-                        context.request.response.redirect(destino_form)
+                                context.context.invokeFactory(**objects)  
+                            
+                #Redirect back to the front page with a status message
+                context.request.response.redirect(destino_form)
                         
                 if not acoes:
                     # Menssagem de Erro na ação - volta para a view do formulario
                     IStatusMessage(context.request).addStatusMessage(_(u"Ação Indisponível, contate o administrados do portal."), "error")
                     context.request.response.redirect(success_url)
-             
              
             else:
                 form_data['errors'] = errors

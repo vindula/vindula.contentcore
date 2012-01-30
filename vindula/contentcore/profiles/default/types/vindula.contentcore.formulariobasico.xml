@@ -62,12 +62,12 @@
   <permission value="Modify portal content"/>
  </action>  
  
- <action title="Edit" action_id="edit" category="object" condition_expr=""
+ <action title="Editar Formulário" action_id="edit" category="object" condition_expr=""
     url_expr="string:${object_url}/edit" visible="True">
   <permission value="Modify portal content"/>
  </action>
  
- <action title="Editar Campo" action_id="form" category="object" condition_expr=""
+ <action title="Editar Campos" action_id="form" category="object" condition_expr=""
     url_expr="string:${object_url}/edit-form" visible="True">
   <permission value="Modify portal content"/>
  </action>
