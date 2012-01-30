@@ -4,6 +4,10 @@
 .project
 .pydevproject
 .settings/org.eclipse.core.resources.prefs
+<<<<<<< HEAD
+=======
+*.egg/*
+>>>>>>> aaf3c4b2cdf5b2dc553706498cc69adfd8da4649
 *~
 
 # OS generated files #
