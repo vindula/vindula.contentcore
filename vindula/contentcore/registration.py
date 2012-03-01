@@ -118,7 +118,8 @@ class RegistrationCreateFields(BaseFunc):
         lista_itens = {'type_fields':{'text':'Campo de Texto','textarea':'Campo Texto Multiplas Linhas',
                                       'bool':'Campo Verdadeiro/Falso','choice':'Campo de Escolha',
                                       'list':'Campo de Seleção Multipla','hidden':'Campo Oculto',
-                                      'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos'}
+                                      'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos',
+                                      'richtext':'Campo de Texto Rico'}
                        }
         
         dados_defaul =  ModelsDefaultValue().get_DefaultValues()

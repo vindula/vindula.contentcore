@@ -4,11 +4,12 @@
 	<body >
 		<div metal:fill-slot="main" >
 		    <meta:macro metal:define-macro="page-view">
-		    	<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
-				<div id="interna" tal:define="view python:context.restrictedTraverse('@@load-form');
-									  form_data view/load_form | python:{}; errors form_data/errors | python:{};
-							  		  form_values form_data/data | python:{};">    		
-			        <form name="load-form" id="load-form" enctype="multipart/form-data" 
+		    	<!--link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css"-->
+				<div id="interna-form" tal:define="view python:context.restrictedTraverse('@@load-form');
+									  			   form_data view/load_form | python:{}; errors form_data/errors | python:{};
+							  		  			   form_values form_data/data | python:{};">    		
+			        
+			        	<form name="load-form" id="load-form" enctype="multipart/form-data" 
 						  class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/load-form" method="POST">
 						<!-- Id Form-->
 						<input type="hidden" name="forms_id" id="forms_id" value="" tal:attributes="value context/forms_id|nothing"> 

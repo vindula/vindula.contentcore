@@ -9,7 +9,7 @@
 		    <div tal:define="form view/get_Form|python:{};id_form form/id|nothing">
 				<!--h1 tal:content="form/name_form|nothing">Titulo Formul&aacute;rio</h1>
 				<p tal:content="form/description_form|nothing">Descrição do formul&aacute;rio</p-->
-				<div id="interna" >    		
+				<div id="interna-form" >    		
 		            <fieldset>
 		            	<legend>Cadastrar novo registro</legend>
 						<a alt="Adicionar novo registro" title="Adicionar novo registro"

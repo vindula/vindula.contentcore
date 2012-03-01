@@ -4,6 +4,10 @@ from vindula.contentcore.models import ModelsFormValues
 import pickle
 import datetime
 
+#from Products.TinyMCE.utility import TinyMCE, form_adapter
+from zope.component import getUtility
+from Products.TinyMCE.interfaces.utility import ITinyMCE
+
 # Import para envio de E-mail
 #from Products.CMFCore.utils import getToolByName
 from zope.app.component.hooks import getSite
@@ -29,7 +33,8 @@ class BaseFunc(BaseStore):
         D = {'text':'Campo de Texto','textarea':'Campo Texto Multiplas Linhas',
              'bool':'Campo Verdadeiro/Falso','choice':'Campo de Escolha',
              'list':'Campo de Seleção Multipla','hidden':'Campo Oculto',
-             'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos'} 
+             'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos',
+             'richtext':'Campo de Texto Rico'} 
         
         if type:
             return D.get(type)
@@ -285,9 +290,13 @@ class BaseFunc(BaseStore):
                 tmp = ""
                 if not 'outro' in campo:
                     type_campo = campos[campo]['type']
+                    if type_campo == 'richtext':
+                        classe = 'richTextWidget'
+                    else:
+                        classe = ''
                     
                     tmp += "<!-- Campo %s -->"%(campo)
-                    tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo),campo)
+                    tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo)+' '+classe,'field-'+campo)
                     
                     if type_campo != 'hidden':
                         tmp += "   <label for='%s'>%s</label>"%(campo,campos[campo]['label'])
@@ -365,6 +374,17 @@ class BaseFunc(BaseStore):
 
                         tmp += "</select>"
                     
+                    elif type_campo == 'richtext':
+                        utility = getUtility(ITinyMCE)
+                        conf = utility.getConfiguration(context=self.context,
+                                                        field=campo,
+                                                        request=self.request)
+                        
+                        tmp += "<div class='fieldTextFormat'><label>Formato do Texto</label>"
+                        tmp += "<select name='%s_text_format' id='%s_text_format'><option value='text/html' selected='selected'>HTML</option>"%(campo,campo)
+                        tmp += "<option value='text/x-web-textile'>Textile</option><option value='text/x-plone-outputfilters-html'>Plone Output Filters HTML</option></select></div>"
+                        tmp += "<textarea id='%s' class='mce_editable' name='%s' rows='25' cols='40' title='%s' >%s</textarea>"%(campo,campo, conf, self.getValue(campo, self.request,data, default_value))
+                   
                     else:
                         tmp += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo, self.getValue(campo, self.request,data, default_value), campo)
     
@@ -378,3 +398,8 @@ class BaseFunc(BaseStore):
                 html.insert(index, tmp)    
             
             return html
+        
+        
+        
+        
+        
