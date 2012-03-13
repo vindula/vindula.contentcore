@@ -6,13 +6,13 @@ $j(document).ready(function(){
 	$j('#contentview-view').removeClass('selected');
 	
 	/* Exibição do campo de list value*/
-	$j('div#list_values').hide();
+	$j('div#field-list_values').hide();
 	$j("select[name='type_fields']").change(function(){
 		val = this.value;
 		if (val =='list' || val == 'choice'){
-			$j('div#list_values').show();
+			$j('div#field-list_values').show();
 		}else{
-			$j('div#list_values').hide();
+			$j('div#field-list_values').hide();
 		};  
 	});
 	
