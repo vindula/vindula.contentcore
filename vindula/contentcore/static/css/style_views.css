@@ -1,0 +1,11 @@
+#aviso{
+	float:left;
+	margin:0 10px 0 10px;
+	width:300px;
+	height:250px;
+}	
+
+#all-avisos{
+	display:table;
+	float:left;
+}
