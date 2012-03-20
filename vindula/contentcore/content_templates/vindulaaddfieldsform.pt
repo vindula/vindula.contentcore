@@ -1,7 +1,7 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
 		<metal:js fill-slot="javascript_head_slot">
-    		<script type="text/javascript" tal:attributes="src string:${view/static}/list_fields.js"></script>
+    		<script type="text/javascript" tal:attributes="src string:${view/static}/js/list_fields.js"></script>
 		</metal:js>
 	</head>
 	<body>
@@ -14,8 +14,10 @@
 			<h1 tal:condition="not: request/id_fields|nothing"> Adicionar Novo Campo ao formul&aacute;rio</h1>
 			
 			<div id="interna" >    		
-		        <form enctype="multipart/form-data" class="enableAutoFocus" method="POST" tal:attributes="action string:${context/absolute_url|nothing}/add-fields-form">
-		        	<!-- Id campo -->
+		        <form enctype="multipart/form-data" class="enableAutoFocus" method="POST"
+					  tal:attributes="action string:${context/absolute_url|nothing}/add-fields-form">
+		        	
+					<!-- Id campo -->
 					<input	tal:condition="python:request.get('id_fields',None)" 
 							type="hidden" name="id_fields" id="id_fields" value="" tal:attributes="value request/id_fields|nothing">
 					

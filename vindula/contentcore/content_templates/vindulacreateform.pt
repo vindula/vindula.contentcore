@@ -1,7 +1,7 @@
 <html  metal:use-macro="here/main_template/macros/master">
 	<head>
 		<metal:styleslot fill-slot="style_slot">
-    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
 		</metal:styleslot>
 		
 	</head>

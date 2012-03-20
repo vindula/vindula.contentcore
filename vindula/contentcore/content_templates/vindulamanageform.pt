@@ -1,7 +1,7 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
 		<metal:styleslot fill-slot="style_slot">
-    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
 		</metal:styleslot>
 	</head>
 	<body>
@@ -18,40 +18,13 @@
 							<a class="button" href="@@vindula-control-panel" alt="Voltar" title="Voltar">
 								<input style="width:100px" class="button-erp" type="button" value="Voltar" name="form.voltar">
 							</a>
-							<!--a class="button" href="add-form"  alt="Adicionar novo formulário" title="Adicionar novo formulário">							
-								<input class="button-erp" type="button" value="Adicionar novo formulário" name="form.submited">
-							</a-->
+
 							<a class="button" href="add-defaut-value"  alt="Adicionar valor padrão" title="Adicionar valor padrão">							
 								<input class="button-erp" type="button" value="Adicionar valor padrão" name="form.submited">
 							</a>
 						</div>
 					</fieldset>
-			        <!--fieldset>
-		            	<legend>Formulários Cadastrados</legend>
-							<div id="list-forns" tal:condition="data">
-								<table width="100%">
-									<tr>
-										<th width="80%">Ver Formulário</th>
-										<th width="20%">Editar Formulário</th>
-									</tr>
-									<tal:rep repeat="item data">
-										<tr>
-											<td>
-												<a tal:attributes="href string:${here/portal_url}/view-form?forms_id=${item/id|nothing}"
-													alt="Visualizar formulario" title="Visualizar formulario" class="edit-link">
-												<span tal:content="item/name_form|nothing"></span></a>
-												<p tal:content="item/description_form|nothing"></p>	
-											</td>
-											<td>
-												<a tal:attributes="href string:${here/portal_url}/edit-form?forms_id=${item/id|nothing}"
-													alt="Editar Formulario" title="Editar Formulario">Editar</a>
-											</td>	
-										</tr>
-									</tal:rep>	
-								</table>
-								
-							</div>
-					</fieldset-->
+
 					<fieldset>
 		            	<legend>Lista de Valor Padrão</legend>
 							<div id="list-forns" tal:condition="data_default">

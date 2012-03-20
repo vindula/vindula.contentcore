@@ -1,20 +1,13 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
 		<metal:styleslot fill-slot="style_slot">
-    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
 		</metal:styleslot>
 	</head>
 	<body>
 		<div metal:fill-slot="main">
-		    <div tal:define="form view/get_Form|python:{};id_form form/id|nothing">
-				<!--h1 tal:content="form/name_form|nothing">Titulo Formul&aacute;rio</h1>
-				<p tal:content="form/description_form|nothing">Descrição do formul&aacute;rio</p-->
+		    <div>
 				<div id="interna-form" >    		
-		            <fieldset>
-		            	<legend>Cadastrar novo registro</legend>
-						<a alt="Adicionar novo registro" title="Adicionar novo registro"
-						   tal:attributes="href string:${context/absolute_url|nothing}/load-form">Adicionar novo registro</a>
-					</fieldset>
 					<fieldset>
 		            	<legend>Exportar registro</legend>
 						<a alt="exportar registro" title="exportar registro"
@@ -22,9 +15,22 @@
 
 					</fieldset>
 					<fieldset>
+		            	<legend>Relat&oacute;rio dos registro</legend>
+						<a alt="exportar relatorio" title="exportar relatorio"
+						   tal:attributes="href string:${context/absolute_url|nothing}/relatorio-form">Gerar relat&oacute;rio os registros existentes</a>
+
+					</fieldset>
+					<fieldset>
+		            	<legend>Visão Quadro de Avisos</legend>
+						<a alt="Quadro de Avisos" title="Quadro de Avisos"
+						   tal:attributes="href string:${context/absolute_url|nothing}/myvindula-avisos-view">Ver Quadro de Avisos</a>
+
+					</fieldset>
+					
+					<fieldset>
 		            	<legend>Listagems do registros</legend>
 						<table width="100%">
-							<tr tal:define="fields python:view.get_Form_fields(id_form)">
+							<tr tal:define="fields python:view.get_Form_fields()">
 								<tal:rep repeat="campo fields|nothing">
 									<th tal:condition="campo/flag_ativo|nothing"
 										tal:content="campo/title|nothing" />	
@@ -32,9 +38,10 @@
 								<th width="10%">Editar Registro</th>
 								<th width="10%">Excluir Registro</th>
 							</tr>
-							<tal:rep repeat="item python:view.get_FormValues(id_form)">
-								<tr>
-									<tal:def tal:define="fields python:view.get_Form_fields(id_form)">
+							<tal:rep repeat="item python:view.get_FormValues()">
+								<tr tal:define="i repeat/item/even|nothing" 
+									tal:attributes="class python: i and 'even' or 'odd'">
+									<tal:def tal:define="fields python:view.get_Form_fields()">
 										<tal:rep repeat="campo fields|nothing">
 											<tal:cond condition="campo/flag_ativo|nothing">
 												<tal:def tal:define="data python: item.find(fields=campo.name_field).one()">

@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<metal:styleslot fill-slot="style_slot">
-    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
 		</metal:styleslot>
 		
 	</head>
@@ -13,8 +13,10 @@
 		    <div id="content" >
 		    		<h1 tal:content="string:Editar o Campo '${form_values/name_field|nothing}' do formularios"> </h1>
 					<div id="interna" >    		
-				        <form name="edit-fields" id="edit-fields" enctype="multipart/form-data" class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/vindula-edit-fields-form" method="POST">
-				        	<!-- Id campo -->
+				        <form name="edit-fields" id="edit-fields" enctype="multipart/form-data" class="enableAutoFocus"
+							  tal:attributes="action string:${context/absolute_url|nothing}/vindula-edit-fields-form" method="POST">
+				        	
+							<!-- Id campo -->
 							<input type="hidden" name="id_fields" id="id_fields" value="" tal:attributes="value context/REQUEST/id_fields|nothing">
 				            <fieldset>
 				            	<legend>Dados do Campo</legend>

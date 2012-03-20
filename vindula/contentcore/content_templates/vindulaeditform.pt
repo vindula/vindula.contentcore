@@ -1,7 +1,7 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
 		<metal:styleslot fill-slot="style_slot">
-    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
 		</metal:styleslot>
 	</head>
 	<body>
@@ -12,26 +12,15 @@
 		    
     		<h1 tal:content="string:Editar o formul&aacute;rio: '${form_values/name_form|nothing}'"></h1>
 			<div id="interna" >    		
-		        <form name="edit-form" id="edit-form" enctype="multipart/form-data" class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/edit-form" method="POST">
-		        	<!-- Id Form 
-					<input	tal:condition="context/forms_id" 
-							type="hidden" name="forms_id" id="forms_id" value="" tal:attributes="value context/forms_id|nothing">
-				
-		            <fieldset>
-		            	<legend>Dados do Formul&aacute;rio</legend>
-						<tal:def define="html python:view.geraCampos(form_data)">
-							<tal:rep repeat="x html">
-								<div tal:replace="structure x"/>
-							</tal:rep>
-						</tal:def>
-					</fieldset>-->
+		        <form name="edit-form" id="edit-form" enctype="multipart/form-data" class="enableAutoFocus" 
+					  tal:attributes="action string:${context/absolute_url|nothing}/edit-form" method="POST">
 					
 					<!-- Botões de ação --> 	
 				   	<fieldset>
 				   		<legend>A&ccedil;&atilde;o</legend>
 						<div style="float:left; width:100%">
 							<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
-							<!--input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited"-->
+							
 							<a class="button" tal:attributes="href string:${context/absolute_url|nothing}/add-fields-form">		
 								<input class="button-erp" type="button" value="Adicionar novo campo ao formulário" name="form.submited">
 							</a>
@@ -64,10 +53,10 @@
 									<td tal:content="item/description_fields|nothing" />
 									
 									<td tal:define="check item/flag_ativo|nothing" >
-										<img tal:attributes="src string:${view/static}/icone-${check}.png" />
+										<img tal:attributes="src string:${view/static}/img/icone-${check}.png" />
 									</td>
 									<td tal:define="check item/required|nothing" align="center">
-										<img tal:attributes="src string:${view/static}/icone-${check}.png" />
+										<img tal:attributes="src string:${view/static}/img/icone-${check}.png" />
 									</td>
 									<td class="draggable" align="center">
 						                <a title="Mover item para cima" 

@@ -4,7 +4,7 @@
 	<body >
 		<div metal:fill-slot="main" >
 		    <meta:macro metal:define-macro="page-view">
-		    	<!--link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/form_style.css"-->
+		    	
 				<div id="interna-form" tal:define="view python:context.restrictedTraverse('@@load-form');
 									  			   form_data view/load_form | python:{}; errors form_data/errors | python:{};
 							  		  			   form_values form_data/data | python:{};">    		

@@ -1,7 +1,7 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
 		<metal:js fill-slot="javascript_head_slot">
-			<script type="text/javascript" tal:attributes="src string:${view/static}/parameters.js"></script>
+			<script type="text/javascript" tal:attributes="src string:${view/static}/js/parameters.js"></script>
 		</metal:js>
 	</head>
 	<body>
@@ -15,7 +15,8 @@
     		<h1 tal:content="string:Editar parâmetros do formul&aacute;rio: '${context/Title|nothing}'"></h1>
 			
 			<div id="interna" >    		
-		        <form name="edit-parametros" id="edit-parametros" enctype="multipart/form-data" class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/edit-parametros" method="POST">
+		        <form name="edit-parametros" id="edit-parametros" enctype="multipart/form-data" class="enableAutoFocus"
+					 tal:attributes="action string:${context/absolute_url|nothing}/edit-parametros" method="POST">
 					<fieldset>					
 						<legend>Parâmetros originário dos campos do formulario</legend>
 					
@@ -52,14 +53,14 @@
 										</td>
 										<td>
 											<a style="cursor:pointer;" onClick="$j(this).parent().parent().remove();">
-												<img alt="Adicionar Parâmetros" title="Adicionar Parâmetros" tal:attributes="src string:${view/static}/icone-False.png" />
+												<img alt="Adicionar Parâmetros" title="Adicionar Parâmetros" tal:attributes="src string:${view/static}/img/icone-False.png" />
 											</a>				
 										</td>
 									</tr>
 								</tal:rep>
 							</table>
 							<a style="cursor:pointer;" onClick="addHTMLParameters();">
-								<img alt="Adicionar Parâmetros" title="Adicionar Parâmetros" tal:attributes="src string:${view/static}/icone-True.png" />
+								<img alt="Adicionar Parâmetros" title="Adicionar Parâmetros" tal:attributes="src string:${view/static}/img/icone-True.png" />
 								Adicionar Parâmetros</a>
 						</div>
 					
