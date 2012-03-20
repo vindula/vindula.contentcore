@@ -16,6 +16,35 @@ from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 from email.MIMEImage import MIMEImage
 
+#Imports regarding the connection of the database 'strom'
+from storm.locals import *
+from storm.expr import Desc
+from zope.component import getUtility
+from storm.zope.interfaces import IZStorm
+from storm.locals import Store
+from plone.i18n.normalizer.interfaces import IIDNormalizer
+from Products.statusmessages.interfaces import IStatusMessage
+from datetime import date , datetime 
+
+class BaseStore(object):
+   
+    def __init__(self, *args, **kwargs):
+        self.store = getUtility(IZStorm).get('myvindula')
+        
+        #Lazy initialization of the object
+        for attribute, value in kwargs.items():
+            if not hasattr(self, attribute):
+                raise TypeError('unexpected argument %s' % attribute)
+            else:
+                setattr(self, attribute, value)        
+  
+        # divide o dicionario 'convertidos'
+        for key in kwargs:
+            setattr(self,key,kwargs[key])
+        # adiciona a data atual
+        self.date_creation = datetime.now()    
+
+
 class BaseFunc(BaseStore):
     #default class for standard functions
 

@@ -8,12 +8,13 @@ from vindula.contentcore.formulario import IFormularioPadrao
 from vindula.contentcore.conteudo_basico import IConteudoBasico 
 from vindula.contentcore.base import BaseFunc
 from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormValues, ModelsDefaultValue    
+
 from vindula.contentcore.registration import RegistrationCreateForm, RegistrationCreateFields,RegistrationLoadForm, RegistrationExcluirForm ,\
-                                             RegistrationAddDefaultValue, RegistrationExcluirDefault, RegistrationParametrosForm    
+                                             RegistrationAddDefaultValue, RegistrationExcluirDefault, RegistrationParametrosForm, LoadRelatorioForm    
 
 import datetime
 
-#Views registros Form--------------------------------------------------    
+#Views Manage Form--------------------------------------------------    
 class VindulaManageForm(grok.View, BaseFunc):
     grok.context(INavigationRoot)
     grok.require('cmf.ManagePortal')
@@ -24,47 +25,7 @@ class VindulaManageForm(grok.View, BaseFunc):
     
     def list_default(self):
         return ModelsDefaultValue().get_DefaultValues()
-    
-class VindulaViewForm(grok.View, BaseFunc):
-    grok.context(IFormularioPadrao)
-    grok.require('zope2.View')
-    grok.name('view-form')
-    
-    def get_Form(self):
-        id_form = int(self.context.forms_id)
-        #form = self.request.form
-        if id_form:# 'forms_id' in form.keys():
-            return ModelsForm().get_Forns_byId(int(id_form))
-        else:
-            return {}
-    
-    def get_FormValues(self, id_form):
-        return ModelsForm().get_FormValues(int(id_form))
-    
-    def get_Form_fields(self,id_form):
-        return ModelsFormFields().get_Fields_ByIdForm(int(id_form))
 
-class VindulaViewInstanceForm(grok.View, BaseFunc):
-    grok.context(IConteudoBasico)
-    grok.require('zope2.View')
-    grok.name('view-instance-form')
-    
-    
-    def get_FormValues(self, id_form,id_instance):
-        return ModelsFormValues().get_FormValues_byForm_and_Instance(int(id_form),int(id_instance))
-    
-    def get_Form_fields(self,id_form):
-        return ModelsFormFields().get_Fields_ByIdForm(int(id_form))
-
-    
-class VindulaLoadForm(grok.View, BaseFunc):
-    grok.context(IFormularioPadrao)
-    grok.require('zope2.View')
-    grok.name('load-form')
-    
-    def load_form(self):
-        return RegistrationLoadForm().registration_processes(self)
-    
 class VindulaExcluirRegistroForm(grok.View, BaseFunc):
     grok.context(IFormularioPadrao)
     grok.require('zope2.View')
@@ -89,61 +50,6 @@ class VindulaExcluirRegistroForm(grok.View, BaseFunc):
         else:
             return None
 
-
-#Views de renderização dos objetos do Image e Arquivo ---------------------------------------------------   
-class VindulaFormImage(grok.View, BaseFunc):
-    grok.context(Interface)
-    grok.require('zope2.View')
-    grok.name('form-image')
-    
-    def render(self):
-        pass
-    
-    def update(self):
-        form = self.request.form
-        if 'id' in form.keys():
-            id = form.get('id','0')
-            if id != 'None':
-                campo_image = ModelsFormValues().get_Values_byID(int(id))
-                valor = campo_image.value
-                valor_blob = campo_image.value_blob
-                                
-                if valor:
-                    x = self.decodePickle(valor)
-                else:
-                    x = self.decodePickle(valor_blob)
-                
-                self.request.response.setHeader("Content-Type", "image/jpeg", 0)
-                self.request.response.write(x)                
-
-class VindulaFormFile(grok.View, BaseFunc):
-    grok.context(Interface)
-    grok.require('zope2.View')
-    grok.name('form-file')
-    
-    def render(self):
-        pass
-    
-    def update(self):
-        form = self.request.form
-        if 'id' in form.keys():
-            id = form.get('id','0')
-            if id != 'None':
-                campo_image = ModelsFormValues().get_Values_byID(int(id))
-                valor = campo_image.value
-                valor_blob = campo_image.value_blob
-                if valor:
-                    x = self.decodePickle(valor)
-                else:
-                    x = self.decodePickle(valor_blob)
-                
-                filename = x['filename']
-                self.request.response.setHeader("Content-Type", "type/file", 0)
-                self.request.response.setHeader('Content-Disposition','attachment; filename=%s'%(filename))
-                self.request.response.write(x['data'])                
-
-
-#Views Forms ---------------------------------------------------
 class VindulaCreateForm(grok.View, BaseFunc):
     grok.context(IFormularioPadrao)
     grok.require('cmf.ManagePortal')
@@ -203,22 +109,8 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
     grok.require('zope2.View')
     grok.name('export-form')    
 
-#    def get_Form(self):
-#        id_form = int(self.context.forms_id)
-#        #form = self.request.form
-#        if id_form:# 'forms_id' in form.keys():
-#            return ModelsForm().get_Forns_byId(int(id_form))
-#        else:
-#            return {}
-#    
-#    def get_FormValues(self, id_form):
-#        return ModelsForm().get_FormValues(int(id_form))
-    
-#    def get_Form_fields(self,id_form):
-#        return ModelsFormFields().get_Fields_ByIdForm(int(id_form))
     def render(self):
         pass
-
     
     def update(self):
         self.request.response.setHeader("Content-Type", "text/csv", 0)
@@ -251,6 +143,102 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                     text += '\n'
                  
         self.request.response.write(str(text))
+
+
+#--------View Visualização Form----------------------------
+class VindulaViewForm(grok.View, BaseFunc):
+    grok.context(IFormularioPadrao)
+    grok.require('zope2.View')
+    grok.name('view-form') #Dados
+   
+    def get_FormValues(self):
+        id_form = int(self.context.forms_id)
+        return ModelsForm().get_FormValues(id_form)
+    
+    def get_Form_fields(self):
+        id_form = int(self.context.forms_id)
+        return ModelsFormFields().get_Fields_ByIdForm(id_form)
+
+    
+class VindulaLoadForm(grok.View, BaseFunc):
+    grok.context(IFormularioPadrao)
+    grok.require('zope2.View')
+    grok.name('load-form') #View Padrao
+    
+    def load_form(self):
+        return RegistrationLoadForm().registration_processes(self)
+
+
+
+
+
+
+
+#----------View Conteudo Padrao ----------------------
+class VindulaViewInstanceForm(grok.View, BaseFunc):
+    grok.context(IConteudoBasico)
+    grok.require('zope2.View')
+    grok.name('view-instance-form')
+    
+    def get_FormValues(self, id_form,id_instance):
+        return ModelsFormValues().get_FormValues_byForm_and_Instance(int(id_form),int(id_instance))
+    
+    def get_Form_fields(self,id_form):
+        return ModelsFormFields().get_Fields_ByIdForm(int(id_form))
+
+
+
+#Views de renderização dos objetos do Image e Arquivo ---------------------------------------------------   
+class VindulaFormImage(grok.View, BaseFunc):
+    grok.context(Interface)
+    grok.require('zope2.View')
+    grok.name('form-image')
+    
+    def render(self):
+        pass
+    
+    def update(self):
+        form = self.request.form
+        if 'id' in form.keys():
+            id = form.get('id','0')
+            if id != 'None':
+                campo_image = ModelsFormValues().get_Values_byID(int(id))
+                valor = campo_image.value
+                valor_blob = campo_image.value_blob
+                                
+                if valor:
+                    x = self.decodePickle(valor)
+                else:
+                    x = self.decodePickle(valor_blob)
+                
+                self.request.response.setHeader("Content-Type", "image/jpeg", 0)
+                self.request.response.write(x)                
+
+class VindulaFormFile(grok.View, BaseFunc):
+    grok.context(Interface)
+    grok.require('zope2.View')
+    grok.name('form-file')
+    
+    def render(self):
+        pass
+    
+    def update(self):
+        form = self.request.form
+        if 'id' in form.keys():
+            id = form.get('id','0')
+            if id != 'None':
+                campo_image = ModelsFormValues().get_Values_byID(int(id))
+                valor = campo_image.value
+                valor_blob = campo_image.value_blob
+                if valor:
+                    x = self.decodePickle(valor)
+                else:
+                    x = self.decodePickle(valor_blob)
+                
+                filename = x['filename']
+                self.request.response.setHeader("Content-Type", "type/file", 0)
+                self.request.response.setHeader('Content-Disposition','attachment; filename=%s'%(filename))
+                self.request.response.write(x['data'])                
 
 
 #------View Default Value ----------------

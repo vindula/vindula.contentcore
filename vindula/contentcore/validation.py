@@ -31,8 +31,9 @@ def valida_form(ctx, configuracao, form):
             
             if configuracao.get(campo).get('required', None) is not None:
                 if configuracao[campo]['required'] == True: # configuracao: campo e obrigatorio
-                    if valor == '' or valor.isspace(): # se o campo estiver vazio
-                        errors[campo] = u'Este campo é obrigatório' # indica o campo vazio
+                    if configuracao[campo]['type'] != 'bool':
+                        if valor == '' or valor.isspace(): # se o campo estiver vazio
+                            errors[campo] = u'Este campo é obrigatório' # indica o campo vazio
     
             if configuracao[campo]['type'] == date:
                 if valor != '':   
@@ -53,6 +54,7 @@ def valida_form(ctx, configuracao, form):
             
             #logica para converter campos tipo Boolen
             elif configuracao[campo]['type'] == 'bool':
+                
                 if valor:
                     convertidos[campo] = True
                 else:

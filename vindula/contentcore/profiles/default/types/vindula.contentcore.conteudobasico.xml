@@ -7,7 +7,7 @@
  <!-- Basic metadata -->
  <property name="title" i18n:translate="">Vindula Conteúdo Básico</property>
  <property name="description" i18n:translate="">Cria um conteúdo para administração e gerencia dos dados dos formulários.</property>
- <property name="content_icon">++resource++vindula.contentcore/conteudobasico.png</property>
+ <property name="content_icon">++resource++vindula.contentcore/img/conteudobasico.png</property>
  <property name="allow_discussion">True</property>
  <property name="global_allow">False</property>
  <property name="filter_content_types">True</property>
@@ -53,7 +53,7 @@
  </action>
  
  <action title="Edit" action_id="edit" category="object" condition_expr=""
-    url_expr="string:${object_url}/edit" visible="True">
+    url_expr="string:${object_url}/edit_form" visible="True">
   <permission value="Modify portal content"/>
  </action>
 

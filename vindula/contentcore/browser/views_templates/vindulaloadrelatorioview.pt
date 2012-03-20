@@ -1,0 +1,71 @@
+<html metal:use-macro="here/main_template/macros/master">
+	<head>
+		<metal:styleslot fill-slot="style_slot">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
+		</metal:styleslot>
+		
+		<metal:js fill-slot="javascript_head_slot">
+    		<script type="text/javascript" >
+    			$j = jQuery.noConflict();
+
+					$j(document).ready(function(){
+						/* Aba de edição do conteudo*/
+						$j('#contentview-content').addClass('selected');
+						$j('#contentview-view').removeClass('selected');
+					
+					});
+				
+    		</script>
+		</metal:js>
+	</head>
+	<body >
+		<div metal:fill-slot="main" >
+		    <meta:macro metal:define-macro="page-view">
+		    	<!--link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css"-->
+				<div id="interna-form" tal:define="form_data view/load_form | python:{};">    		
+			        
+					<h1 > Relat&oacute;rios dos dados do formul&aacute;rio</h1>		
+					<fieldset>
+		            	<legend>Relat&oacute;rio</legend>
+						
+						<tal:rep repeat="item form_data">
+							<table width="100%">
+								<tr><th width="100%" tal:content="string:Nome do Campo: ${item/titulo|nothing}" /></tr>
+								<tr><td width="100%" tal:content="string:Quantidade de Respostas Totais: ${item/quant|nothing}"></td></tr>
+								<tr>
+									<td>
+										<table tal:condition="not: item/text|nothing" width="100%">
+											<tr>
+												<th width="70%" >Resposta</th>
+												<th width="25%" >Quantidade</th>
+											</tr>
+											<tal:rep repeat="rep item/dados|nothing">
+												
+												<tr tal:define="i repeat/rep/even|nothing" 
+													tal:attributes="class python: i and 'even' or 'odd'">
+													
+													<td tal:content="rep/name|nothing"></td>
+													<td tal:content="rep/cont|nothing"></td>
+												</tr>
+											</tal:rep>
+										</table>
+										<table tal:condition="item/text|nothing" width="100%" >
+											<tr><th width="95%">Respostas</th></tr>
+											<tal:rep repeat="rep item/dados|nothing">
+												<tr tal:define="i repeat/rep/even|nothing" 
+													tal:attributes="class python: i and 'even' or 'odd'">
+													
+													<td tal:content="rep/text|nothing"></td>
+												</tr>
+											</tal:rep>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</tal:rep>
+					</fieldset>
+				</div>
+			</meta:macro>
+		</div>  
+	</body>
+</html>

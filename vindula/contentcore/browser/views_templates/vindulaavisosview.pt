@@ -1,0 +1,39 @@
+<html metal:use-macro="here/main_template/macros/master">
+	<head>
+		<metal:styleslot fill-slot="style_slot">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${context/portal_url}/++resource++vindula.contentcore/css/style_views.css">
+		</metal:styleslot>
+		
+		<metal:js fill-slot="javascript_head_slot">
+    		<script type="text/javascript" >
+    			$j = jQuery.noConflict();
+				$j(document).ready(function(){
+					/* Aba de edição do conteudo*/
+					$j('#contentview-content').addClass('selected');
+					$j('#contentview-view').removeClass('selected');
+				
+				});
+    		</script>
+		</metal:js>
+		
+	</head>
+	<body metal:fill-slot="content-core">
+		<br /> 
+		<h2 class="h2title">Quadro de avisos</h2>
+  		<meta:macro metal:define-macro="page-view">                  
+			
+			<div id="content" tal:define="view python: context.restrictedTraverse('@@myvindula-avisos-view');
+	  									  form_data view/load_list | python:{};">
+					<div id="all-avisos">
+						<tal:rep repeat="i form_data">
+							<div id="aviso" tal:condition="i/status|nothing">
+								<h1 tal:content="i/titulo|nothing" />
+								<p tal:content="structure i/texto"></p>
+							</div>
+						</tal:rep>
+					</div>
+	        	<div class="visualClear"></div>
+			</div>
+  		</meta:macro>
+  	</body>
+</html>

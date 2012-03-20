@@ -5,7 +5,7 @@ from storm.locals import Store
 from Products.statusmessages.interfaces import IStatusMessage
 from vindula.contentcore import MessageFactory as _
 
-from vindula.myvindula.user import BaseStore
+from vindula.contentcore.base import BaseStore
 from datetime import date , datetime 
 
 #models
@@ -143,6 +143,13 @@ class ModelsFormInstance(Storm, BaseStore):
         else:
             return []
     
+    def del_Instance(self, form_id, id_instance):
+        results = self.store.find(ModelsFormInstance, ModelsFormInstance.forms_id==form_id,
+                                                      ModelsFormInstance.instance_id==id_instance).one()
+        if results:
+            self.store.remove(results)
+            self.store.flush()   
+    
     
 class ModelsFormValues(Storm, BaseStore):
     __storm_table__ = 'vin_contentcore_form_values'
@@ -174,6 +181,14 @@ class ModelsFormValues(Storm, BaseStore):
                                                  ModelsFormValues.instance_id==id_instance,
                                                  ModelsFormValues.fields==field).one()
         if data:
+            return data
+        else:
+            return None
+
+    def get_FormValues_byForm_and_Field(self, id_form,field):
+        data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==id_form,
+                                                 ModelsFormValues.fields==field)
+        if data.count() > 0:
             return data
         else:
             return None
