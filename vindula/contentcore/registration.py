@@ -566,7 +566,7 @@ class RegistrationLoadForm(BaseFunc):
             # Inicia o processamento do formulario
             # chama a funcao que valida os dados extraidos do formulario (valida_form)
             errors, data = valida_form(context, campos, context.request.form)
-            import pdb;pdb.set_trace()
+          
             if not errors:
                 
                 if isForm: 

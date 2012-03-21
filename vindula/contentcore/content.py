@@ -143,6 +143,17 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                     text += '\n'
                  
         self.request.response.write(str(text))
+        
+class VindulaEditViewForm(grok.View, BaseFunc):
+    grok.context(IFormularioPadrao)
+    grok.require('cmf.ManagePortal')
+    grok.name('edit-views')
+    
+#    def get_FormValues(self, id_form,id_instance):
+#        return ModelsFormValues().get_FormValues_byForm_and_Instance(int(id_form),int(id_instance))
+#    
+#    def get_Form_fields(self,id_form):
+#        return ModelsFormFields().get_Fields_ByIdForm(int(id_form))        
 
 
 #--------View Visualização Form----------------------------
