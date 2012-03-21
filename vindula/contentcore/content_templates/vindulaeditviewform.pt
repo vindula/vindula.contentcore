@@ -1,0 +1,32 @@
+<html metal:use-macro="here/main_template/macros/master">
+	<head>
+	</head>
+	<body>
+		<div metal:fill-slot="main">
+		    <div>
+				<div id="interna-form" >    		
+					<fieldset>
+		            	<legend>Selecione a visão para este formulario</legend>
+						<select id="opcao-view">
+							<option>View Padrão</option>
+							<option>Quadro de avisos</option>
+						</select>
+
+					</fieldset>
+					
+					<fieldset style="float:left;width:50%">
+		            	<legend>Listagems do campos deste formulário</legend>
+
+
+					</fieldset>
+					<fieldset style="float:left;width:50%">
+		            	<legend>Listagems do campos para esta view</legend>
+
+
+					</fieldset>
+					
+				</div>
+		    </div>
+		</div>  
+	</body>
+</html>
