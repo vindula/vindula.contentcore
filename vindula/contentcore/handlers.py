@@ -7,6 +7,7 @@ from zope.lifecycleevent.interfaces import IObjectModifiedEvent, IObjectCreatedE
 from vindula.contentcore.formulario import IFormularioPadrao
 from vindula.contentcore.conteudo_basico import IConteudoBasico
 
+from vindula.contentcore.validation import to_utf8
 from vindula.contentcore.base import BaseFunc
 from vindula.myvindula.user import BaseStore
 from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormInstance, ModelsFormValues, ModelsParametersForm
@@ -130,8 +131,4 @@ def ExcludConteudoDataBase(context, event):
             basestore.store.flush()   
     
     ModelsFormInstance().del_Instance(id_form,id_instance)    
-    
-    
-              
-            
             
