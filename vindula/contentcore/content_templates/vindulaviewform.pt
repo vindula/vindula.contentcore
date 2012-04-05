@@ -20,12 +20,12 @@
 						   tal:attributes="href string:${context/absolute_url|nothing}/relatorio-form">Gerar relat&oacute;rio os registros existentes</a>
 
 					</fieldset>
-					<fieldset>
+					<!--fieldset>
 		            	<legend>Visão Quadro de Avisos</legend>
 						<a alt="Quadro de Avisos" title="Quadro de Avisos"
 						   tal:attributes="href string:${context/absolute_url|nothing}/myvindula-avisos-view">Ver Quadro de Avisos</a>
 
-					</fieldset>
+					</fieldset-->
 					
 					<fieldset>
 		            	<legend>Listagems do registros</legend>

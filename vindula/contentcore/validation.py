@@ -31,7 +31,9 @@ def valida_form(ctx, configuracao, form):
             
             if configuracao.get(campo).get('required', None) is not None:
                 if configuracao[campo]['required'] == True: # configuracao: campo e obrigatorio
-                    if configuracao[campo]['type'] != 'bool':
+                    if configuracao[campo]['type'] != 'bool' and\
+                       configuracao[campo]['type'] != 'img' and \
+                       configuracao[campo]['type'] != 'file':
                         if valor == '' or valor.isspace(): # se o campo estiver vazio
                             errors[campo] = u'Este campo é obrigatório' # indica o campo vazio
     
@@ -113,24 +115,32 @@ def valida_form(ctx, configuracao, form):
                     
             elif configuracao[campo]['type'] == 'img':
                 data = valor.read()
-                if len(data) != 0 : 
-                    valor_convert = pickle.dumps(data)
-                    convertidos[campo] = to_utf8(valor_convert)
+                if configuracao[campo]['required'] == True and len(data) == 0:
+                    errors[campo] = u'Este campo é obrigatório' # indica o campo vazio
+
                 else:
-                     convertidos[campo] = ''
+                    if len(data) != 0 : 
+                        valor_convert = pickle.dumps(data)
+                        convertidos[campo] = to_utf8(valor_convert)
+                    else:
+                         convertidos[campo] = ''
     
             #logica para converter campos tipo File           
             elif configuracao[campo]['type'] == 'file':
                 data = valor.read()
                 filename = valor.filename
-                if len(data) != 0 :
-                    D ={}
-                    D['data'] = data
-                    D['filename'] = filename 
-                    valor_convert = pickle.dumps(D)
-                    convertidos[campo] = to_utf8(valor_convert)
+                if configuracao[campo]['required'] == True and len(data) == 0:
+                    errors[campo] = u'Este campo é obrigatório' # indica o campo vazio
+
                 else:
-                     convertidos[campo] = ''           
+                    if len(data) != 0 :
+                        D ={}
+                        D['data'] = data
+                        D['filename'] = filename 
+                        valor_convert = pickle.dumps(D)
+                        convertidos[campo] = to_utf8(valor_convert)
+                    else:
+                         convertidos[campo] = ''           
             
             elif configuracao[campo]['type'] == 'textarea':
                 if type(valor) == unicode:
