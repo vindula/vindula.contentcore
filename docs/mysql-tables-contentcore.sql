@@ -111,7 +111,7 @@ ENGINE = InnoDB
 AUTO_INCREMENT = 1
 DEFAULT CHARACTER SET = latin1;
 
-INSERT INTO `vin_contentcore_default_value` VALUES (3,'self.context.portal_membership.getAuthenticatedMember().getId()','usuario logado'),(4,'self.context.absolute_url()','url portal');
+INSERT INTO `vin_contentcore_default_value` VALUES (3,'self.context.portal_membership.getAuthenticatedMember().getId()','usuario logado'),(4,'self.context.absolute_url()','url portal'),(5,'import datetime; datetime.datetime.now().strftime("%d-%m-%Y %H:%M")','Data atual');
 
 
 -- -----------------------------------------------------

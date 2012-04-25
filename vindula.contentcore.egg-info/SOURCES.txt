@@ -16,7 +16,10 @@ vindula/contentcore/base.py
 vindula/contentcore/content.py
 vindula/contentcore/conteudo_basico.py
 vindula/contentcore/formulario.py
+vindula/contentcore/handlers.py
 vindula/contentcore/models.py
 vindula/contentcore/registration.py
 vindula/contentcore/tests.py
 vindula/contentcore/validation.py
+vindula/contentcore/browser/__init__.py
+vindula/contentcore/browser/views.py

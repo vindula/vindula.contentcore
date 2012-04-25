@@ -498,6 +498,53 @@ class RegistrationParametrosForm(BaseFunc):
         else:
             return form_data
 
+        
+class RegistrationEditViewForm(BaseFunc):
+    def to_utf8(self, value):
+        return unicode(value, 'utf-8')
+                            
+    def registration_processes(self,context):
+        form = context.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
+        form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
+        
+        # divisao dos dicionarios "errors" e "convertidos"
+        form_data = {
+            'errors': {},
+            'data': {},
+            'campos':{},}
+
+        # se clicou no botao "Voltar"
+        if 'form.voltar' in form_keys:
+            ctx.request.response.redirect(success_url)
+          
+        # se clicou no botao "Salvar"
+        elif 'form.submited' in form_keys:
+                
+            IStatusMessage(context.request).addStatusMessage(_(u'View cadastrados com sucesso.'), 'info')  
+            context.request.response.redirect(success_url)
+        
+        # se for um formulario de edicao 
+        elif result:
+            data = {}
+            fields = []
+            parameters = []
+            for item in result:
+                if item.fields_id:
+                    fields.append(item)
+                elif item.parameters:
+                    parameters.append(item)    
+                 
+            data['form_fields'] = fields
+            data['parameters'] = parameters
+            form_data['data'] = data 
+            return form_data
+
+        
+        #se formulario de listagem dos campos
+        else:
+            return form_data        
+        
+
 class RegistrationLoadForm(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
@@ -742,14 +789,24 @@ class RegistrationLoadForm(BaseFunc):
                         assunto = 'E-mail enviado do Formulário - %s'%(context.context.Title())
                         
                         msg = []
+                        arquivos = []
                         i=0
                         while i < len(campos.keys()):
                             msg.append(i)
                             i+=1
                         
+                        
                         for campo in campos:
                             index = campos[campo].get('ordem',0)
-                            x = "%s: %s" % (campos[campo]['label'],data.get(campo,''))
+                            
+                            if campos[campo].get('type','') == 'file' or \
+                                campos[campo].get('type','') == 'img':
+                                    
+                                decode = self.decodePickle(data.get(campo))
+                                arquivos.append(decode)
+                                                                
+                            else:
+                                x = "%s: %s" % (campos[campo].get('label',''),data.get(campo,''))
                             
                             msg.pop(index)
                             msg.insert(index, x)  
@@ -759,7 +816,7 @@ class RegistrationLoadForm(BaseFunc):
                         
                         envio = False
                         for email in emails:
-                            envio = self.envia_email(context,msg, assunto, email)
+                            envio = self.envia_email(context,msg, assunto, email,arquivos)
                         
                         if envio:
                             IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")

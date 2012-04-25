@@ -14,7 +14,9 @@ from zope.app.component.hooks import getSite
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
+from email.MIMEBase import MIMEBase
 from email.MIMEImage import MIMEImage
+from email import Encoders
 
 #Imports regarding the connection of the database 'strom'
 from storm.locals import *
@@ -81,6 +83,7 @@ class BaseFunc(BaseStore):
             return True
     
     def getValue(self,campo,request,data,default_value):
+        #import pdb;pdb.set_trace() 
         if campo in request.keys():
             if request.get(campo, None):
                 return request.get(campo,'')
@@ -256,7 +259,7 @@ class BaseFunc(BaseStore):
         else:
             return valor
 
-    def envia_email(self,ctx, msg, assunto, mail_para):
+    def envia_email(self,ctx, msg, assunto, mail_para, arquivos):
         """
         Parte do codigo retirado de:
             - http://dev.plone.org/collective/browser/ATContentTypes/branches/release-1_0-branch/lib/imagetransform.py?rev=10162
@@ -276,6 +279,17 @@ class BaseFunc(BaseStore):
         mensagem['To'] = mail_para
         mensagem.preamble = 'This is a multi-part message in MIME format.'
         mensagem.attach(MIMEText(msg, 'html', 'utf-8'))
+        
+        # Atacha os arquivos
+        for f in arquivos:
+            if type(f) == dict:
+                parte = MIMEBase('application', 'octet-stream')
+                parte.set_payload(f.get('data',f))
+                Encoders.encode_base64(parte)
+                parte.add_header('Content-Disposition', 'attachment; filename="%s"' % f.get('filename','image.jpeg'))
+                
+                mensagem.attach(parte)
+        
         mail_de = mensagem['From']
 
         #Pegando SmtpHost Padrão do Plone
@@ -422,9 +436,11 @@ class BaseFunc(BaseStore):
                 else:
                     tmp += ''
                 
+                
                     
                 html.pop(index)
                 html.insert(index, tmp)    
+                
             
             return html
         

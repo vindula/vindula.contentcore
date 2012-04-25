@@ -149,11 +149,12 @@ class VindulaEditViewForm(grok.View, BaseFunc):
     grok.require('cmf.ManagePortal')
     grok.name('edit-views')
     
-#    def get_FormValues(self, id_form,id_instance):
-#        return ModelsFormValues().get_FormValues_byForm_and_Instance(int(id_form),int(id_instance))
-#    
-#    def get_Form_fields(self,id_form):
-#        return ModelsFormFields().get_Fields_ByIdForm(int(id_form))        
+    def get_Form_fields(self,):
+        id_form =  int(self.context.forms_id)
+        return ModelsFormFields().get_Fields_ByIdForm(id_form)    
+    
+    def load_form(self):
+        return RegistrationViewForm().registration_processes(self)
 
 
 #--------View Visualização Form----------------------------
@@ -223,7 +224,13 @@ class VindulaFormImage(grok.View, BaseFunc):
                     x = self.decodePickle(valor_blob)
                 
                 self.request.response.setHeader("Content-Type", "image/jpeg", 0)
-                self.request.response.write(x)                
+                
+                try:
+                    #medoto adicionado na versão 1.1 do vindula
+                    self.request.response.write(x['data'])
+                except:
+                    # medo usutilizado ate a versão antiga do content core
+                    self.request.response.write(x)
 
 class VindulaFormFile(grok.View, BaseFunc):
     grok.context(Interface)

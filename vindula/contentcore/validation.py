@@ -115,12 +115,18 @@ def valida_form(ctx, configuracao, form):
                     
             elif configuracao[campo]['type'] == 'img':
                 data = valor.read()
+                filename = valor.filename
                 if configuracao[campo]['required'] == True and len(data) == 0:
                     errors[campo] = u'Este campo é obrigatório' # indica o campo vazio
 
                 else:
-                    if len(data) != 0 : 
-                        valor_convert = pickle.dumps(data)
+                    if len(data) != 0 :
+                        # Adicionado dicionario na versão 1.1 do vindula 
+                        D ={}
+                        D['data'] = data
+                        D['filename'] = filename
+                        
+                        valor_convert = pickle.dumps(D)
                         convertidos[campo] = to_utf8(valor_convert)
                     else:
                          convertidos[campo] = ''

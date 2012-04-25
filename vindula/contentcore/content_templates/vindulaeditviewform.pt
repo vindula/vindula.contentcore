@@ -1,30 +1,105 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
+		<metal:styleslot fill-slot="style_slot">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/drop-box.css">
+			<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
+		</metal:styleslot>
+		<metal:js fill-slot="javascript_head_slot">
+    		
+			
+			<script type="text/javascript">
+				var boxSizeArray = [1,1,1];	
+			</script>
+			<script type="text/javascript" src="/++resource++vindula.contentcore/js/select-field-form.js"></script>
+			
+			<script type="text/javascript" tal:attributes="src string:${view/static}/js/select-views.js"></script>
+		</metal:js>
+		
+		
 	</head>
 	<body>
 		<div metal:fill-slot="main">
 		    <div>
-				<div id="interna-form" >    		
+		    	<h2>Edição e configuração da view do formulário</h2>
+				<div id="interna-view-form" >    		
 					<fieldset>
-		            	<legend>Selecione a visão para este formulario</legend>
+		            	<legend>Selecione a visão para este formulário</legend>
+						<!--input type="hidden" id="context_url" tal:attributes="value string:${context/absolute_url|nothing}"-->
 						<select id="opcao-view">
-							<option>View Padrão</option>
-							<option>Quadro de avisos</option>
+							<option value="">-- Selecione --</option>
+							<option value="padrao">Formulario de adção</option>
+							<option value="avisos">Quadro de avisos</option>
 						</select>
 
 					</fieldset>
 					
-					<fieldset style="float:left;width:50%">
-		            	<legend>Listagems do campos deste formulário</legend>
+					<div id="content-avisos">
+				
+						<div id="dhtmlgoodies_dragDropContainer">
+							<fieldset class="colluns">
+				            	<legend>Listagems do campos deste formulário</legend>
+								<div id="dhtmlgoodies_listOfItems">
+									<div>
+										<p>Listagems do campos</p>
+										<tal:def define="itens view/get_Form_fields|nothing">
+											<tal:cond condition="itens"
+													  define="x python:itens.count()">
+												<ul id="allItems" tal:attributes="style python: 'height:'+str(x*30)+'px';">
+													
+													<tal:rep tal:repeat="item itens">
+														<li><span tal:attributes="id string: node${repeat/item/number}"
+															tal:content="string:${item/title|nothing} - ${item/type_fields|nothing}" />
+															<input type="hidden" name="name-field" tal:attributes="value item/name_field|nothig">
+														</li>
+				
+													</tal:rep>	
+												</ul>
+											</tal:cond>
+										</tal:def>
+									</div>
+								</div>
+				
+								<!--http://www.dhtmlgoodies.com/index.html?whichScript=drag_drop_nodes-->
+							</fieldset>
+							<form id="" tal:attributes="action string:${context/absolute_url|nothing}/edit-views">
+								<fieldset class="colluns">
+									<legend>Listagems do campos para esta view</legend>
+									<div id="dhtmlgoodies_mainContainer">
+										<!-- ONE <UL> for each "room" -->
+										<div>
+											<p>Titulo (Text)</p>
+											<ul id="box1"></ul>
+										</div>
+										<div>
+											<p>Texto (Text / RichText)</p>
+											<ul id="box2"></ul>
+										</div>
+										<div>
+											<p>Status (Bool)</p>
+											<ul id="box3"></ul>
+										</div>
+									</div>	
+										
+									<!-- Botões de ação -->	 	
+								   	<fieldset>
+								   		<br/>
+										<div style="float:left; width:100%">
+											<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
+											<input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited">
+										</div>
+									</fieldset>
+								</fieldset>
+							</form>
 
-
-					</fieldset>
-					<fieldset style="float:left;width:50%">
-		            	<legend>Listagems do campos para esta view</legend>
-
-
-					</fieldset>
-					
+						</div>
+						<ul id="dragContent"></ul>
+						<div id="dragDropIndicator"><img tal:attributes="src string:${view/static}/img/insert.gif"></div>
+					</div>
+					<!-- Spinner 
+					<div id="spinner" class="display-none" style="text-align:center;">
+						<img src="" alt="spinner" align="center" tal:attributes="src string:${view/static}/img/ajaxLoader.gif" />
+					</div>		-->	
+				
 				</div>
 		    </div>
 		</div>  
