@@ -1,0 +1,55 @@
+<tal:ajax define="view python:context.restrictedTraverse('@@edit-views');">
+	<div>		
+		<script type="text/javascript">
+			var boxSizeArray = [1,1,1];	
+		</script>
+		
+		<!--script type="text/javascript" src="/++resource++vindula.contentcore/js/select-field-form.js"></script-->
+
+		<div id="dhtmlgoodies_dragDropContainer">
+			<fieldset class="colluns">
+            	<legend>Listagems do campos deste formulário</legend>
+				<div id="dhtmlgoodies_listOfItems">
+					<div>
+						<p>Listagems do campos</p>
+						<tal:def define="itens view/get_Form_fields|nothing">
+							<tal:cond condition="itens"
+									  define="x python:itens.count()">
+								<ul id="allItems" tal:attributes="style python: 'height:'+str(x*30)+'px';">
+									
+									<tal:rep tal:repeat="item itens">
+										<li tal:attributes="id string: node${repeat/item/number}"
+											tal:content="string:${item/title|nothing} - ${item/type_fields|nothing}">Student A</li>
+
+									</tal:rep>	
+								</ul>
+							</tal:cond>
+						</tal:def>
+					</div>
+				</div>
+
+				<!--http://www.dhtmlgoodies.com/index.html?whichScript=drag_drop_nodes-->
+			</fieldset>
+			<fieldset class="colluns">
+            	<legend>Listagems do campos para esta view</legend>
+				<div id="dhtmlgoodies_mainContainer">
+					<!-- ONE <UL> for each "room" -->
+					<div>
+						<p>Team a</p>
+						<ul id="box1"></ul>
+					</div>
+					<div>
+						<p>Team B</p>
+						<ul id="box2"></ul>
+					</div>
+					<div>
+						<p>Team C</p>
+						<ul id="box3"></ul>
+					</div>
+				</div>	
+			</fieldset>
+		</div>
+		<ul id="dragContent"></ul>
+		<div id="dragDropIndicator"><img tal:attributes="src string:${view/static}/img/insert.gif"></div>
+	</div>
+</tal:ajax>									
