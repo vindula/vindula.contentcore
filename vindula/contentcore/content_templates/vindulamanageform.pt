@@ -9,7 +9,7 @@
 												   data_default view/list_default|python:{}">
 		    
 		    <div id="content" >
-				<h1>Criação de Formul&aacute;rios do Vindula</h1>	
+				<h1>Vindula Formul&aacute;rio B&aacute;sico</h1>	
 				<div id="interna" >
 					<!-- Botões de ação--> 	
 				   	<fieldset>
