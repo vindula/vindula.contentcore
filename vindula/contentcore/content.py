@@ -137,7 +137,10 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                         if field.flag_ativo:
                             data = item.find(fields=field.name_field).one()
                             if not field.type_fields in types:
-                                valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', '')
+                                if data:
+                                    valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', '')
+                                else:
+                                    valor = ''
                                 text += '%s;' % (valor)
            
                     text += '\n'
