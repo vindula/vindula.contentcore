@@ -7,3 +7,9 @@ Changelog
 1.1 (2012-04-25)
 
 - adição de anexo no email do formulario, para campos de arquivo ou imagem 
+
+1.1.1 - 2012-05-23
+--------------------
+ - Correções de ortografia no porduto
+ - Correção da exportação de arquivos csv
+ - Correção da visualização de objetos conteudo basico com imagens e anexo 

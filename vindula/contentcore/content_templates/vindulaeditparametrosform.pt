@@ -18,7 +18,7 @@
 		        <form name="edit-parametros" id="edit-parametros" enctype="multipart/form-data" class="enableAutoFocus"
 					 tal:attributes="action string:${context/absolute_url|nothing}/edit-parametros" method="POST">
 					<fieldset>					
-						<legend>Parâmetros originário dos campos do formulario</legend>
+						<legend>Parâmetros originário dos campos do formulário</legend>
 					
 						<div class="boxSelecao" name="form_fields">
 							<tal:rep repeat="filed form_fields">

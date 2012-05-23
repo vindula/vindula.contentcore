@@ -34,7 +34,7 @@ class IFormularioPadrao(form.Schema):
                             required=False)
     
     list_email = schema.Text(title=_(u"Lista de Email"),
-                            description=_(u"Digite os email de destinatario dos dados do formulário <br /> (Digite um email por linha)."),
+                            description=_(u"Digite os email de destinatário dos dados do formulário <br /> (Digite um email por linha)."),
                             required=False)
     
     acao_destino = schema.Choice(title=_(u"Ação de destino do formulário"),
@@ -43,12 +43,12 @@ class IFormularioPadrao(form.Schema):
                                  required=True)
    
     doc_plone = RelationChoice(title=_(u"Enviar o usuário a um documento do plone"),
-                               description=_(u"Selecione o objeto no portal para que o usuario seja direcionado após o formulário realizar a ação"),                      
+                               description=_(u"Selecione o objeto no portal para que o usuário seja direcionado após o formulário realizar a ação"),                      
                                source=ObjPathSourceBinder(review_state='published'),
                                required=False,)
     
     url = schema.TextLine(title=_(u"Redireciona o usuário para uma url especifica"),
-                              description=_(u"Digite a url que o usuario sera redirecionado após o formulário realizar a ação"),
+                              description=_(u"Digite a url que o usuário será redirecionado após o formulário realizar a ação"),
                               default=u'http://',
                               required=False)
     

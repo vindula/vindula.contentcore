@@ -28,7 +28,7 @@
 					</fieldset-->
 					
 					<fieldset>
-		            	<legend>Listagems do registros</legend>
+		            	<legend>Listagem do registros</legend>
 						<table width="100%">
 							<tr tal:define="fields python:view.get_Form_fields()">
 								<tal:rep repeat="campo fields|nothing">

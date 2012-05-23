@@ -245,6 +245,7 @@ class BaseFunc(BaseStore):
             return self.decodePickle(valor)
         
         elif tipo == 'img':
+            
             if id:
                 return '<img width="100px" src="../form-image?id=%s">' % id
             else:
@@ -304,15 +305,19 @@ class BaseFunc(BaseStore):
             smtp.connect(server_all)
             #Caso o Usuario e Senha estejam preenchdos faz o login
             if smtp_userid and smtp_pass:
-                smtp.login(smtp_userid, smtp_pass)
+                try:
+                    smtp.ehlo()
+                    smtp.starttls()
+                    smtp.login(smtp_userid, smtp_pass)
+                except:
+                    smtp.login(smtp_userid, smtp_pass)
+                    
             smtp.sendmail(mail_de, mail_para, mensagem.as_string())
             smtp.quit()
         except:
             return False
 
         return True
-
-
 
     def geraCampos(self,form_data):
         if type(form_data) == dict:

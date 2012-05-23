@@ -15,11 +15,13 @@
 							<tal:cont condition="python: values and fields">
 								<tal:rep repeat="campo fields|nothing">
 									<p> <b tal:content="campo/title|nothing" /> :
-										
-										<tal:def define="valor python:values.find(fields=campo.name_field).one()">
-											<span tal:content="valor/value|nothing" />	
+										<tal:def define="data python:values.find(fields=campo.name_field).one()">
+												<span tal:define="tipo campo/type_fields|nothing;
+																   valor data/value|nothing;
+																	valor_blob data/value_blob|nothing;
+																	id_campo data/id|nothing;"
+														tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)" />
 										</tal:def>
-										 
 									</p>
 								</tal:rep>
 							</tal:cont>

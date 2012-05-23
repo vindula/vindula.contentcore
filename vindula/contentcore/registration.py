@@ -12,8 +12,8 @@ class RegistrationCreateForm(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
       
-    campos = {'name_form'          : {'required': True,  'type' : to_utf8,'label':'Titulo',    'decription':u'Digite o titulo do formulario',    'ordem':0},
-              'description_form'   : {'required': False, 'type' : to_utf8,'label':'Descrição', 'decription':u'Digite a descrição do formulario', 'ordem':1}}
+    campos = {'name_form'          : {'required': True,  'type' : to_utf8,'label':'Titulo',    'decription':u'Digite o título do formulário',    'ordem':0},
+              'description_form'   : {'required': False, 'type' : to_utf8,'label':'Descrição', 'decription':u'Digite a descrição do formulário', 'ordem':1}}
                         
     def registration_processes(self,context):
         success_voltar = context.context.absolute_url() #+  '/manage-form'
@@ -312,8 +312,8 @@ class RegistrationAddDefaultValue(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
       
-    campos = {'value': {'required': True, 'type' : to_utf8,'label':'Médoto ou Valor Padrão', 'decription':u'Digite um método ou valor padão em formato python','ordem':0},
-              'lable': {'required': True, 'type' : to_utf8,'label':'Nome do método',         'decription':u'Digite a descrição do método',                     'ordem':1},}
+    campos = {'value': {'required': True, 'type' : to_utf8,'label':'Médoto ou Valor Padrão', 'decription':u'Digite um método ou valor padrão em formato python','ordem':0},
+              'lable': {'required': True, 'type' : to_utf8,'label':'Nome do método',         'decription':u'Digite a descrição do método',                      'ordem':1},}
                         
     def registration_processes(self,context):
         success = context.context.absolute_url() +  '/manage-form'
@@ -794,11 +794,10 @@ class RegistrationLoadForm(BaseFunc):
                         while i < len(campos.keys()):
                             msg.append(i)
                             i+=1
-                        
-                        
+                       
                         for campo in campos:
                             index = campos[campo].get('ordem',0)
-                            
+                            x = ''
                             if campos[campo].get('type','') == 'file' or \
                                 campos[campo].get('type','') == 'img':
                                     

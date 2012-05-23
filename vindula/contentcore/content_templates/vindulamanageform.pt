@@ -30,8 +30,8 @@
 							<div id="list-forns" tal:condition="data_default">
 								<table width="100%">
 									<tr>
-										<th>Mátodo</th>
-										<th>Nome do mátodo</th>
+										<th>Método</th>
+										<th>Nome do método</th>
 										<th width="10%">Editar </th>
 										<th width="10%">Excluir </th>
 									</tr>
