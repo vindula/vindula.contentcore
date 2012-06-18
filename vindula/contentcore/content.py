@@ -139,9 +139,9 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
 
                             if not field.type_fields in types and data:
                                     valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', '')
-                                else:
-                                    valor = ''
-                                text += '%s;' % (valor)
+                            else:
+                                valor = ''
+                            text += '%s;' % (valor)
            
                     text += '\n'
                  

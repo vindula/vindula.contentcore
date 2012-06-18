@@ -15,9 +15,37 @@ from plone.z3cform.textlines import TextLinesFieldWidget
 from vindula.contentcore.base import BaseFunc
 from vindula.contentcore.models import ModelsForm, ModelsFormFields
 
+# import fo SimpleVocabulary
+from zope.interface import implements
+from zope.schema.interfaces import IContextSourceBinder
+from zope.schema.vocabulary import SimpleVocabulary
+from zope.schema.vocabulary import SimpleTerm
+
 
 def to_utf8(value):
     return unicode(value, 'utf-8')
+
+class ListCamposForm(object):
+    """ Create SimpleVocabulary for fields of form """
+    implements(IContextSourceBinder)
+    def __init__(self):
+        self.object = object 
+    def __call__(self, context):
+        terms = []
+        #terms.append(SimpleTerm('', '--NOVALUE--', _(u'option_category', default=u'Padrão')))
+        try:
+            id_form = int(context.forms_id)
+        except:
+            id_form = 0
+         
+        if id_form:
+            fields = ModelsFormFields().get_Fields_ByIdForm(id_form)
+            
+            for campo in fields:
+                  if campo.flag_ativo:
+                      terms.append(SimpleTerm(campo.name_field, campo.name_field, _(u'option_category', default=campo.title)))
+        
+        return SimpleVocabulary(terms)    
 
 # Interface and schema
 class IFormularioPadrao(form.Schema):
@@ -36,6 +64,11 @@ class IFormularioPadrao(form.Schema):
     list_email = schema.Text(title=_(u"Lista de Email"),
                             description=_(u"Digite os email de destinatário dos dados do formulário <br /> (Digite um email por linha)."),
                             required=False)
+    
+    email_padrao = schema.Choice(title=_(u"E-mail padrão"),
+                                 description=_(u"Selecione o campo para o remetente do email, enviado pedo formulário."),
+                                 source=ListCamposForm(),
+                                 required=False)
     
     acao_destino = schema.Choice(title=_(u"Ação de destino do formulário"),
                                  description=_(u"Selecione um destino para o formulário depois de realizar a ação"),

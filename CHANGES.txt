@@ -12,4 +12,9 @@ Changelog
 --------------------
  - Correções de ortografia no porduto
  - Correção da exportação de arquivos csv
- - Correção da visualização de objetos conteudo basico com imagens e anexo 
+ - Correção da visualização de objetos conteudo basico com imagens e anexo
+ 
+ 
+ 1.1.2 - 2012-06-18
+ ---------------------
+ - Adição de mecanismo para alterar o FROM do email enviado pelo formulario basico (funciona com servidor SMTP nao altenticado) 

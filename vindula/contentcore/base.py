@@ -260,7 +260,7 @@ class BaseFunc(BaseStore):
         else:
             return valor
 
-    def envia_email(self,ctx, msg, assunto, mail_para, arquivos):
+    def envia_email(self,ctx, msg, assunto, mail_para, arquivos,to_email=None):
         """
         Parte do codigo retirado de:
             - http://dev.plone.org/collective/browser/ATContentTypes/branches/release-1_0-branch/lib/imagetransform.py?rev=10162
@@ -275,8 +275,12 @@ class BaseFunc(BaseStore):
         mensagem['Subject'] = assunto
 
         #Pega os remetentes do email pelas configurações do zope @@mail-controlpanel
-        mensagem['From'] = '%s <%s>' % (portal.getProperty('email_from_name'),
-                                        portal.getProperty('email_from_address'))
+        if to_email:
+            mensagem['From'] = '%s <%s>' % (to_email,to_email)
+        else:
+            mensagem['From'] = '%s <%s>' % (portal.getProperty('email_from_name'),
+                                            portal.getProperty('email_from_address'))
+        
         mensagem['To'] = mail_para
         mensagem.preamble = 'This is a multi-part message in MIME format.'
         mensagem.attach(MIMEText(msg, 'html', 'utf-8'))

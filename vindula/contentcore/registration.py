@@ -810,12 +810,17 @@ class RegistrationLoadForm(BaseFunc):
                             msg.pop(index)
                             msg.insert(index, x)  
                         
+                        if context.context.email_padrao:
+                            to_email = data.get(context.context.email_padrao)
+                        else:
+                            to_email = None
+                        
                         # Pega o conteudo impresso na tela e define como mensagem
                         msg = '\n<br>'.join(msg)
                         
                         envio = False
                         for email in emails:
-                            envio = self.envia_email(context,msg, assunto, email,arquivos)
+                            envio = self.envia_email(context,msg, assunto, email,arquivos,to_email)
                         
                         if envio:
                             IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
