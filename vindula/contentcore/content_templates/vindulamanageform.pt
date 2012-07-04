@@ -1,12 +1,14 @@
-<html metal:use-macro="here/main_template/macros/master">
-	<head>
-		<metal:styleslot fill-slot="style_slot">
-    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
-		</metal:styleslot>
-	</head>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:tal="http://xml.zope.org/namespaces/tal" 
+	  xmlns:metal="http://xml.zope.org/namespaces/metal" 
+	  xmlns:i18n="http://xml.zope.org/namespaces/i18n" 
+	  metal:use-macro="context/prefs_main_template/macros/master">
+	
 	<body>
-		<div metal:fill-slot="content" tal:define="data view/load_form | python:{};
+		<div metal:fill-slot="prefs_configlet_content" tal:define="data view/load_form | python:{};
 												   data_default view/list_default|python:{}">
+		    
+		    <link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">	
 		    
 		    <div id="content" >
 				<h1>Vindula Formul&aacute;rio B&aacute;sico</h1>	
