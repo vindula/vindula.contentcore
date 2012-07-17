@@ -22,6 +22,8 @@ from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema.vocabulary import SimpleTerm
 
 
+from z3c.form.browser.checkbox import CheckBoxFieldWidget 
+
 def to_utf8(value):
     return unicode(value, 'utf-8')
 
@@ -56,10 +58,11 @@ class IFormularioPadrao(form.Schema):
                               description=u"campo do formulario",
                               required=True)
     
-    acao_saida = schema.List(title=_(u"Ação de saída do formulário"),
+    form.widget(acao_saida = CheckBoxFieldWidget)
+    acao_saida = schema.Set(title=_(u"Ação de saída do formulário"),
                             description=_(u"Selecione uma ou mais ações que o formulário deve executar ao salvar"),# <br /> (Use a tecla control para seleciona mais de umvalor)."),
                             value_type=schema.Choice(source=ListExitForm()),
-                            required=False)
+                            required=True)
     
     list_email = schema.Text(title=_(u"Lista de Email"),
                             description=_(u"Digite os email de destinatário dos dados do formulário <br /> (Digite um email por linha)."),

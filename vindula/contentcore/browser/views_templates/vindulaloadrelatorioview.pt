@@ -55,7 +55,7 @@
 												<tr tal:define="i repeat/rep/even|nothing" 
 													tal:attributes="class python: i and 'even' or 'odd'">
 													
-													<td tal:content="rep/text|nothing"></td>
+													<td tal:content="structure rep/text|nothing"></td>
 												</tr>
 											</tal:rep>
 										</table>

@@ -17,8 +17,7 @@ class VindulaLoadRelatorioView(grok.View, BaseFunc):
     
     def load_form(self):
         return LoadRelatorioForm().registration_processes(self)
-
-
+    
 class VindulaAvisosView(grok.View):
     grok.context(IFormularioPadrao)
     grok.require('zope2.View')

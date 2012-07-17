@@ -158,24 +158,20 @@ class LoadRelatorioForm(BaseFunc):
                        
                        M.append(N)
                            
-#                   opcao = campo.list_values.splitlines()
-#                   for i in opcao:
-#                       N = {}
-#                       x = i.split('|')
-#                       N['name'] = x[1]
-#                       N['cont'] = 0 
-#                       
-#                           if str(x[0].replace(' ','')) in convertido:
-#                               N['cont'] +=1 
-#                    
-#                       M.append(N)
-                   
                    D['dados'] = M
+                   
                else:
                    M = []
                    for instance in instances:
-                       N={}    
-                       N['text'] = instance.value
+                       N={}
+                       if tipo == 'img':
+                           N['text'] = '<img width="120px" src="%s/form-image?id=%s">' %(getSite().absolute_url(),instance.id)
+                           
+                       elif tipo == 'file':
+                           N['text'] = '<a href="%s/form-file?id=%s" target="_blank">Download do Arquivo</a><br />' %(getSite().absolute_url(), instance.id)
+                           
+                       else:
+                           N['text'] = instance.value
                    
                        M.append(N)
                    
@@ -188,7 +184,6 @@ class LoadRelatorioForm(BaseFunc):
            L.append(D) 
         
         return L
-    
     
 
 

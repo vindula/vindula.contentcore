@@ -17,4 +17,14 @@ Changelog
  
  1.1.2 - 2012-06-18
  ---------------------
- - Adição de mecanismo para alterar o FROM do email enviado pelo formulario basico (funciona com servidor SMTP nao altenticado) 
+ - Adição de mecanismo para alterar o FROM do email enviado pelo formulario basico (funciona com servidor SMTP nao altenticado)
+ 
+ 1.1.3 - 2012-07-11
+ ----------------------
+ - Adição do medoto de id de comentarios dinamico para o editor richText
+  
+
+1.1.4 - 2012-07-17
+------------------------
+- Ajustes no widget para seleção da ação do formulario
+- Ajustes na view de relatorio do formulario para campos image e file
