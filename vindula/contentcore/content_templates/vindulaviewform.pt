@@ -1,5 +1,13 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
+        <!-- Removendo a área de portlets -->
+                <metal:portlet fill-slot="portlets_two_slot">
+                        <span tal:content="nothing" />
+                </metal:portlet>
+
+                <metal:portlet fill-slot="portlets_one_slot">
+                        <span tal:content="nothing" />
+                </metal:portlet>
 		<metal:styleslot fill-slot="style_slot">
     		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
 		</metal:styleslot>

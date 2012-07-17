@@ -1,3 +1,17 @@
+#interna-form{
+        position: relative;
+        z-index: 10;
+}
+
+#interna-form table tr{
+        background: #FFFFFF;
+        border: 1px solid #000000;
+        padding:3px;
+}
+
+.even {
+    background: none repeat scroll 0 0 #DDDDDD !important;
+}
 #interna-form table tr{
 	border: 1px solid #000000;
 	padding:3px;	
