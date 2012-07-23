@@ -1,13 +1,11 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
         <!-- Removendo a área de portlets -->
-                <metal:portlet fill-slot="portlets_two_slot">
-                        <span tal:content="nothing" />
-                </metal:portlet>
-
-                <metal:portlet fill-slot="portlets_one_slot">
-                        <span tal:content="nothing" />
-                </metal:portlet>
+        <metal:block fill-slot="top_slot">
+            <tal:dummy tal:define="disable_column_one python:request.set('disable_plone.leftcolumn',1);
+                                   disable_column_two python:request.set('disable_plone.rightcolumn',1);" />
+        </metal:block>
+        
 		<metal:styleslot fill-slot="style_slot">
     		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
 		</metal:styleslot>
