@@ -28,3 +28,8 @@ Changelog
 ------------------------
 - Ajustes no widget para seleção da ação do formulario
 - Ajustes na view de relatorio do formulario para campos image e file
+
+
+1.1.5 - 2012-07-26
+-----------------------
+- Ajustes na ordenação dos itens do select e list

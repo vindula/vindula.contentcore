@@ -391,14 +391,14 @@ class BaseFunc(BaseStore):
                     
                     elif type_campo == 'combo':
                         select = False
-                        tmp += "<select name='%s'>"%(campo)
+                        tmp += "<select name='%s'>"%(campo) 
                         tmp += "<option value="">-- Selecione --</option>"
                         for item in value_choice[campo]:
-                            if item == self.getValue(campo,self.request,data,default_value):
+                            if item[0] == self.getValue(campo,self.request,data,default_value):
                                 select = True
-                                tmp +="<option value='%s' selected>%s</option>"%(item, value_choice[campo][item])
+                                tmp +="<option value='%s' selected>%s</option>"%(item[0], item[1])
                             else:
-                                tmp +="<option value='%s'>%s</option>"%(item, value_choice[campo][item])
+                                tmp +="<option value='%s'>%s</option>"%(item[0], item[1])
                         tmp += "</select>"
                         if select:
                             tmp += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo,'', campo)
@@ -408,21 +408,21 @@ class BaseFunc(BaseStore):
                     elif type_campo == 'list':
                         tmp += "<div class='boxSelecao' name='%s'>"%(campo)
                         for item in value_choice[campo]:
-                            lable =  value_choice[campo][item]
-                            if item in self.getValueList(campo,self.request,data,default_value):
-                                tmp += "<input value='%s' type='checkbox' checked name='%s'/><label>%s</label><br/>"%(item,campo,lable)
+                            lable =  item[1]
+                            if item[0] in self.getValueList(campo,self.request,data,default_value):
+                                tmp += "<input value='%s' type='checkbox' checked name='%s'/><label>%s</label><br/>"%(item[0],campo,lable)
                             else:
-                                tmp += "<input value='%s' type='checkbox' name='%s'/><label>%s</label><br/>"%(item,campo,lable)
+                                tmp += "<input value='%s' type='checkbox' name='%s'/><label>%s</label><br/>"%(item[0],campo,lable)
                         tmp += "</div>" 
                     
                     elif type_campo == 'choice':
                         tmp += "<select name='%s'>"%(campo)
                         tmp += "<option value="">-- Selecione --</option>"
                         for item in value_choice[campo]:
-                            if item == self.getValue(campo,self.request,data,default_value):
-                                tmp +="<option value='%s' selected>%s</option>"%(item, value_choice[campo][item])
+                            if item[0] == self.getValue(campo,self.request,data,default_value):
+                                tmp +="<option value='%s' selected>%s</option>"%(item[0], item[1])
                             else:
-                                tmp +="<option value='%s'>%s</option>"%(item, value_choice[campo][item])
+                                tmp +="<option value='%s'>%s</option>"%(item[0], item[1])
 
                         tmp += "</select>"
                     

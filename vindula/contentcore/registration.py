@@ -213,11 +213,12 @@ class RegistrationCreateFields(BaseFunc):
                   'forms_id'              : {'required': False, 'type':'hidden',    'label':'Id form',                      'decription':u'',                                                                 'ordem':9}}    
             
         
-        lista_itens = {'type_fields':{'text':'Campo de Texto','textarea':'Campo Texto Multiplas Linhas',
-                                      'bool':'Campo Verdadeiro/Falso','choice':'Campo de Escolha',
-                                      'list':'Campo de Seleção Multipla','hidden':'Campo Oculto',
-                                      'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos',
-                                      'richtext':'Campo de Texto Rico'}
+        lista_itens = {'type_fields':[['text','Campo de Texto'],['textarea','Campo Texto Multiplas Linhas'],
+                                      ['bool','Campo Verdadeiro/Falso'],['choice','Campo de Escolha'],
+                                      ['list','Campo de Seleção Multipla'],['hidden','Campo Oculto'],
+                                      ['img','Campo de Upload de Imagem'],['file','Campo de Upload de Arquivos'],
+                                      ['richtext','Campo de Texto Rico']
+                                      ]
                        }
         
         dados_defaul =  ModelsDefaultValue().get_DefaultValues()
@@ -570,21 +571,26 @@ class RegistrationLoadForm(BaseFunc):
                     campos['outro'+str(n)] = {'ordem':field.ordenacao}     
                     n += 1
                     
-                if field.type_fields == 'choice':
+                if field.type_fields == 'choice' or\
+                   field.type_fields == 'list':
                     items = field.list_values.splitlines()
-                    D={}
+                    D=[]
                     for i in items:
-                        L = i.split('|')
-                        D[L[0].replace(' ','')] = L[1]
+                        L = i.split(' | ')
+                        #D[L[0].replace(' ','')] = L[1]
+                        D.append(L)
+                        
                     lista_itens[field.name_field] = D
                     
-                if field.type_fields == 'list':
-                    items = field.list_values.splitlines()
-                    D={}
-                    for i in items:
-                        L = i.split('|')
-                        D[L[0].replace(' ','')] = L[1]
-                    lista_itens[field.name_field] = D
+#                if field.type_fields == 'list':
+#                    items = field.list_values.splitlines()
+#                    D={}
+#                    for i in items:
+#                        L = i.split('|')
+#                        D[L[0].replace(' ','')] = L[1]
+#                    
+#                    lista_itens[field.name_field] = D
+                
                 if field.value_default:
                     default_value[field.name_field] = field.value_default
                  
