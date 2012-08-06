@@ -73,7 +73,8 @@
   <permission value="Modify portal content"/>
  </action>
 
-  <action title="Editar Parâmetro" action_id="form_parm" category="object" condition_expr="python: context.acao_destino=='parameto'"
+  <action title="Editar Parâmetro" action_id="form_parm" category="object"
+          condition_expr="python: context.acao_destino=='parameto'"
     url_expr="string:${object_url}/edit-parametros" visible="True">
     <permission value="Modify portal content"/>
  </action>

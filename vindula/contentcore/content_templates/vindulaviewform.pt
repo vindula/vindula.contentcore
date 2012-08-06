@@ -64,12 +64,14 @@
 									</tal:def>
 									<td width="10%">
 										<a tal:attributes="href python:context.absolute_url()+'?id_instance='+str(item[0].instance_id)"
-											alt="Editar registro" title="Editar registro">
+											alt="Editar registro" title="Editar registro"
+											tal:condition="python: view.canRequestPermission('cmf.ModifyPortalContent')">
 											Editar</a>
 									</td>
 									<td width="10%">
 										<a tal:attributes="href python:context.absolute_url()+'/excluir-registro-form'+'?id_instance='+str(item[0].instance_id)"
-											alt="Excluir registro" title="Excluir registro">
+											alt="Excluir registro" title="Excluir registro"
+											tal:condition="python: view.canRequestPermission('cmf.ReviewPortalContent')">
 											Excluir</a>
 									</td>
 								</tr>
