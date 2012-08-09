@@ -12,8 +12,16 @@
 	</head>
 	<body>
 		<div metal:fill-slot="main">
-		    <div>
-				<div id="interna-form" >    		
+		    <div tal:define="Batch python:modules['Products.CMFPlone'].Batch;
+											b_size python:20;
+											b_start python:0;
+											b_start request/b_start | b_start;">
+				<div id="interna-form" >
+					<tal:define define="values python:view.get_FormValues();
+										batch python:Batch(values, b_size, int(b_start))">
+					<!-- Invertendo a lista dos valores do formulario -->					
+					<span tal:define="revert python:values.reverse()"></span>
+					    		
 					<fieldset>
 		            	<legend>Exportar registro</legend>
 						<a alt="exportar registro" title="exportar registro"
@@ -44,7 +52,7 @@
 								<th width="10%">Editar Registro</th>
 								<th width="10%">Excluir Registro</th>
 							</tr>
-							<tal:rep repeat="item python:view.get_FormValues()">
+							<tal:rep repeat="item batch">
 								<tr tal:define="i repeat/item/even|nothing" 
 									tal:attributes="class python: i and 'even' or 'odd'">
 									<tal:def tal:define="fields python:view.get_Form_fields()">
@@ -77,7 +85,13 @@
 								</tr>
 							</tal:rep>		
 						</table>
+						<tal:cond tal:condition="values">
+							<div class="navigation-users" tal:define="batch python:Batch(values, b_size, int(b_start));">
+								<div metal:use-macro="here/batch_macros/macros/navigation" />
+							</div>
+						</tal:cond>
 					</fieldset>
+					</tal:define>
 				</div>
 		    </div>
 		</div>  
