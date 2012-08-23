@@ -10,6 +10,10 @@
 		                          				   errors form_data/errors | python:{};
 									  			   form_values form_data/data | python:{};">
 		    
+		    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+                Status message
+            </div>
+		    
 		    <div id="content" >
 		    		<h1 tal:content="string:Editar o Campo '${form_values/name_field|nothing}' do formularios"> </h1>
 					<div id="interna" >    		

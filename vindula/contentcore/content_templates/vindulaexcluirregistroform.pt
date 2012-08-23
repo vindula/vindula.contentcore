@@ -18,23 +18,28 @@
 									tal:content="campo/title|nothing" />	
 							</tal:rep>
 						</tr>
-						<tr>
-							<tal:def tal:define="fields view/get_Form_fields">
-								<tal:rep repeat="campo fields|nothing">
-									<tal:rep repeat="item view/list_registro|nothing">
-										<tal:cond condition="campo/flag_ativo|nothing">
-											<tal:cond condition="python: item.fields==campo.name_field">
-												<td tal:define="tipo item/type_fields|nothing;
-																valor item/value|nothing;
-																valor_blob item/value_blob|nothing;
-																id_campo item/id|nothing;"
-													tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)"></td>
-											</tal:cond>
-										</tal:cond>
-									</tal:rep>										
-								</tal:rep>
-							</tal:def>
-						</tr>		
+						<tr >
+                            <tal:def tal:define="fields python:view.get_Form_fields()">
+                                <tal:rep repeat="campo fields|nothing">
+                                    <tal:cond condition="campo/flag_ativo|nothing">
+                                        <tal:def tal:define="item view/list_registro|nothing;
+                                                             data python: item.find(fields=campo.name_field).one()">
+
+                                            <td tal:define="tipo campo/type_fields|nothing;
+                                                            valor data/value|nothing;
+                                                            valor_blob data/value_blob|nothing;
+                                                            id_campo data/id|nothing;"
+                                                tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)"></td>
+                                            
+                                        </tal:def>
+                                    </tal:cond>
+                                </tal:rep>
+                            </tal:def>
+                        </tr>
+				
+						
+						
+		
 					</table>
 				</fieldset>
 				<!-- Botões de ação -->
