@@ -298,10 +298,10 @@ class BaseFunc(BaseStore):
         mail_de = mensagem['From']
 
         #Pegando SmtpHost Padrão do Plone
-        smtp_host   = ctx.context.MailHost.smtp_host
-        smtp_port   = ctx.context.MailHost.smtp_port
-        smtp_userid = ctx.context.MailHost.smtp_uid
-        smtp_pass   = ctx.context.MailHost.smtp_pwd
+        smtp_host   = portal.MailHost.smtp_host
+        smtp_port   = portal.MailHost.smtp_port
+        smtp_userid = portal.MailHost.smtp_uid
+        smtp_pass   = portal.MailHost.smtp_pwd
         server_all  = '%s:%s'%(smtp_host,smtp_port)
 
         smtp = smtplib.SMTP()

@@ -45,3 +45,7 @@ Changelog
 1.1.8 - 2012-08-23
 -----------------------
 - Correção da pagina de excluir registro do formulario 
+
+1.1.9 - 2012-08-23
+-----------------------
+- Ajustes no metodos de enviar email
