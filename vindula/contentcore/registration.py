@@ -222,10 +222,10 @@ class RegistrationCreateFields(BaseFunc):
                        }
         
         dados_defaul =  ModelsDefaultValue().get_DefaultValues()
-        D={}
+        L = []
         for i in dados_defaul:
-            D[i.value] = i.lable
-        lista_itens['value_default'] = D
+            L.append([i.value,i.lable])
+        lista_itens['value_default'] = L
         
         
         # divisao dos dicionarios "errors" e "convertidos"

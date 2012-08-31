@@ -49,3 +49,11 @@ Changelog
 1.1.9 - 2012-08-23
 -----------------------
 - Ajustes no metodos de enviar email
+
+1.1.10 - 2012-08-31
+-----------------------
+- Criação do filtro dinamico na pagina de listagem do dados do formulario
+- Criação de uma pagina de dados externa ao layout do portal
+
+
+

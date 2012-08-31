@@ -8,92 +8,151 @@
                 
 		<metal:styleslot fill-slot="style_slot">
     		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
+    	    <link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/js/select/jquery.multiselect.css">
 		</metal:styleslot>
+		<metal:js fill-slot="javascript_head_slot">
+		    <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/jquery.multiselect.min.js"></script>
+		    <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/jquery.multiselect.filter.min.js"></script>
+		    <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/i18n/jquery.multiselect.br.js"></script>
+		    <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/i18n/jquery.multiselect.filter.br.js"></script>
+		    <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/select_filter.js"></script>
+		</metal:js>
 	</head>
 	<body>
-		<div metal:fill-slot="main">
-		    <div tal:define="Batch python:modules['Products.CMFPlone'].Batch;
-											b_size python:20;
-											b_start python:0;
-											b_start request/b_start | b_start;">
-				<div id="interna-form" >
-					<tal:define define="values python:view.get_FormValues();
-										batch python:Batch(values, b_size, int(b_start))">
-					<!-- Invertendo a lista dos valores do formulario -->					
-					<span tal:define="revert python:values.reverse()"></span>
-					    		
-					<fieldset>
-		            	<legend>Exportar registro</legend>
-						<a alt="exportar registro" title="exportar registro"
-						   tal:attributes="href string:${context/absolute_url|nothing}/export-form">Exportar registro existentes via csv</a>
+		<div metal:fill-slot="main" class="dados-form">
 
-					</fieldset>
-					<fieldset>
-		            	<legend>Relat&oacute;rio dos registro</legend>
-						<a alt="exportar relatorio" title="exportar relatorio"
-						   tal:attributes="href string:${context/absolute_url|nothing}/relatorio-form">Gerar relat&oacute;rio os registros existentes</a>
+    		<!-- Invertendo a lista dos valores do formulario 					
+    		<span tal:define="revert python:values.reverse()"></span>
+    		-->
+   		    		
+    		<fieldset>
+    		    <legend>Op&ccedil;&otilde;es</legend>
+    			<a alt="exportar registro" title="exportar registro" class="control"
+    			   tal:attributes="href string:${context/absolute_url|nothing}/export-form">
+    			   <img tal:attributes="src string:${view/static}/img/exportar_registro.png"
+    			        title="Exportar registro existentes via csv" alt="Exportar registro existentes via csv" />
+    			</a>
+                <a alt="gerar relatorio" title="gerar relatorio" class="control"
+                   tal:attributes="href string:${context/absolute_url|nothing}/relatorio-form">
+                   <img tal:attributes="src string:${view/static}/img/relatorio_registro.png"
+                        title="Gerar relat&oacute;rio os registros existentes" alt="Gerar relat&oacute;rio os registros existentes" />
+                </a>
 
-					</fieldset>
-					<!--fieldset>
-		            	<legend>Visão Quadro de Avisos</legend>
-						<a alt="Quadro de Avisos" title="Quadro de Avisos"
-						   tal:attributes="href string:${context/absolute_url|nothing}/myvindula-avisos-view">Ver Quadro de Avisos</a>
+                <a alt="filtro em nova janela" title="filtro em nova janela" class="control"
+                   tal:attributes="href string:${context/absolute_url|nothing}/view-dado-newwindows" target="_blank">
+                   <img tal:attributes="src string:${view/static}/img/newWindows.png"
+                        title="Abrir a filtragem de itens em uma nova janela" alt="Abrir a filtragem de itens em uma nova janela" />
+                </a>
 
-					</fieldset-->
+    
+    		</fieldset>
+    		
+    		<!--fieldset>
+            	<legend>Visão Quadro de Avisos</legend>
+    			<a alt="Quadro de Avisos" title="Quadro de Avisos"
+    			   tal:attributes="href string:${context/absolute_url|nothing}/myvindula-avisos-view">Ver Quadro de Avisos</a>
+    
+    		</fieldset-->
 					
-					<fieldset>
-		            	<legend>Listagem do registros</legend>
-						<table width="100%">
-							<tr tal:define="fields python:view.get_Form_fields()">
-								<tal:rep repeat="campo fields|nothing">
-									<th tal:condition="campo/flag_ativo|nothing"
-										tal:content="campo/title|nothing" />	
-								</tal:rep>
-								<th width="10%">Editar Registro</th>
-								<th width="10%">Excluir Registro</th>
-							</tr>
-							<tal:rep repeat="item batch">
-								<tr tal:define="i repeat/item/even|nothing" 
-									tal:attributes="class python: i and 'even' or 'odd'">
-									<tal:def tal:define="fields python:view.get_Form_fields()">
-										<tal:rep repeat="campo fields|nothing">
-											<tal:cond condition="campo/flag_ativo|nothing">
-												<tal:def tal:define="data python: item.find(fields=campo.name_field).one()">
-
-													<td tal:define="tipo campo/type_fields|nothing;
-																	valor data/value|nothing;
-																	valor_blob data/value_blob|nothing;
-																	id_campo data/id|nothing;"
-														tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)"></td>
-													
-												</tal:def>
-											</tal:cond>
-										</tal:rep>
-									</tal:def>
-									<td width="10%">
-										<a tal:attributes="href python:context.absolute_url()+'?id_instance='+str(item[0].instance_id)"
-											alt="Editar registro" title="Editar registro"
-											tal:condition="python: view.canRequestPermission('cmf.ModifyPortalContent')">
-											Editar</a>
-									</td>
-									<td width="10%">
-										<a tal:attributes="href python:context.absolute_url()+'/excluir-registro-form'+'?id_instance='+str(item[0].instance_id)"
-											alt="Excluir registro" title="Excluir registro"
-											tal:condition="python: view.canRequestPermission('cmf.ReviewPortalContent')">
-											Excluir</a>
-									</td>
-								</tr>
-							</tal:rep>		
-						</table>
-						<tal:cond tal:condition="values">
-							<div class="navigation-users" tal:define="batch python:Batch(values, b_size, int(b_start));">
-								<div metal:use-macro="here/batch_macros/macros/navigation" />
-							</div>
-						</tal:cond>
-					</fieldset>
-					</tal:define>
-				</div>
-		    </div>
+    			<fieldset>
+                	<legend>Listagem do registros</legend>
+                	
+                    <metal:page metal:define-macro="page">    	
+                    	<div class="overFlowHor">
+                    	    <tal:define define="values view/get_FormValues;
+                                                values_filter  view/get_FormValues_filtro;
+                                                
+                                                fields view/get_Form_fields;
+                                                
+                                                Batch python:modules['Products.CMFPlone'].Batch;
+                                                
+                                                b_size python:20;
+                                                b_start python:0;
+                                                b_start request/b_start | b_start;
+                                                
+                                                batch python:Batch(values, b_size, int(b_start))" >
+                            
+                                <table id="listing-table" class="listing" >
+                                   <thead>
+                                        <tr>
+                                            <tal:rep repeat="campo fields|nothing">
+                                                <th tal:condition="campo/flag_ativo|nothing">
+                                                    <tal:cont content="campo/title|nothing" />
+                                                    <br />
+                                                    <tal:cond tal:define="tipo campo/type_fields|nothing;" 
+                                                              condition="python: tipo in ['text','bool','choice','list']">
+                                                        
+                                                        <select multiple="multiple" class="select-filter"
+                                                                tal:attributes="id campo/name_field|nothing">
+                                                            <tal:def define="valores_b python: values_filter.find(fields=campo.name_field);
+                                                                             valores python:view.find_group_by(valores_b)">
+                                                                    
+                                                                    <option tal:repeat="valor valores" 
+                                                                            tal:content="valor"
+                                                                            tal:define="campo campo/name_field|nothing"
+                                                                            tal:attributes="value valor;
+                                                                                            selected python: (valor == request.form.get(campo,'') or
+                                                                                                              valor in request.form.get(campo,'')) and 'selected' or '';"/>
+                                                            </tal:def>
+                                                        </select>
+                                                    </tal:cond>
+                                                </th>
+                                                    
+                                            </tal:rep>
+                                            <th width="10%">Editar Registro</th>
+                                            <th width="10%">Excluir Registro</th>
+                                        </tr>
+                                   </thead>
+                                    
+                                   <tbody id="content-tabela">
+                                            <tal:rep repeat="item batch">
+                                                <tr tal:define="i repeat/item/odd|nothing"
+                                                    tal:attributes="class python: i and 'odd' or 'even'">
+                                                    <tal:rep repeat="campo fields|nothing">
+                                                        <tal:cond condition="campo/flag_ativo|nothing">
+                                                            <tal:def tal:define="data python: item.find(fields=campo.name_field).one()">
+            
+                                                                <td tal:define="tipo campo/type_fields|nothing;
+                                                                                valor data/value|nothing;
+                                                                                valor_blob data/value_blob|nothing;
+                                                                                id_campo data/id|nothing;"
+                                                                    tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)"></td>
+                                                                
+                                                            </tal:def>
+                                                        </tal:cond>
+                                                    </tal:rep>
+                                                    <td width="10%">
+                                                        <a tal:attributes="href python:context.absolute_url()+'?id_instance='+str(item[0].instance_id)"
+                                                            alt="Editar registro" title="Editar registro"
+                                                            tal:condition="python: view.canRequestPermission('cmf.ModifyPortalContent')">
+                                                            Editar</a>
+                                                    </td>
+                                                    <td width="10%">
+                                                        <a tal:attributes="href python:context.absolute_url()+'/excluir-registro-form'+'?id_instance='+str(item[0].instance_id)"
+                                                            alt="Excluir registro" title="Excluir registro"
+                                                            tal:condition="python: view.canRequestPermission('cmf.ReviewPortalContent')">
+                                                            Excluir</a>
+                                                    </td>
+                                                </tr>
+                                            </tal:rep>
+                                        
+                                   </tbody>
+                                </table>
+            
+                                <div class="navigation-users" id="content-macro">
+                                    <div metal:use-macro="here/batch_macros/macros/navigation" />
+                                </div>
+                                <div id="load-save" style="display: none">
+                                    <img tal:attributes="src string:${view/static}/img/ajaxLoader.gif" />    
+                                </div>
+                                
+                                
+                                
+                                
+                            </tal:define>   
+                    	</div>
+                	</metal:page>
+    			</fieldset>
 		</div>  
 	</body>
 </html>

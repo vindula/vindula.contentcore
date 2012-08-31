@@ -211,14 +211,62 @@ class VindulaViewForm(grok.View, BaseFunc):
    
     def get_FormValues(self):
         id_form = int(self.context.forms_id)
-        return ModelsForm().get_FormValues(id_form)
+        form = self.request.form
+        
+        data = ModelsForm().get_FormValues(id_form)
+        L = []
+        
+        for item in data:
+            if self.checkItem(item, form):
+                L.append(item)
+
+        return L
+            
+    def get_FormValues_filtro(self):
+        id_form = int(self.context.forms_id)
+        return ModelsForm().get_FormValues_filtro(id_form)
     
     def get_Form_fields(self):
         id_form = int(self.context.forms_id)
         return ModelsFormFields().get_Fields_ByIdForm(id_form)
     
+    def find_group_by(self, valores):
+        L = []
+        for valor in valores:
+            V = valor.value 
+            if V and not V in L:
+                L.append(V)
+            
+        return L
+    
     def canRequestPermission(self,permissao):
         return checkPermission(permissao, self.context)
+    
+    def checkItem(self, item, form):
+        for campo in form.keys():
+            if campo not in ['b_start']:
+                valor = form.get(campo,'')
+                if not valor:
+                    continue
+                elif type(valor) == list:
+                    existe = False
+                    for val in valor:
+                        if item.find(fields=self.Convert_utf8(campo)).one().value == self.Convert_utf8(val):
+                            existe = True
+                            break
+                        
+                    if not existe:
+                        return False
+                elif not item.find(fields=self.Convert_utf8(campo)).one().value == self.Convert_utf8(valor):
+                    return False
+                
+        return True
+    
+
+class VindulaDadosNewWindows(grok.View, BaseFunc):
+    grok.context(IFormularioPadrao)
+    grok.require('cmf.ListFolderContents')
+    grok.name('view-dado-newwindows') #View dados em nova janela
     
     
 class VindulaLoadForm(grok.View, BaseFunc):

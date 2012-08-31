@@ -45,6 +45,15 @@ class ModelsForm(Storm, BaseStore):
         
         return L
         
+    def get_FormValues_filtro(self,id_form):
+        data = None
+        inst = Select(ModelsFormInstance.instance_id, where=ModelsFormInstance.forms_id==id_form,distinct=True)
+        if inst:
+            data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==id_form,
+                                                     ModelsFormValues.instance_id.is_in(inst))
+            
+        
+        return data
 
     def set_Form(self,**kwargs):
         # adicionando...

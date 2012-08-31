@@ -36,3 +36,19 @@
 	margin:5px 8px 5px 5px;
 	width:44%;
 }
+
+a.control img{
+    margin: 5px;
+    
+}
+.dados-form fieldset{
+    padding-bottom: 0px;
+    
+}
+
+#load-save{
+    text-align: center;
+    width: 100%;
+    
+    
+}

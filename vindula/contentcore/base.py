@@ -72,6 +72,17 @@ class BaseFunc(BaseStore):
         else:
             return None
 
+    def Convert_utf8(self,valor):
+        try: 
+            return unicode(valor,'utf-8')
+        except UnicodeDecodeError:
+            return valor.decode("utf-8", "ignore")
+        except:
+            if type(valor) == unicode:
+                return valor
+            else:
+                return u'erro ao converter os caracteres'
+
           
     def checaEstado(self,config, campo):
         if config:

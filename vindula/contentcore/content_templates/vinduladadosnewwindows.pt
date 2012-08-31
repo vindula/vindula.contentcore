@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <base tal:define="plone_view context/@@plone" 
+              tal:attributes="href plone_view/renderBase" /><!--[if lt IE 7]></base><![endif]-->
+        <div tal:replace="structure provider:plone.htmlhead" />
+        
+        <link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css">
+        <link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/js/select/jquery.multiselect.css">
+    
+        <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/jquery.multiselect.min.js"></script>
+        <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/jquery.multiselect.filter.min.js"></script>
+        <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/i18n/jquery.multiselect.br.js"></script>
+        <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/i18n/jquery.multiselect.filter.br.js"></script>
+        <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/select_filter.js"></script>
+        
+    </head>
+    <body>
+        <style type="text/css">
+            .overFlowHor {overflow-x: inherit;width: auto;}
+            body {background: none;}
+            #logo {margin: 15px;}
+        </style>
+        <div tal:define="portal python: context.portal_url.getPortalObject();
+                        config_obj python: portal['control-panel-objects']['ThemeConfig'];">
+        
+            <div id="logo">
+                <a class="vindula-portal-logo" tal:attributes="href string:${context/portal_url}" title="P&aacute;gina Inicial">
+                    <img tal:condition="config_obj/getLogoCabecalho" 
+                         tal:attributes="src python: config_obj.getLogoCabecalho().absolute_url() or None" />
+            
+                    <img tal:condition="not: config_obj/getLogoCabecalho" 
+                         src="/++resource++vindula.controlpanel/imagens/logo_topo.png" />   
+                </a>
+            </div>  
+        </div>
+        <div id="content">
+            <tal:def define="view python:context.restrictedTraverse('@@view-form')">  
+                <metal:tabela metal:use-macro="context/view-form/macros/page" />
+            </tal:def>
+    
+        </div>
+    </body>
+</html>
