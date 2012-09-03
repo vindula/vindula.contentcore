@@ -80,7 +80,7 @@
                                                     <tal:cont content="campo/title|nothing" />
                                                     <br />
                                                     <tal:cond tal:define="tipo campo/type_fields|nothing;" 
-                                                              condition="python: tipo in ['text','bool','choice','list']">
+                                                              condition="python: tipo in ['text','bool','choice','list','hidden']">
                                                         
                                                         <select multiple="multiple" class="select-filter"
                                                                 tal:attributes="id campo/name_field|nothing">
