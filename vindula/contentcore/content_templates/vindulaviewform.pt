@@ -105,7 +105,8 @@
                                                 <br />
                                                     
                                                     <select multiple="multiple" class="select-filter" id="date_creation">
-                                                        <tal:def define="valores python:view.find_group_by_data(instances_form) ">
+                                                        <tal:def define="valores_b python:[ i[0].instancia for i in values ];
+                                                                         valores python:view.find_group_by_data(valores_b) ">
                                                             <option tal:repeat="valor valores" 
                                                                         tal:content="valor"
                                                                         tal:attributes="value valor;
@@ -117,7 +118,7 @@
                                                 
                                             </th>
                                             
-                                            <th style="display: block; height: 44px;">Ações</th>
+                                            <th style="display: block; height: 44px; width: 70px">Ações</th>
                                             <!--th width="10%">Editar Registro</th>
                                             <th width="10%">Excluir Registro</th-->
                                         </tr>
