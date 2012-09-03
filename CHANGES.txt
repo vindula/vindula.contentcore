@@ -55,5 +55,9 @@ Changelog
 - Criação do filtro dinamico na pagina de listagem do dados do formulario
 - Criação de uma pagina de dados externa ao layout do portal
 
-
+1.1.11 - 2012-09-03
+-----------------------
+- Criação de index para a busca do filtro dinamico
+- Ajustes na busca e layout da tabela
+ 
 

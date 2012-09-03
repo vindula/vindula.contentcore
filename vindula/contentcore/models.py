@@ -172,6 +172,8 @@ class ModelsFormValues(Storm, BaseStore):
     instance_id = Int()
     fields = Unicode()
     
+    instancia = Reference(instance_id, "ModelsFormInstance.instance_id")
+    
     def set_FormValues(self,**kwargs):
         # adicionando...
         values = ModelsFormValues(**kwargs)

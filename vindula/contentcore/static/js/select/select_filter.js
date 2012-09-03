@@ -24,6 +24,10 @@ function ajaxBusca(){
              success: function(data){
                 $j('#content-tabela').html($j(data).find('#content-tabela').html());
                 $j('#content-macro').html($j(data).find('#content-macro').html());
+                
+                setFilter();
+                setPopup();
+                
                 $j('#load-save').hide();
                 $j('#content-tabela').show();
                 $j('#content-macro').show();        
@@ -31,7 +35,7 @@ function ajaxBusca(){
     });
 };
  
-$j(document).ready(function(){
+function setFilter(){
     $j(".select-filter").multiselect({
         selectedList:5,
         minWidth:150,
@@ -45,10 +49,32 @@ $j(document).ready(function(){
         }
     }).multiselectfilter({
         width:120
-    });
+    },'refresh');
 
     $j('select.select-filter').change(function(){
        ajaxBusca(); 
     });
-       
+    
+};
+
+function setPopup(){
+    var common_content_filter = '#content=*:not(div.configlet),dl.portalMessage.error,dl.portalMessage.info';
+    var common_jqt_config = {fixed:false,speed:'fast',mask:{color:'#000',opacity: 0.4,loadSpeed:0,closeSpeed:0}};
+
+   $j('a.excluir-data').prepOverlay({
+        subtype: 'ajax',
+        formselector: 'form[name=excluir-data]',
+        closeselector: '[name=form.voltar]',
+        noform: 'close',
+        filter: common_content_filter,
+        config: common_jqt_config,
+        width:'50%'
+    
+    });
+    
+};
+ 
+$j(document).ready(function(){
+    setFilter();
+    setPopup();
  });

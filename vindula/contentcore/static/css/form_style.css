@@ -45,6 +45,9 @@ a.control img{
     padding-bottom: 0px;
     
 }
+table a.marginRight{
+    margin-right: 10px;
+}
 
 #load-save{
     text-align: center;

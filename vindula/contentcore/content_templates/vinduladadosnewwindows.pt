@@ -24,13 +24,13 @@
                         config_obj python: portal['control-panel-objects']['ThemeConfig'];">
         
             <div id="logo">
-                <a class="vindula-portal-logo" tal:attributes="href string:${context/portal_url}" title="P&aacute;gina Inicial">
-                    <img tal:condition="config_obj/getLogoCabecalho" 
-                         tal:attributes="src python: config_obj.getLogoCabecalho().absolute_url() or None" />
-            
-                    <img tal:condition="not: config_obj/getLogoCabecalho" 
-                         src="/++resource++vindula.controlpanel/imagens/logo_topo.png" />   
-                </a>
+                
+                <img tal:condition="config_obj/getLogoCabecalho" width="60px" 
+                     tal:attributes="src python: config_obj.getLogoCabecalho().absolute_url() or None" />
+        
+                <img tal:condition="not: config_obj/getLogoCabecalho" width="60px"
+                     src="/++resource++vindula.controlpanel/imagens/logo_topo.png" />   
+                
             </div>  
         </div>
         <div id="content">

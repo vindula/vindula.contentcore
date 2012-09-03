@@ -43,7 +43,7 @@
 					</table>
 				</fieldset>
 				<!-- Botões de ação -->
-				<form method="post" enctype="multipart/form-data" tal:attributes="action string:${context/absolute_url|nothing}/excluir-registro-form">	 
+				<form method="post" enctype="multipart/form-data" tal:attributes="action string:${context/absolute_url|nothing}/excluir-registro-form" name="excluir-data">	 
 					<!-- Id Form -->
 					<input type="hidden" name="forms_id" id="forms_id" value="" tal:attributes="value context/forms_id|nothing">
 					<!-- Id instancia -->

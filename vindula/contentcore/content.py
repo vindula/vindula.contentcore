@@ -8,7 +8,7 @@ from zope.security import checkPermission
 from vindula.contentcore.formulario import IFormularioPadrao
 from vindula.contentcore.conteudo_basico import IConteudoBasico 
 from vindula.contentcore.base import BaseFunc
-from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormValues, ModelsDefaultValue    
+from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormValues, ModelsDefaultValue, ModelsFormInstance
 
 from vindula.contentcore.registration import RegistrationCreateForm, RegistrationCreateFields,RegistrationLoadForm, RegistrationExcluirForm ,\
                                              RegistrationAddDefaultValue, RegistrationExcluirDefault, RegistrationParametrosForm, LoadRelatorioForm    
@@ -230,6 +230,10 @@ class VindulaViewForm(grok.View, BaseFunc):
         id_form = int(self.context.forms_id)
         return ModelsFormFields().get_Fields_ByIdForm(id_form)
     
+    def get_Form_instance(self):
+        id_form = int(self.context.forms_id)
+        return ModelsFormInstance().get_Instance(id_form)
+    
     def find_group_by(self, valores):
         L = []
         for valor in valores:
@@ -239,12 +243,22 @@ class VindulaViewForm(grok.View, BaseFunc):
             
         return L
     
+    def find_group_by_data(self, valores):
+        L = []
+        for valor in valores:
+            V = valor.date_creation.strftime('%d/%m/%Y') 
+            if not V in L:
+                L.append(V)
+            
+        return L
+    
+    
     def canRequestPermission(self,permissao):
         return checkPermission(permissao, self.context)
     
     def checkItem(self, item, form):
         for campo in form.keys():
-            if campo not in ['b_start']:
+            if campo not in ['b_start','date_creation']:
                 valor = form.get(campo,'')
                 if not valor:
                     continue
@@ -258,6 +272,11 @@ class VindulaViewForm(grok.View, BaseFunc):
                     if not existe:
                         return False
                 elif not item.find(fields=self.Convert_utf8(campo)).one().value == self.Convert_utf8(valor):
+                    return False
+            
+            elif campo == 'date_creation':
+                valor = form.get(campo,'')
+                if valor and item[0].instancia.date_creation.strftime('%d/%m/%Y') != valor:
                     return False
                 
         return True
