@@ -65,7 +65,7 @@ function setPopup(){
         subtype: 'ajax',
         formselector: 'form[name=excluir-data]',
         closeselector: '[name=form.voltar]',
-        noform: 'close',
+        noform: 'reload',
         filter: common_content_filter,
         config: common_jqt_config,
         width:'50%'
