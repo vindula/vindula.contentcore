@@ -136,7 +136,7 @@
                                                                             valor data/value|nothing;
                                                                             valor_blob data/value_blob|nothing;
                                                                             id_campo data/id|nothing;"
-                                                                tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)"></td>
+                                                                tal:content="structure python:view.geraHTMLContent(id_campo,tipo,(valor or valor_blob) )"></td>
                                                             
                                                         </tal:def>
                                                     </tal:cond>

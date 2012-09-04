@@ -60,4 +60,7 @@ Changelog
 - Criação de index para a busca do filtro dinamico
 - Ajustes na busca e layout da tabela
  
+1.1.12 - 2012-09-03
+-----------------------
+- Na visualização dos arquivos mostrar o nome do arquivo uplogado
 
