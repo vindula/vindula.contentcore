@@ -60,7 +60,9 @@ Changelog
 - Criação de index para a busca do filtro dinamico
 - Ajustes na busca e layout da tabela
  
-1.1.12 - 2012-09-03
+1.1.12 - 2012-09-04
 -----------------------
 - Na visualização dos arquivos mostrar o nome do arquivo uplogado
+- Ajustes no botão de adicionar campos no formulario para funcionar no IE
+
 

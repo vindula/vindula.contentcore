@@ -27,8 +27,9 @@
 						<div style="float:left; width:100%">
 							<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
 							
-							<a class="button" tal:attributes="href string:${context/absolute_url|nothing}/add-fields-form">		
-								<input class="button-erp" type="button" value="Adicionar novo campo ao formulário" name="form.submited">
+							<a class="button">		
+								<input class="button-erp" type="button" value="Adicionar novo campo ao formulário" name="form.submited"
+								    tal:attributes="onClick string: location.href='${context/absolute_url|nothing}/add-fields-form'">
 							</a>
 						</div>
 					</fieldset>
