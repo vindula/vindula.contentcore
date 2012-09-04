@@ -25,10 +25,10 @@
         
             <div id="logo">
                 
-                <img tal:condition="config_obj/getLogoCabecalho" width="60px" 
+                <img tal:condition="config_obj/getLogoCabecalho" height="60px" 
                      tal:attributes="src python: config_obj.getLogoCabecalho().absolute_url() or None" />
         
-                <img tal:condition="not: config_obj/getLogoCabecalho" width="60px"
+                <img tal:condition="not: config_obj/getLogoCabecalho" height="60px"
                      src="/++resource++vindula.controlpanel/imagens/logo_topo.png" />   
                 
             </div>  
