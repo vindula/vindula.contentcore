@@ -114,7 +114,7 @@ class LoadRelatorioForm(BaseFunc):
                    
                    D['dados'] = M  
                    D['quant'] =  regs.count()
-               elif tipo == 'choice':
+               elif tipo == 'choice' or tipo == 'radio':
                    M = []
                    opcao = campo.list_values.splitlines()
                    for i in opcao:
@@ -123,7 +123,7 @@ class LoadRelatorioForm(BaseFunc):
                        N['name'] = j[1]
                        N['cont'] = 0 
                        for instance in instances:
-                           if instance.value == j[0]:
+                           if instance.value == j[0].strip():
                                 N['cont'] +=1 
                     
                        M.append(N)
@@ -163,12 +163,16 @@ class LoadRelatorioForm(BaseFunc):
                else:
                    M = []
                    for instance in instances:
+                       valor = instance.value or instance.value_blob
+                       arquivo = self.decodePickle(valor)
+                
+                       name = arquivo.get('filename','')
                        N={}
                        if tipo == 'img':
                            N['text'] = '<img width="120px" src="%s/form-image?id=%s">' %(getSite().absolute_url(),instance.id)
                            
                        elif tipo == 'file':
-                           N['text'] = '<a href="%s/form-file?id=%s" target="_blank">Download do Arquivo</a><br />' %(getSite().absolute_url(), instance.id)
+                           N['text'] = '<a href="%s/form-file?id=%s" target="_blank">%s</a><br />' %(getSite().absolute_url(), instance.id,name)
                            
                        else:
                            N['text'] = instance.value
@@ -217,7 +221,7 @@ class RegistrationCreateFields(BaseFunc):
                                       ['bool','Campo Verdadeiro/Falso'],['choice','Campo de Escolha'],
                                       ['list','Campo de Seleção Multipla'],['hidden','Campo Oculto'],
                                       ['img','Campo de Upload de Imagem'],['file','Campo de Upload de Arquivos'],
-                                      ['richtext','Campo de Texto Rico']
+                                      ['richtext','Campo de Texto Rico'],['radio','Campo de Opção']
                                       ]
                        }
         
@@ -572,7 +576,8 @@ class RegistrationLoadForm(BaseFunc):
                     n += 1
                     
                 if field.type_fields == 'choice' or\
-                   field.type_fields == 'list':
+                   field.type_fields == 'list' or\
+                   field.type_fields == 'radio':
                     items = field.list_values.splitlines()
                     D=[]
                     for i in items:

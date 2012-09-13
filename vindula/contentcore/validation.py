@@ -76,7 +76,13 @@ def valida_form(ctx, configuracao, form):
                 if type(valor) == unicode:
                     convertidos[campo] = valor.strip()
                 else:
-                    convertidos[campo] = to_utf8((valor.strip()))    
+                    convertidos[campo] = to_utf8(valor.strip())
+                    
+            elif configuracao[campo]['type'] == 'radio':
+                if type(valor) == unicode:
+                    convertidos[campo] = valor.strip()
+                else:
+                    convertidos[campo] = to_utf8(valor.strip())                        
 
             elif configuracao[campo]['type'] == 'combo':
                 um = valor[0]
@@ -94,13 +100,13 @@ def valida_form(ctx, configuracao, form):
                 try:
                     convertidos[campo] = int(valor)
                 except:
-                    convertidos[campo] = to_utf8((valor.strip()))
+                    convertidos[campo] = to_utf8(valor.strip())
                     
             elif configuracao[campo]['type'] == 'text':
                 if type(valor) == unicode:
                     convertidos[campo] = valor.strip()
                 else:
-                    convertidos[campo] = to_utf8((valor.strip()))
+                    convertidos[campo] = to_utf8(valor.strip())
     
             elif configuracao[campo]['type'] == 'list':
                 valor_convert = ''
@@ -152,7 +158,7 @@ def valida_form(ctx, configuracao, form):
                 if type(valor) == unicode:
                     convertidos[campo] = valor.strip()
                 else:
-                    convertidos[campo] = to_utf8((valor.strip()))
+                    convertidos[campo] = to_utf8(valor.strip())
                     
             elif configuracao[campo]['type'] == 'key':
                 normalizer = getUtility(IIDNormalizer)
@@ -163,7 +169,7 @@ def valida_form(ctx, configuracao, form):
                     if type(valor) == unicode:
                         convertidos[campo] = valor.strip()
                     else:
-                        convertidos[campo] = to_utf8((valor.strip()))
+                        convertidos[campo] = to_utf8(valor.strip())
                 else:
                     errors[campo] = u'E mail inválido, digite um email valido'
                 

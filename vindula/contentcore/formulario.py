@@ -20,7 +20,7 @@ from zope.interface import implements
 from zope.schema.interfaces import IContextSourceBinder
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema.vocabulary import SimpleTerm
-
+from plone.app.textfield import RichText
 
 from z3c.form.browser.checkbox import CheckBoxFieldWidget 
 
@@ -57,6 +57,10 @@ class IFormularioPadrao(form.Schema):
     forms_id = schema.TextLine(title=u"Form ID",
                               description=u"campo do formulario",
                               required=True)
+    
+    text_messenger = RichText(title=_(u"Texto Para o topo do formulário"),
+                                     description=_(u"Digite o texto que será mostrado no topo do formulario"),
+                                     required=False)
     
     form.widget(acao_saida = CheckBoxFieldWidget)
     acao_saida = schema.Set(title=_(u"Ação de saída do formulário"),

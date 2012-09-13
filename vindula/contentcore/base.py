@@ -65,7 +65,8 @@ class BaseFunc(BaseStore):
              'bool':'Campo Verdadeiro/Falso','choice':'Campo de Escolha',
              'list':'Campo de Seleção Multipla','hidden':'Campo Oculto',
              'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos',
-             'richtext':'Campo de Texto Rico'} 
+             'richtext':'Campo de Texto Rico','radio':'Campo de Opção'
+        } 
         
         if type:
             return D.get(type)
@@ -439,6 +440,17 @@ class BaseFunc(BaseStore):
                                 tmp +="<option value='%s'>%s</option>"%(item[0], item[1])
 
                         tmp += "</select>"
+                    
+                    elif type_campo == 'radio':
+                        tmp += "<div id='%s' >"%(campo)
+                        for item in value_choice[campo]: 
+                            if item[0] == self.getValueList(campo,self.request,data,default_value):
+                                tmp += "<input type='radio' name='%s' value='%s' checked >%s" %(campo, item[0], item[1])
+                            else:
+                                tmp += "<input type='radio' name='%s' value='%s' >%s" %(campo, item[0], item[1])
+
+                            tmp += '<br />'
+                        tmp += "</div>"
                     
                     elif type_campo == 'richtext':
                         utility = getUtility(ITinyMCE)

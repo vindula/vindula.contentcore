@@ -2,7 +2,7 @@ $j = jQuery.noConflict();
 
 function hideShowListValues () {
     var val = $j("select[name='type_fields']").val();
-    if (val =='list' || val == 'choice'){
+    if (val =='list' || val == 'choice' || val == 'radio'){
         $j('div#field-list_values').show();
     }else{
         $j('div#field-list_values').hide();

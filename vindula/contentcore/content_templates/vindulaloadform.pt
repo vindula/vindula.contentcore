@@ -9,32 +9,37 @@
 									  			   form_data view/load_form | python:{}; errors form_data/errors | python:{};
 							  		  			   form_values form_data/data | python:{};">    		
 			        
+			             <br />
+			             <div id="conteudo">
+			                 <tal:cont content="structure context/text_messenger/output|nothing" />
+			             </div>
+			             
 			        	<form name="load-form" id="load-form" enctype="multipart/form-data" 
-						  class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/load-form" method="POST">
-						<!-- Id Form-->
-						<input type="hidden" name="forms_id" id="forms_id" value="" tal:attributes="value context/forms_id|nothing"> 
-						<!-- Id instancia -->
-						<input tal:condition="request/id_instance|nothing" 
-							   type="hidden" name="id_instance" id="id_instance" value="" tal:attributes="value request/id_instance|nothing">
+						      class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/load-form" method="POST">
+    						<!-- Id Form-->
+    						<input type="hidden" name="forms_id" id="forms_id" value="" tal:attributes="value context/forms_id|nothing"> 
+    						<!-- Id instancia -->
+    						<input tal:condition="request/id_instance|nothing" 
+    							   type="hidden" name="id_instance" id="id_instance" value="" tal:attributes="value request/id_instance|nothing">
 						
-			            <fieldset tal:condition="python:form_data!={}">
-			            	<legend>Adicionar Novo Registro</legend>
-							<tal:def define="html python:view.geraCampos(form_data)">
-								<tal:rep repeat="x html">
-									<div tal:content="structure x"/>
-								</tal:rep>
-							</tal:def>
-
-						</fieldset>	
-						<!-- Botões de ação -->	 	
-					   	<fieldset>
-					   		<br/>
-							<div style="float:left; width:100%">
-								<input tal:condition="request/id_instance|nothing"
-										style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
-								<input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited">
-							</div>
-						</fieldset>
+    			            <fieldset tal:condition="python:form_data!={}">
+    			            	<legend>Adicionar Novo Registro</legend>
+    							<tal:def define="html python:view.geraCampos(form_data)">
+    								<tal:rep repeat="x html">
+    									<div tal:content="structure x"/>
+    								</tal:rep>
+    							</tal:def>
+    
+    						</fieldset>	
+    						<!-- Botões de ação -->	 	
+    					   	<fieldset>
+    					   		<br/>
+    							<div style="float:left; width:100%">
+    								<input tal:condition="request/id_instance|nothing"
+    										style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
+    								<input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited">
+    							</div>
+    						</fieldset>
 					</form>
 				</div>
 			</meta:macro>
