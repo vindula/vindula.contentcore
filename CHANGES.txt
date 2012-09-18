@@ -73,3 +73,7 @@ Changelog
 -----------------------
 - Criação do novo campo de referencia e campos multiplos
  
+1.1.15 - 2012-09-19
+-----------------------
+- Correção do Ticket #199
+

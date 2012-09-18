@@ -306,7 +306,7 @@ class RegistrationCreateFields(BaseFunc):
         #id_form = int(form.get('forms_id','0'))
         
         campos = {'name_field'            : {'required': True,  'type':'key',       'label':'Nome do Campo',                'decription':u'Digite o nome para o campo',                                       'ordem':0},
-                  'type_fields'           : {'required': True,  'type':'choice',    'label':'Tipo do Campo',                'decription':u'Selecione o tipo da informação deste campos',                      'ordem':1},
+                  'type_fields'           : {'required': True,  'type':'choice',    'label':'Tipo do Campo',                'decription':u'Selecione o tipo da informação deste campo',                      'ordem':1},
                   'list_values'           : {'required': False, 'type':'textarea',  'label':'Lista de dados para o select', 'decription':u'Digite um item por linha no padrão [ID] | [Valor]',                'ordem':2},
                   'title'                 : {'required': True,  'type':self.to_utf8,'label':'Título',                       'decription':u'Digite o título para o campo',                                     'ordem':3},
                   'description_fields'    : {'required': False, 'type':'textarea',  'label':'Descrição',                    'decription':u'Digite a descrição para o campo',                                  'ordem':4},

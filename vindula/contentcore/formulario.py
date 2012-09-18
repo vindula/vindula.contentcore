@@ -69,11 +69,11 @@ class IFormularioPadrao(form.Schema):
                             required=True)
     
     list_email = schema.Text(title=_(u"Lista de Email"),
-                            description=_(u"Digite os email de destinatário dos dados do formulário <br /> (Digite um email por linha)."),
+                            description=_(u"Crie uma lista de e-mails dos destinatários que irão receber os dados do formulário <br /> (Digite um email por linha)."),
                             required=False)
     
     email_padrao = schema.Choice(title=_(u"E-mail padrão"),
-                                 description=_(u"Selecione o campo para o remetente do email, enviado pedo formulário."),
+                                 description=_(u"elecione um campo para remetente de e-mail, enviado pelo formulário"),
                                  source=ListCamposForm(),
                                  required=False)
     
