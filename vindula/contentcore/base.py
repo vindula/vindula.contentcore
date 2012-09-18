@@ -28,6 +28,8 @@ from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import date , datetime 
 
+from vindula.contentcore.models import ModelsFormFields
+
 class BaseStore(object):
    
     def __init__(self, *args, **kwargs):
@@ -355,10 +357,18 @@ class BaseFunc(BaseStore):
             for campo in campos.keys():
                 index = campos[campo].get('ordem',0)
                 tmp = ""
+                valor = ''
                 if not 'outro' in campo:
+                    
                     type_campo = campos[campo]['type']
                     if type_campo == 'richtext':
                         classe = 'richTextWidget'
+                    elif type_campo == 'referencia':
+                        tmp += ''
+                        html.pop(index)
+                        html.insert(index, tmp)
+                        
+                        continue
                     else:
                         classe = ''
                     
@@ -374,103 +384,203 @@ class BaseFunc(BaseStore):
                         tmp += "   <div >%s</div>"%(errors.get(campo,''))
                     
                     if type_campo == 'hidden':
-                        tmp += "<input id='%s' type='hidden' value='%s' name='%s' size='25'/>"%(campo,self.getValue(campo,self.request,data,default_value),campo)
+                        valor += "<input id='%s' type='hidden' value='%s' name='%s' size='25'/>"%(campo,self.getValue(campo,self.request,data,default_value),campo)
                     
                     elif type_campo == 'img':
                         if errors:
                             if self.getPhoto(campo,self.request,data):
-                                tmp += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
+                                valor += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
                         else: 
                             if self.getPhoto(campo,self.request,data):
-                                tmp += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
-                        tmp += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getPhoto(campo,self.request,data),campo)
+                                valor += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
+                        valor += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getPhoto(campo,self.request,data),campo)
                     
                     elif type_campo == 'file':
                         if errors:
                             if self.getFile(campo,self.request,data):
-                                tmp += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(campo,self.request,data))
+                                valor += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(campo,self.request,data))
                         else:
                             if self.getFile(campo,self.request,data):
-                                tmp += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(campo,self.request,data))
-                        tmp += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getFile(campo,self.request,data),campo)
+                                valor += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(campo,self.request,data))
+                        valor += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getFile(campo,self.request,data),campo)
                     
                     elif type_campo == 'date':
-                        tmp += """<input id='%s' type='text' maxlength='10' onKeyDown='Mascara(this,Data);' onKeyPress='Mascara(this,Data);' onKeyUp='Mascara(this,Data);'
+                        valor += """<input id='%s' type='text' maxlength='10' onKeyDown='Mascara(this,Data);' onKeyPress='Mascara(this,Data);' onKeyUp='Mascara(this,Data);'
                                          value='%s' name='%s' size='25'/>"""%(campo,self.converte_data(self.getValue(campo,self.request,data,default_value),True),campo)
         
                     elif type_campo == 'textarea':
-                        tmp += "<textarea id='%s' name='%s' style='width: 100; height: 81px;'>%s</textarea>"%(campo, campo, self.getValue(campo,self.request,data,default_value)) 
+                        valor += "<textarea id='%s' name='%s' style='width: 100; height: 81px;'>%s</textarea>"%(campo, campo, self.getValue(campo,self.request,data,default_value)) 
                     
                     elif type_campo == 'bool':
-                        tmp += "<input id='%s' type='checkbox' value='%s' name='%s' size='25' %s/>"%(campo,'True',campo,self.checked(campo,self.request,data,default_value))
+                        valor += "<input id='%s' type='checkbox' value='%s' name='%s' size='25' %s/>"%(campo,'True',campo,self.checked(campo,self.request,data,default_value))
                     
                     elif type_campo == 'combo':
                         select = False
-                        tmp += "<select name='%s'>"%(campo) 
-                        tmp += "<option value="">-- Selecione --</option>"
+                        valor += "<select name='%s'>"%(campo) 
+                        valor += "<option value="">-- Selecione --</option>"
                         for item in value_choice[campo]:
                             if item[0] == self.getValue(campo,self.request,data,default_value):
                                 select = True
-                                tmp +="<option value='%s' selected>%s</option>"%(item[0], item[1])
+                                valor +="<option value='%s' selected>%s</option>"%(item[0], item[1])
                             else:
-                                tmp +="<option value='%s'>%s</option>"%(item[0], item[1])
-                        tmp += "</select>"
+                                valor +="<option value='%s'>%s</option>"%(item[0], item[1])
+                        valor += "</select>"
                         if select:
-                            tmp += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo,'', campo)
+                            valor += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo,'', campo)
                         else:
-                            tmp += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo, self.getValue(campo, self.request,data, default_value), campo)
+                            valor += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo, self.getValue(campo, self.request,data, default_value), campo)
                     
                     elif type_campo == 'list':
-                        tmp += "<div class='boxSelecao' name='%s'>"%(campo)
+                        valor += "<div class='boxSelecao' name='%s'>"%(campo)
                         for item in value_choice[campo]:
                             lable =  item[1]
                             if item[0] in self.getValueList(campo,self.request,data,default_value):
-                                tmp += "<input value='%s' type='checkbox' checked name='%s'/><label>%s</label><br/>"%(item[0],campo,lable)
+                                valor += "<input value='%s' type='checkbox' checked name='%s'/><label>%s</label><br/>"%(item[0],campo,lable)
                             else:
-                                tmp += "<input value='%s' type='checkbox' name='%s'/><label>%s</label><br/>"%(item[0],campo,lable)
-                        tmp += "</div>" 
+                                valor += "<input value='%s' type='checkbox' name='%s'/><label>%s</label><br/>"%(item[0],campo,lable)
+                        valor += "</div>" 
                     
                     elif type_campo == 'choice':
-                        tmp += "<select name='%s'>"%(campo)
-                        tmp += "<option value="">-- Selecione --</option>"
+                        valor += "<select name='%s'>"%(campo)
+                        valor += "<option value="">-- Selecione --</option>"
                         for item in value_choice[campo]:
                             if item[0] == self.getValue(campo,self.request,data,default_value):
-                                tmp +="<option value='%s' selected>%s</option>"%(item[0], item[1])
+                                valor +="<option value='%s' selected>%s</option>"%(item[0], item[1])
                             else:
-                                tmp +="<option value='%s'>%s</option>"%(item[0], item[1])
+                                valor +="<option value='%s'>%s</option>"%(item[0], item[1])
 
-                        tmp += "</select>"
+                        valor += "</select>"
                     
                     elif type_campo == 'radio':
-                        tmp += "<div id='%s' >"%(campo)
+                        valor += "<div id='%s' >"%(campo)
                         for item in value_choice[campo]: 
                             if item[0] == self.getValueList(campo,self.request,data,default_value):
-                                tmp += "<input type='radio' name='%s' value='%s' checked >%s" %(campo, item[0], item[1])
+                                valor += "<input type='radio' name='%s' value='%s' checked >%s" %(campo, item[0], item[1])
                             else:
-                                tmp += "<input type='radio' name='%s' value='%s' >%s" %(campo, item[0], item[1])
+                                valor += "<input type='radio' name='%s' value='%s' >%s" %(campo, item[0], item[1])
 
-                            tmp += '<br />'
-                        tmp += "</div>"
+                            valor += '<br />'
+                        valor += "</div>"
                     
                     elif type_campo == 'richtext':
                         utility = getUtility(ITinyMCE)
                         conf = utility.getConfiguration(context=self.context,
                                                         field=campo,
                                                         request=self.request)
-                        
-                        tmp += "<div class='fieldTextFormat'><label>Formato do Texto</label>"
-                        tmp += "<select name='%s_text_format' id='%s_text_format'><option value='text/html' selected='selected'>HTML</option>"%(campo,campo)
-                        tmp += "<option value='text/x-web-textile'>Textile</option><option value='text/x-plone-outputfilters-html'>Plone Output Filters HTML</option></select></div>"
-                        tmp += "<textarea id='%s' class='mce_editable' name='%s' rows='25' cols='40' title='%s' >%s</textarea>"%(campo,campo, conf, self.getValue(campo, self.request,data, default_value))
+                            
+                        valor += "<div class='fieldTextFormat'><label>Formato do Texto</label>"
+                        valor += "<select name='%s_text_format' id='%s_text_format'><option value='text/html' selected='selected'>HTML</option>"%(campo,campo)
+                        valor += "<option value='text/x-web-textile'>Textile</option><option value='text/x-plone-outputfilters-html'>Plone Output Filters HTML</option></select></div>"
+                        valor += "<textarea id='%s' class='mce_editable' name='%s' rows='25' cols='40' title='%s' >%s</textarea>"%(campo,campo, conf, self.getValue(campo, self.request,data, default_value))
                    
-                    else:
-                        tmp += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo, self.getValue(campo, self.request,data, default_value), campo)
+                    elif type_campo != 'referencia':
+                        valor += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo, self.getValue(campo, self.request,data, default_value), campo)
     
-                    tmp += "</div>"
+    
+    
+                    if campos[campo].get('flag_multi'):
+                        table = ''
+                        table +='<table id="listing-table" class="listing"><th style="width: 50%"></th>'
+    
+                        if type_campo in ['list','radio']:
+                            for item in value_choice[campo]: 
+                                table += '<th class="posted">%s</th>'%( item[1])
+                        
+                        else:    
+                            table += '<th>%s</th>'%('Responda')
+                            
+                        id_form = int(self.context.forms_id)
+                        ref = ModelsFormFields().get_fields_byIdForm_and_RefField(id_form,campo)
+                        for i in ref:
+                            table += '<tr><td>%s</td>'%(i.title)
+                            
+                            valor = ''
+                            if type_campo == 'list':
+                                for item in value_choice[campo]:
+                                    valor = ''
+                                    lable =  item[1]
+                                    if item[0] in self.getValueList(i.name_field,self.request,data,default_value):
+                                        valor += "<input value='%s' type='checkbox' checked name='%s'/>"%(item[0],i.name_field)
+                                    else:
+                                        valor += "<input value='%s' type='checkbox' name='%s'/>"%(item[0],i.name_field)
+                                    table += '<td>%s</td>'%(valor)
+                            
+                            elif type_campo == 'radio':
+                                for item in value_choice[campo]:
+                                    valor = '' 
+                                    if item[0] == self.getValueList(i.name_field,self.request,data,default_value):
+                                        valor += "<input type='radio' name='%s' value='%s' checked >" %(i.name_field, item[0])
+                                    else:
+                                        valor += "<input type='radio' name='%s' value='%s' >" %(i.name_field, item[0])
+                                    
+                                    table += '<td>%s</td>'%(valor)
+                                    
+                                    
+                            elif type_campo == 'img':
+                                if errors:
+                                    if self.getPhoto(i.name_field,self.request,data):
+                                        valor += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(campo,self.request,data))
+                                else: 
+                                    if self.getPhoto(i.name_field,self.request,data):
+                                        valor += "<img src='%s' style='width:100px;height:100px;' /><br />"%(self.getPhoto(i.name_field,self.request,data))
+                                valor += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(i.name_field,self.getPhoto(i.name_field,self.request,data),i.name_field)
+                            
+                                table += '<td>%s</td>'%(valor)
+                            
+                            elif type_campo == 'file':
+                                if errors:
+                                    if self.getFile(i.name_field,self.request,data):
+                                        valor += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(i.name_field,self.request,data))
+                                else:
+                                    if self.getFile(i.name_field,self.request,data):
+                                        valor += "<a href='%s' target='_blank'>Download do Arquivo</a><br />"%(self.getFile(i.name_field,self.request,data))
+                                valor += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getFile(i.name_field,self.request,data),campo)
+                            
+                                table += '<td>%s</td>'%(valor)
+                            
+                            elif type_campo == 'date':
+                                valor += """<input id='%s' type='text' maxlength='10' onKeyDown='Mascara(this,Data);' onKeyPress='Mascara(this,Data);' onKeyUp='Mascara(this,Data);'
+                                                 value='%s' name='%s' size='25'/>"""%(i.name_field,self.converte_data(self.getValue(i.name_field,self.request,data,default_value),True),i.name_field)
+                
+                                table += '<td>%s</td>'%(valor)
+                            
+                            elif type_campo == 'textarea':
+                                valor += "<textarea id='%s' name='%s' style='width: 100; height: 81px;'>%s</textarea>"%(i.name_field, i.name_field, self.getValue(i.name_field,self.request,data,default_value)) 
+                            
+                                table += '<td>%s</td>'%(valor)
+                            
+                            elif type_campo == 'bool':
+                                valor += "<input id='%s' type='checkbox' value='%s' name='%s' size='25' %s/>"%(i.name_field,'True',i.name_field,self.checked(i.name_field,self.request,data,default_value))
+                            
+                                table += '<td>%s</td>'%(valor)
+                            
+                            elif type_campo == 'choice':
+                                valor += "<select name='%s'>"%(i.name_field)
+                                valor += "<option value="">-- Selecione --</option>"
+                                for item in value_choice[campo]:
+                                    if item[0] == self.getValue(i.name_field,self.request,data,default_value):
+                                        valor +="<option value='%s' selected>%s</option>"%(item[0], item[1])
+                                    else:
+                                        valor +="<option value='%s'>%s</option>"%(item[0], item[1])
+        
+                                valor += "</select>"
+                            
+                                table += '<td>%s</td>'%(valor)
+                                
+                            elif type_campo != 'referencia':
+                                valor += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(i.name_field, self.getValue(i.name_field, self.request,data, default_value), i.name_field)
+
+                                table += '<td>%s</td>'%(valor)
+                                
+                            table += '</tr>'
+                        
+                        table += '</table>'
+                        tmp += table + "</div>"
+                    else:
+                        tmp += valor + "</div>"
                 
                 else:
                     tmp += ''
-                
                 
                     
                 html.pop(index)
@@ -478,8 +588,5 @@ class BaseFunc(BaseStore):
                 
             
             return html
-        
-        
-        
         
         

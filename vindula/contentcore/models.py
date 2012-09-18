@@ -78,6 +78,8 @@ class ModelsFormFields(Storm, BaseStore):
     name_field = Unicode() 
     type_fields =  Unicode()
     list_values = Unicode()
+    field_ref = Unicode()
+    flag_multi = Bool()
     date_creation = DateTime()
     title = Unicode()
     value_default = Unicode()
@@ -87,6 +89,7 @@ class ModelsFormFields(Storm, BaseStore):
     flag_ativo = Bool()
     forms_id = Int()
     
+    ref_mult = ReferenceSet(name_field, "ModelsFormFields.field_ref")
     
     def set_FormFields(self,**kwargs):
         # adicionando...
@@ -101,6 +104,16 @@ class ModelsFormFields(Storm, BaseStore):
             return data
         else:
             return None
+        
+    def get_fields_byIdForm_and_RefField(self,id_form,ref_field):
+        data = self.store.find(ModelsFormFields, ModelsFormFields.field_ref==ref_field,
+                                                 ModelsFormFields.forms_id==id_form)
+        if data.count() > 0:
+            return data
+        else:
+            return []
+        
+        
         
     def get_Fields_byId(self, id_form,id_fields):
         data = self.store.find(ModelsFormFields, ModelsFormFields.id==id_fields,

@@ -31,8 +31,9 @@
 						<tal:rep repeat="item form_data">
 							<table width="100%">
 								<tr><th width="100%" tal:content="string:Nome do Campo: ${item/titulo|nothing}" /></tr>
-								<tr><td width="100%" tal:content="string:Quantidade de Respostas Totais: ${item/quant|nothing}"></td></tr>
-								<tr>
+								<tr><td width="100%" tal:condition="not: item/flag_multi|nothing" 
+								                     tal:content="string:Quantidade de Respostas Totais: ${item/quant|nothing}"></td></tr>
+								<tr tal:condition="not: item/flag_multi|nothing">
 									<td>
 										<table tal:condition="not: item/text|nothing" width="100%">
 											<tr>
@@ -60,6 +61,46 @@
 											</tal:rep>
 										</table>
 									</td>
+								</tr>
+								<tr tal:condition="item/flag_multi|nothing">
+								    <td>
+                                        <tal:rep repeat="ref item/dados|python:[]">
+                                            <tal:cont content="ref/title"></tal:cont>    
+                                            
+                                            <table tal:condition="not: item/text|nothing" width="100%">
+                                                <tr>
+                                                    <th width="70%" >Resposta</th>
+                                                    <th width="25%" >Quantidade</th>
+                                                </tr>
+                                                <tal:rep repeat="j ref/dados|nothing">
+                                                    
+                                                    <tr tal:define="i repeat/j/even|nothing" 
+                                                        tal:attributes="class python: i and 'even' or 'odd'">
+                                                        
+                                                        <td tal:content="j/name|nothing"></td>
+                                                        <td tal:content="j/cont|nothing"></td>
+                                                        
+                                                    </tr>
+                                                    
+                                                </tal:rep>
+
+                                            </table>
+                                            <table tal:condition="item/text|nothing" width="100%" >
+                                                <tr><th width="95%">Respostas</th></tr>
+                                                <tal:rep repeat="rep item/dados|nothing">
+                                                    <tr tal:define="i repeat/rep/even|nothing" 
+                                                        tal:attributes="class python: i and 'even' or 'odd'">
+                                                        
+                                                        <td tal:content="structure rep/text|nothing"></td>
+                                                    </tr>
+                                                </tal:rep>
+                                            </table>
+                                                    
+                                                
+                                            
+                                        
+                                        </tal:rep>
+                                    </td>
 								</tr>
 							</table>
 						</tal:rep>

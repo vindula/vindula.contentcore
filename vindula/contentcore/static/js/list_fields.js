@@ -9,6 +9,18 @@ function hideShowListValues () {
     };
 }
 
+function hideShowFieldRef () {
+    var val = $j("select[name='type_fields']").val();
+    if (val =='referencia'){
+        $j('div#field-field_ref').show();
+        $j('div#field-flag_multi').hide();
+    }else{
+        $j('div#field-field_ref').hide();
+        $j('div#field-flag_multi').show();
+    };
+}
+
+
 $j(document).ready(function(){
 	/* Aba de edição do conteudo*/
 	$j('#contentview-form').addClass('selected');
@@ -16,9 +28,11 @@ $j(document).ready(function(){
 	
 	/* Exibição do campo de list value*/
 	hideShowListValues();
+	hideShowFieldRef();
 	//$j('div#field-list_values').hide();
 	$j("select[name='type_fields']").change(function(){
-	   hideShowListValues();  
+	   hideShowListValues();
+	   hideShowFieldRef();  
 	});
 	
 });

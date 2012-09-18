@@ -13,6 +13,12 @@
 			             <div id="conteudo">
 			                 <tal:cont content="structure context/text_messenger/output|nothing" />
 			             </div>
+                        <script type="text/javascript" tal:attributes="src string:${view/static}/js/jquery.emoticons.js"></script>
+                        <script type="text/javascript">
+                            $j(document).ready(function(){
+                                $j(".posted").emoticons();
+                            });
+                        </script>
 			             
 			        	<form name="load-form" id="load-form" enctype="multipart/form-data" 
 						      class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/load-form" method="POST">

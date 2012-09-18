@@ -55,3 +55,14 @@ table a.marginRight{
     
     
 }
+
+#subtable .odd td,
+#subtable .odd{
+ background: none;   
+    
+}
+#subtable .even td,
+#subtable .even{
+ background: none;   
+    
+}        

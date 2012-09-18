@@ -102,85 +102,186 @@ class LoadRelatorioForm(BaseFunc):
            D={}
            D['titulo'] = campo.title 
            
+           if campo.flag_multi:
+               D['flag_multi'] = True
+               ref = []
+               
+               
+               for item in campo.ref_mult:
+                   E = {}
+                   instances = ModelsFormValues().get_FormValues_byForm_and_Field(id_form, item.name_field)
+                   
+                   E['title'] = item.title
+                   
+                   if tipo == 'bool':
+                       regs = ModelsFormInstance().get_Instance(id_form)
+                       M=[{'name': 'True', 'cont': instances.count()},
+                          {'name': 'False', 'cont': regs.count()-instances.count()}]
+                       
+                       E['dados'] = M  
+                       E['quant'] =  regs.count()
+                   elif tipo == 'choice' or tipo == 'radio':
+                       M = []
+                       opcao = campo.list_values.splitlines()
+                       for i in opcao:
+                           N = {}
+                           j = i.split('|')
+                           N['name'] = j[1]
+                           N['cont'] = 0 
+                           
+                           for instance in instances:
+                               if instance.value == j[0].strip():
+                                    N['cont'] +=1 
+                        
+                           M.append(N)
+                       E['dados'] = M
+                   
+                   elif tipo == 'list':
+                       M = []
+                       tmp = []
+                       opcoes = []
+                       opcao = campo.list_values.splitlines()
+                       
+                       for i in opcao:
+                           i = i.split('|')
+                           C ={}
+                           C['id'] = i[0].replace(' ','')
+                           C['val'] = i[1]
+                           opcoes.append(C)
+                      
+                       for instance in instances:
+                           tmp.append(self.decodePickle(instance.value))
+                       
+                       for i in tmp:
+                           N ={}
+                           text = ''
+                           for x in i:
+                               for opcao in opcoes:
+                                   if x == str(opcao['id']):
+                                       text += opcao['val'] + ', ' 
+                           
+                           N['name'] = text
+                           N['cont'] = tmp.count(i)
+                           
+                           M.append(N)
+                    
+                       E['dados'] = M
+                       
+                   else:
+                       M = []
+                       for instance in instances:
+                           valor = instance.value or instance.value_blob
+                           
+                           if tipo in ['img','file']:
+                               arquivo = self.decodePickle(valor)
+                               name = arquivo.get('filename','')
+                               
+                           N={}
+                           if tipo == 'img':
+                               N['text'] = '<img width="120px" src="%s/form-image?id=%s">' %(getSite().absolute_url(),instance.id)
+                               
+                           elif tipo == 'file':
+                               N['text'] = '<a href="%s/form-file?id=%s" target="_blank">%s</a><br />' %(getSite().absolute_url(), instance.id,name)
+                               
+                           else:
+                               N['text'] = instance.value
+                       
+                           M.append(N)
+                       
+                       E['dados'] = M
+                       E['text'] = True
+                   
+                   ref.append(E)
+               
+              
+               D['dados'] = ref
+           
+           
            instances = ModelsFormValues().get_FormValues_byForm_and_Field(id_form, campo.name_field)
            if instances:  
                D['quant'] =  instances.count()
 
                tipo = campo.type_fields
-               if tipo == 'bool':
-                   regs = ModelsFormInstance().get_Instance(id_form)
-                   M=[{'name': 'True', 'cont': instances.count()},
-                      {'name': 'False', 'cont': regs.count()-instances.count()}]
-                   
-                   D['dados'] = M  
-                   D['quant'] =  regs.count()
-               elif tipo == 'choice' or tipo == 'radio':
-                   M = []
-                   opcao = campo.list_values.splitlines()
-                   for i in opcao:
-                       N = {}
-                       j = i.split('|')
-                       N['name'] = j[1]
-                       N['cont'] = 0 
-                       for instance in instances:
-                           if instance.value == j[0].strip():
-                                N['cont'] +=1 
-                    
-                       M.append(N)
-                   D['dados'] = M
+               if tipo == 'referencia':
+                   continue
                
-               elif tipo == 'list':
-                   M = []
-                   tmp = []
-                   opcoes = []
-                   opcao = campo.list_values.splitlines()
-                   
-                   for i in opcao:
-                       i = i.split('|')
-                       C ={}
-                       C['id'] = i[0].replace(' ','')
-                       C['val'] = i[1]
-                       opcoes.append(C)
-                  
-                   for instance in instances:
-                       tmp.append(self.decodePickle(instance.value))
-                   
-                   for i in tmp:
-                       N ={}
-                       text = ''
-                       for x in i:
-                           for opcao in opcoes:
-                               if x == str(opcao['id']):
-                                   text += opcao['val'] + ', ' 
-                       
-                       N['name'] = text
-                       N['cont'] = tmp.count(i)
-                       
-                       M.append(N)
-                           
-                   D['dados'] = M
-                   
                else:
-                   M = []
-                   for instance in instances:
-                       valor = instance.value or instance.value_blob
-                       arquivo = self.decodePickle(valor)
-                
-                       name = arquivo.get('filename','')
-                       N={}
-                       if tipo == 'img':
-                           N['text'] = '<img width="120px" src="%s/form-image?id=%s">' %(getSite().absolute_url(),instance.id)
-                           
-                       elif tipo == 'file':
-                           N['text'] = '<a href="%s/form-file?id=%s" target="_blank">%s</a><br />' %(getSite().absolute_url(), instance.id,name)
-                           
-                       else:
-                           N['text'] = instance.value
+                   if tipo == 'bool':
+                       regs = ModelsFormInstance().get_Instance(id_form)
+                       M=[{'name': 'True', 'cont': instances.count()},
+                          {'name': 'False', 'cont': regs.count()-instances.count()}]
+                       
+                       D['dados'] = M  
+                       D['quant'] =  regs.count()
+                   elif tipo == 'choice' or tipo == 'radio':
+                       M = []
+                       opcao = campo.list_values.splitlines()
+                       for i in opcao:
+                           N = {}
+                           j = i.split('|')
+                           N['name'] = j[1]
+                           N['cont'] = 0 
+                           for instance in instances:
+                               if instance.value == j[0].strip():
+                                    N['cont'] +=1 
+                        
+                           M.append(N)
+                       D['dados'] = M
                    
-                       M.append(N)
-                   
-                   D['dados'] = M
-                   D['text'] = True
+                   elif tipo == 'list':
+                       M = []
+                       tmp = []
+                       opcoes = []
+                       opcao = campo.list_values.splitlines()
+                       
+                       for i in opcao:
+                           i = i.split('|')
+                           C ={}
+                           C['id'] = i[0].replace(' ','')
+                           C['val'] = i[1]
+                           opcoes.append(C)
+                      
+                       for instance in instances:
+                           tmp.append(self.decodePickle(instance.value))
+                       
+                       for i in tmp:
+                           N ={}
+                           text = ''
+                           for x in i:
+                               for opcao in opcoes:
+                                   if x == str(opcao['id']):
+                                       text += opcao['val'] + ', ' 
+                           
+                           N['name'] = text
+                           N['cont'] = tmp.count(i)
+                           
+                           M.append(N)
+                               
+                       D['dados'] = M
+                       
+                   else:
+                       M = []
+                       for instance in instances:
+                           valor = instance.value or instance.value_blob
+                           
+                           if tipo in ['img','file']:
+                               arquivo = self.decodePickle(valor)
+                               name = arquivo.get('filename','')
+                               
+                           N={}
+                           if tipo == 'img':
+                               N['text'] = '<img width="120px" src="%s/form-image?id=%s">' %(getSite().absolute_url(),instance.id)
+                               
+                           elif tipo == 'file':
+                               N['text'] = '<a href="%s/form-file?id=%s" target="_blank">%s</a><br />' %(getSite().absolute_url(), instance.id,name)
+                               
+                           else:
+                               N['text'] = instance.value
+                       
+                           M.append(N)
+                       
+                       D['dados'] = M
+                       D['text'] = True
            else:
                D['quant'] = 0
                D[''] = 'Não possui resultados'
@@ -211,25 +312,40 @@ class RegistrationCreateFields(BaseFunc):
                   'description_fields'    : {'required': False, 'type':'textarea',  'label':'Descrição',                    'decription':u'Digite a descrição para o campo',                                  'ordem':4},
                   'value_default'         : {'required': False, 'type':'combo',     'label':'Valor Padrão',                 'decription':u'''Digite o comando ou o valor padrão para preenchimento deste campo,\n
                                                                                                                                              este campo funciona com interpretação python''',                 'ordem':5},
-                  'required'              : {'required': False, 'type':'bool',      'label':'Campo Obrigatório',            'decription':u'Marque esta opção se o campo for obrigatório',                     'ordem':6},
-                  'ordenacao'             : {'required': False, 'type':'hidden',    'label':'Ordenação',                    'decription':u'',                                                                 'ordem':7},
-                  'flag_ativo'            : {'required': False, 'type':'bool',      'label':'Campo ativo',                  'decription':u'Marque esta opção se o campo estará ativo para o usuário',         'ordem':8},
-                  'forms_id'              : {'required': False, 'type':'hidden',    'label':'Id form',                      'decription':u'',                                                                 'ordem':9}}    
+                  
+                  'flag_multi'            : {'required': False, 'type':'bool',      'label':'Campo multiplo',               'decription':u'Selecione se este campo suportara outros campos dentro dele',      'ordem':6},                                                                                                               
+                  'field_ref'             : {'required': False, 'type':'choice',    'label':'Campo multiplo pai',           'decription':u'Selecione o campo multiplo que este campo pertence',               'ordem':7},
+                  
+                  'required'              : {'required': False, 'type':'bool',      'label':'Campo Obrigatório',            'decription':u'Marque esta opção se o campo for obrigatório',                     'ordem':8},
+                  'ordenacao'             : {'required': False, 'type':'hidden',    'label':'Ordenação',                    'decription':u'',                                                                 'ordem':9},
+                  'flag_ativo'            : {'required': False, 'type':'bool',      'label':'Campo ativo',                  'decription':u'Marque esta opção se o campo estará ativo para o usuário',         'ordem':10},
+                  'forms_id'              : {'required': False, 'type':'hidden',    'label':'Id form',                      'decription':u'',                                                                 'ordem':11}}    
             
         
         lista_itens = {'type_fields':[['text','Campo de Texto'],['textarea','Campo Texto Multiplas Linhas'],
                                       ['bool','Campo Verdadeiro/Falso'],['choice','Campo de Escolha'],
                                       ['list','Campo de Seleção Multipla'],['hidden','Campo Oculto'],
                                       ['img','Campo de Upload de Imagem'],['file','Campo de Upload de Arquivos'],
-                                      ['richtext','Campo de Texto Rico'],['radio','Campo de Opção']
+                                      ['richtext','Campo de Texto Rico'],['radio','Campo de Opção'],
+                                      
+                                      ['referencia','Campo com referencia a um campo multiplo']
                                       ]
                        }
-        
+        #Valores Default
         dados_defaul =  ModelsDefaultValue().get_DefaultValues()
         L = []
         for i in dados_defaul:
             L.append([i.value,i.lable])
         lista_itens['value_default'] = L
+        
+        #Campos de referencia
+        M =[] 
+        dados_ref = ModelsFormFields().get_Fields_ByIdForm(id_form)
+        for i in dados_ref:
+            if i.flag_multi:
+                M.append([i.name_field,i.title])
+        
+        lista_itens['field_ref'] = M
         
         
         # divisao dos dicionarios "errors" e "convertidos"
@@ -570,6 +686,8 @@ class RegistrationLoadForm(BaseFunc):
                     M['label'] = field.title
                     M['decription'] = field.description_fields
                     M['ordem'] = field.ordenacao
+                    M['flag_multi'] = field.flag_multi
+                    
                     campos[field.name_field] = M
                 else:
                     campos['outro'+str(n)] = {'ordem':field.ordenacao}     

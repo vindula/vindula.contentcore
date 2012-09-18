@@ -69,3 +69,7 @@ Changelog
 -----------------------
 - Criação do campo de radio button no formulario
 
+1.1.14 - 2012-09-18
+-----------------------
+- Criação do novo campo de referencia e campos multiplos
+ 

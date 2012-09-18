@@ -10,10 +10,11 @@ from zope.component import getUtility
 #from plone.namedfile.scaling import ImageScaling
 import pickle
 
+from vindula.contentcore.models import ModelsFormFields
+
 def to_utf8(value):
     return unicode(value, 'utf-8')
 
-         
 
 def valida_form(ctx, configuracao, form):
     # metodo que valida um sequencia de campos e retorna um dicionario
@@ -26,17 +27,26 @@ def valida_form(ctx, configuracao, form):
     # var 'valor' - usado para converter dos dados inseridos no fomulario
     for campo in configuracao.keys():
         if not 'outro' in campo:
-            valor = form.get(campo)   #configuracao[campo]['campo_form'], '')
+            valor = form.get(campo, u'')   #configuracao[campo]['campo_form'], '')
             # logica para verificacao de obrigatoriedade de campo
             
             if configuracao.get(campo).get('required', None) is not None:
                 if configuracao[campo]['required'] == True: # configuracao: campo e obrigatorio
                     if configuracao[campo]['type'] != 'bool' and\
-                       configuracao[campo]['type'] != 'img' and \
-                       configuracao[campo]['type'] != 'file':
+                       configuracao[campo]['type'] != 'img' and\
+                       configuracao[campo]['type'] != 'file' and\
+                       not configuracao[campo].get('flag_multi'):
                         if valor == '' or valor.isspace(): # se o campo estiver vazio
                             errors[campo] = u'Este campo é obrigatório' # indica o campo vazio
-    
+                    
+                    elif configuracao[campo].get('flag_multi'):
+                        id_form = int(ctx.context.forms_id)
+                        ref = ModelsFormFields().get_fields_byIdForm_and_RefField(id_form,campo)
+                        for i in ref:
+                            valor_tmp = form.get(i.name_field, u'')
+                            if not valor_tmp or valor_tmp.isspace():
+                                errors[campo] = u'Este campo é obrigatório'
+                        
             if configuracao[campo]['type'] == date:
                 if valor != '':   
                     try:       

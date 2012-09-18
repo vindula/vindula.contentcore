@@ -259,20 +259,28 @@ class VindulaViewForm(grok.View, BaseFunc):
     def checkItem(self, item, form):
         for campo in form.keys():
             if campo not in ['b_start','date_creation']:
+                
                 valor = form.get(campo,'')
-                if not valor:
+                field = item.find(fields=self.Convert_utf8(campo)).one()
+                
+                if not valor :
                     continue
+                if not field:
+                    return False
+                
                 elif type(valor) == list:
                     existe = False
                     for val in valor:
-                        if item.find(fields=self.Convert_utf8(campo)).one().value == self.Convert_utf8(val):
-                            existe = True
-                            break
+                        if field:
+                            if field.value == self.Convert_utf8(val):
+                                existe = True
+                                break
                         
                     if not existe:
                         return False
-                elif not item.find(fields=self.Convert_utf8(campo)).one().value == self.Convert_utf8(valor):
-                    return False
+                elif field: 
+                    if not field.value == self.Convert_utf8(valor):
+                        return False
             
             elif campo == 'date_creation':
                 valor = form.get(campo,'')
