@@ -58,6 +58,11 @@ class IFormularioPadrao(form.Schema):
                               description=u"campo do formulario",
                               required=True)
     
+    view_title = schema.Bool(title=_(u"Visualizar o Título"),
+                                     description=_(u"Marque esta opção para visualizar o título do formulário."),
+                                     default=True,
+                                     required=False)
+    
     text_messenger = RichText(title=_(u"Texto Para o topo do formulário"),
                                      description=_(u"Digite o texto que será mostrado no topo do formulario"),
                                      required=False)

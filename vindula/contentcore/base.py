@@ -454,7 +454,7 @@ class BaseFunc(BaseStore):
                     elif type_campo == 'radio':
                         valor += "<div id='%s' >"%(campo)
                         for item in value_choice[campo]: 
-                            if item[0] == self.getValueList(campo,self.request,data,default_value):
+                            if item[0] == self.getValue(campo,self.request,data,default_value):
                                 valor += "<input type='radio' name='%s' value='%s' checked >%s" %(campo, item[0], item[1])
                             else:
                                 valor += "<input type='radio' name='%s' value='%s' >%s" %(campo, item[0], item[1])
@@ -508,7 +508,7 @@ class BaseFunc(BaseStore):
                             elif type_campo == 'radio':
                                 for item in value_choice[campo]:
                                     valor = '' 
-                                    if item[0] == self.getValueList(i.name_field,self.request,data,default_value):
+                                    if item[0] == self.getValue(i.name_field,self.request,data,default_value):
                                         valor += "<input type='radio' name='%s' value='%s' checked >" %(i.name_field, item[0])
                                     else:
                                         valor += "<input type='radio' name='%s' value='%s' >" %(i.name_field, item[0])

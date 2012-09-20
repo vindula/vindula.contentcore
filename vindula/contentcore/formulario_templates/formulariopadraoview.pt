@@ -7,8 +7,20 @@
       i18n:domain="vindula.contentcore">
 
 <body>
-<metal:main fill-slot="content-core">
-		
+<metal:main fill-slot="main">
+	
+	<tal:cond condition="context/view_title|nothing">	
+        <h1 metal:use-macro="context/kss_generic_macros/macros/generic_title_view">
+             Generic KSS Title. Is rendered with class="documentFirstHeading".
+        </h1>
+        <div id="viewlet-below-content-title" tal:content="structure provider:plone.belowcontenttitle" tal:condition="not:ajax_load" />
+        
+        <div metal:use-macro="context/kss_generic_macros/macros/generic_description_view">
+            Generic KSS Description. Is rendered with class="documentDescription".
+        </div>
+
+    </tal:cond>
+	
 	<metal:block metal:use-macro="context/load-form/macros/page-view"/>
 
 </metal:main>
