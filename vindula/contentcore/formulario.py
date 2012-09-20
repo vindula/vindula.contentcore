@@ -78,7 +78,7 @@ class IFormularioPadrao(form.Schema):
                             required=False)
     
     email_padrao = schema.Choice(title=_(u"E-mail padrão"),
-                                 description=_(u"elecione um campo para remetente de e-mail, enviado pelo formulário"),
+                                 description=_(u"Selecione um campo para remetente de e-mail, enviado pelo formulário"),
                                  source=ListCamposForm(),
                                  required=False)
     
