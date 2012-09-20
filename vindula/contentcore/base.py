@@ -256,7 +256,11 @@ class BaseFunc(BaseStore):
 
     def geraHTMLContent(self,id,tipo,valor):
         if tipo == 'list':
-            return self.decodePickle(valor)
+            txt = ''
+            for i in self.decodePickle(valor): 
+                txt += i +', '
+                
+            return txt
         
         elif tipo == 'img':
             
@@ -276,6 +280,18 @@ class BaseFunc(BaseStore):
         
         else:
             return valor
+
+    def convertSelect(self,valor, tipo):
+        if tipo == 'list':
+           
+           txt = ''
+           for i in self.decodePickle(valor): 
+               txt += i +', '
+               
+           return txt
+        else:
+            return valor
+        
 
     def envia_email(self,ctx, msg, assunto, mail_para, arquivos,to_email=None):
         """

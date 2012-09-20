@@ -90,11 +90,13 @@
                                                                              valores python:view.find_group_by(valores_b)">
                                                                     
                                                                     <option tal:repeat="valor valores" 
-                                                                            tal:content="valor"
-                                                                            tal:define="campo campo/name_field|nothing"
+                                                                            tal:define="tipo campo/type_fields|nothing;
+                                                                                        campo campo/name_field|nothing;"
+                                                                                        
+                                                                            tal:content="python: view.convertSelect(valor,tipo)"
                                                                             tal:attributes="value valor;
                                                                                             selected python: (valor == request.form.get(campo,'') or
-                                                                                                              valor in request.form.get(campo,'')) and 'selected' or '';"/>
+                                                                                                              valor in request.form.get(campo,'')) and 'selected' or ''; "/>
                                                             </tal:def>
                                                             
                                                         </select>
@@ -115,8 +117,9 @@
                                                                                                  valores python:view.find_group_by(valores_b)">
                                                                                         
                                                                                         <option tal:repeat="valor valores" 
-                                                                                                tal:content="valor"
-                                                                                                tal:define="campo item/name_field|nothing"
+                                                                                                tal:define="tipo item/type_fields|nothing;
+                                                                                                            campo item/name_field|nothing;"
+                                                                                                tal:content="python: view.convertSelect(valor,tipo)"            
                                                                                                 tal:attributes="value valor;
                                                                                                                 selected python: (valor == request.form.get(campo,'') or
                                                                                                                                   valor in request.form.get(campo,'')) and 'selected' or '';"/>
