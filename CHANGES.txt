@@ -81,3 +81,6 @@ Changelog
 -----------------------
 - Criação da opção de mostrar o titulo do formulario
 
+1.1.17 - 2012-09-21
+-----------------------
+- Correção do Ticket #200

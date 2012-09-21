@@ -5,8 +5,8 @@ import pickle
 import datetime
 
 #from Products.TinyMCE.utility import TinyMCE, form_adapter
-from zope.component import getUtility
-from Products.TinyMCE.interfaces.utility import ITinyMCE
+#from zope.component import getUtility
+#from Products.TinyMCE.interfaces.utility import ITinyMCE
 
 # Import para envio de E-mail
 #from Products.CMFCore.utils import getToolByName
@@ -479,15 +479,29 @@ class BaseFunc(BaseStore):
                         valor += "</div>"
                     
                     elif type_campo == 'richtext':
-                        utility = getUtility(ITinyMCE)
-                        conf = utility.getConfiguration(context=self.context,
-                                                        field=campo,
-                                                        request=self.request)
-                            
+                        url = self.context.absolute_url()
+
                         valor += "<div class='fieldTextFormat'><label>Formato do Texto</label>"
                         valor += "<select name='%s_text_format' id='%s_text_format'><option value='text/html' selected='selected'>HTML</option>"%(campo,campo)
-                        valor += "<option value='text/x-web-textile'>Textile</option><option value='text/x-plone-outputfilters-html'>Plone Output Filters HTML</option></select></div>"
-                        valor += "<textarea id='%s' class='mce_editable' name='%s' rows='25' cols='40' title='%s' >%s</textarea>"%(campo,campo, conf, self.getValue(campo, self.request,data, default_value))
+                        valor += "<option value='text/x-web-textile'>Textile</option><option value='text/x-plone-outputfilters-html'>Plone Output Filters HTML</option></select></div>"                        
+                        valor += "<input class='cke_config_ur' type='hidden' value='%s/ckeditor_plone_config.js' name='cke_config_url'>"%(url)
+                        valor += "<input class='cke_iswidget' type='hidden' value='True' name='cke_iswidget'>"
+                        valor += "<div class='widget_settings'><input class='cke_baseHref' type='hidden' name='cke_baseHref' value='%s' >"%(url)
+                        valor += "<input class='cke_height' type='hidden' value='100px' name='cke_height'></div>"
+                        valor += "<textarea id='%s' class='ckeditor_plone' name='%s' rows='25' cols='40' >%s</textarea>"%(campo,campo, self.getValue(campo, self.request,data, default_value))                        
+                        
+
+                        
+                        
+#                        utility = getUtility(ITinyMCE)
+#                        conf = utility.getConfiguration(context=self.context,
+#                                                        field=campo,
+#                                                        request=self.request)
+#                            
+#                        valor += "<div class='fieldTextFormat'><label>Formato do Texto</label>"
+#                        valor += "<select name='%s_text_format' id='%s_text_format'><option value='text/html' selected='selected'>HTML</option>"%(campo,campo)
+#                        valor += "<option value='text/x-web-textile'>Textile</option><option value='text/x-plone-outputfilters-html'>Plone Output Filters HTML</option></select></div>"
+#                        valor += "<textarea id='%s' class='mce_editable' name='%s' rows='25' cols='40' title='%s' >%s</textarea>"%(campo,campo, conf, self.getValue(campo, self.request,data, default_value))
                    
                     elif type_campo != 'referencia':
                         valor += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo, self.getValue(campo, self.request,data, default_value), campo)
