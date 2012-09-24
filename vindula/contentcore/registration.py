@@ -1066,6 +1066,10 @@ class RegistrationLoadForm(BaseFunc):
                                 context.context.invokeFactory(**objects)  
                             
                 #Redirect back to the front page with a status message
+                mensagem = context.context.mensagem
+                if mensagem:
+                    IStatusMessage(context.request).addStatusMessage(_(mensagem), "info")
+                
                 context.request.response.redirect(destino_form)
                         
                 if not acoes:

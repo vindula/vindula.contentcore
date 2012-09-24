@@ -84,3 +84,7 @@ Changelog
 1.1.17 - 2012-09-21
 -----------------------
 - Correção do Ticket #200
+
+1.1.18 - 2012-09-24
+-----------------------
+- Adição do mecanismo de adicionar alerta quando salvar

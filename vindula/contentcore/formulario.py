@@ -103,6 +103,10 @@ class IFormularioPadrao(form.Schema):
                                default=u'http://',
                                required=False)
 
+    mensagem = schema.TextLine(title=_(u"Mensagem de aviso"),
+                               description=_(u"Digite a mensagem que será mostrada ao usuário quando o formulário for salvo"),
+                               required=False)
+
 
 @form.default_value(field=IFormularioPadrao['forms_id'])
 def forms_idDefaultValue(value):
