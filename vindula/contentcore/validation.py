@@ -35,6 +35,7 @@ def valida_form(ctx, configuracao, form):
                     if configuracao[campo]['type'] != 'bool' and\
                        configuracao[campo]['type'] != 'img' and\
                        configuracao[campo]['type'] != 'file' and\
+                       configuracao[campo]['type'] != 'list' and\
                        not configuracao[campo].get('flag_multi'):
                         if valor == '' or valor.isspace(): # se o campo estiver vazio
                             errors[campo] = u'Este campo é obrigatório' # indica o campo vazio
@@ -46,6 +47,9 @@ def valida_form(ctx, configuracao, form):
                             valor_tmp = form.get(i.name_field, u'')
                             if not valor_tmp or valor_tmp.isspace():
                                 errors[campo] = u'Este campo é obrigatório'
+                    else:
+                        if not valor:
+                            errors[campo] = u'Este campo é obrigatório' # indica o campo vazio
                         
             if configuracao[campo]['type'] == date:
                 if valor != '':   
