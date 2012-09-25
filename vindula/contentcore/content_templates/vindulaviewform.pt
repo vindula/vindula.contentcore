@@ -35,7 +35,7 @@
                 <a alt="gerar relatorio" title="gerar relatorio" class="control"
                    tal:attributes="href string:${context/absolute_url|nothing}/relatorio-form">
                    <img tal:attributes="src string:${view/static}/img/relatorio_registro.png"
-                        title="Gerar relat&oacute;rio os registros existentes" alt="Gerar relat&oacute;rio os registros existentes" />
+                        title="Gerar relat&oacute;rio dos registros existentes" alt="Gerar relat&oacute;rio dos registros existentes" />
                 </a>
 
                 <a alt="filtro em nova janela" title="filtro em nova janela" class="control"

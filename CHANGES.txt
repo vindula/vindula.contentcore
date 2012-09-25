@@ -92,5 +92,5 @@ Changelog
 1.1.19 - 2012-09-25
 -----------------------
 - Ajustes no campo de list itens
-
+- Correção Ticket #247
 
