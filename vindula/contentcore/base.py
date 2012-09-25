@@ -451,9 +451,9 @@ class BaseFunc(BaseStore):
                         for item in value_choice[campo]:
                             lable =  item[1]
                             if item[0] in self.getValueList(campo,self.request,data,default_value):
-                                valor += "<input value='%s' type='checkbox' checked name='%s'/><label>%s</label><br/>"%(item[0],campo,lable)
+                                valor += "<input value='%s' type='checkbox' checked name='%s'/><span>%s</span><br/>"%(item[0],campo,lable)
                             else:
-                                valor += "<input value='%s' type='checkbox' name='%s'/><label>%s</label><br/>"%(item[0],campo,lable)
+                                valor += "<input value='%s' type='checkbox' name='%s'/><span>%s</span><br/>"%(item[0],campo,lable)
                         valor += "</div>" 
                     
                     elif type_campo == 'choice':

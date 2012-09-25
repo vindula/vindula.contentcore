@@ -88,3 +88,9 @@ Changelog
 1.1.18 - 2012-09-24
 -----------------------
 - Adição do mecanismo de adicionar alerta quando salvar
+
+1.1.19 - 2012-09-25
+-----------------------
+- Ajustes no campo de list itens
+
+
