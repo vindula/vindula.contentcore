@@ -25,7 +25,7 @@ class ModelsForm(Storm, BaseStore):
         if data.count() > 0:
             return data
         else:
-            return None
+            return []
     
     def get_Forns_byId(self, id):
         data = self.store.find(ModelsForm, ModelsForm.id==int(id)).one()
@@ -215,7 +215,7 @@ class ModelsFormValues(Storm, BaseStore):
         if data.count() > 0:
             return data
         else:
-            return None
+            return []
 
         
     def get_FormValues_byForm_and_Instance(self, id_form, id_instance):
@@ -224,14 +224,14 @@ class ModelsFormValues(Storm, BaseStore):
         if data.count()>0:
             return data
         else:
-            return None
+            return []
         
     def get_FormValues_byForm(self, id_form):
         data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==id_form)
         if data.count()>0:
             return data
         else:
-            return None
+            return []
 
 class ModelsParametersForm(Storm, BaseStore):
     __storm_table__ = 'vin_contentcore_parameters'
@@ -262,7 +262,7 @@ class ModelsParametersForm(Storm, BaseStore):
         if data.count() > 0:
             return data
         else:
-            return None
+            return []
         
     def del_ParametersForm(self, form_id):
         results = self.store.find(ModelsParametersForm, ModelsParametersForm.forms_id==form_id)
