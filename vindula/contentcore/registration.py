@@ -105,9 +105,10 @@ class LoadRelatorioForm(BaseFunc):
            if campo.flag_multi:
                D['flag_multi'] = True
                ref = []
-               
+               tipo = campo.type_fields
                
                for item in campo.ref_mult:
+
                    E = {}
                    instances = ModelsFormValues().get_FormValues_byForm_and_Field(id_form, item.name_field)
                    
