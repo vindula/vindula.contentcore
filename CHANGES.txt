@@ -94,3 +94,6 @@ Changelog
 - Ajustes no campo de list itens
 - Correção Ticket #247
 
+1.1.20 - 2012-10-04
+-----------------------
+- Criado metodo de relacionameto para view de dados 

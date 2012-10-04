@@ -130,6 +130,14 @@ class ModelsFormFields(Storm, BaseStore):
         else:
             return None
     
+    def get_Fields_ByField(self,campo,form):
+        data = self.store.find(ModelsFormFields, ModelsFormFields.name_field==campo,
+                                                 ModelsFormFields.forms_id==form).one()
+        if data:
+            return data
+        else:
+            return None
+    
     
     def check_fields(self,campo,form):
         data = self.store.find(ModelsFormFields, ModelsFormFields.name_field==campo,

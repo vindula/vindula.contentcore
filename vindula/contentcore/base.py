@@ -278,10 +278,28 @@ class BaseFunc(BaseStore):
             else:
                 return ''
         
+        elif tipo == 'choice':
+            valor_campo = ModelsFormValues().get_Values_byID(id)
+            id_form = int(self.context.forms_id)
+
+            if valor_campo:
+                campo = ModelsFormFields().get_Fields_ByField(valor_campo.fields,id_form)
+                
+                items = campo.list_values.splitlines()
+                D=[]
+                for i in items:
+                    L = i.split(' | ')
+                    
+                    if len(L) >= 2:
+                        if L[0] == valor:
+                            return L[1]
+            
+            return valor  
+        
         else:
             return valor
 
-    def convertSelect(self,valor, tipo):
+    def convertSelect(self,valor, tipo, id):
         if tipo == 'list':
            
            txt = ''
@@ -289,6 +307,21 @@ class BaseFunc(BaseStore):
                txt += i +', '
                
            return txt
+       
+        elif tipo == 'choice':
+            
+            campo = ModelsFormFields().get_Fields_byIdField(id)
+            if campo:
+                items = campo.list_values.splitlines()
+                D=[]
+                for i in items:
+                    L = i.split(' | ')
+                    
+                    if len(L) >= 2:
+                        if L[0] == valor:
+                            return L[1]
+            return valor
+       
         else:
             return valor
         

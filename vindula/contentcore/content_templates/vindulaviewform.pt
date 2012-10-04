@@ -91,9 +91,10 @@
                                                                     
                                                                     <option tal:repeat="valor valores" 
                                                                             tal:define="tipo campo/type_fields|nothing;
+																			            id_campo campo/id|nothing;
                                                                                         campo campo/name_field|nothing;"
                                                                                         
-                                                                            tal:content="python: view.convertSelect(valor,tipo)"
+                                                                            tal:content="python: view.convertSelect(valor,tipo,id_campo)"
                                                                             tal:attributes="value valor;
                                                                                             selected python: (valor == request.form.get(campo,'') or
                                                                                                               valor in request.form.get(campo,'')) and 'selected' or ''; "/>
@@ -118,8 +119,9 @@
                                                                                         
                                                                                         <option tal:repeat="valor valores" 
                                                                                                 tal:define="tipo item/type_fields|nothing;
+																								            id_campo item/id|nothing;
                                                                                                             campo item/name_field|nothing;"
-                                                                                                tal:content="python: view.convertSelect(valor,tipo)"            
+                                                                                                tal:content="python: view.convertSelect(valor,tipo,id_campo)"            
                                                                                                 tal:attributes="value valor;
                                                                                                                 selected python: (valor == request.form.get(campo,'') or
                                                                                                                                   valor in request.form.get(campo,'')) and 'selected' or '';"/>
