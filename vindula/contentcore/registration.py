@@ -144,27 +144,28 @@ class LoadRelatorioForm(BaseFunc):
                        opcao = campo.list_values.splitlines()
                        
                        for i in opcao:
-                           i = i.split('|')
-                           C ={}
-                           C['id'] = i[0].replace(' ','')
-                           C['val'] = i[1]
-                           opcoes.append(C)
-                      
+                            i = i.split('|')
+                            C ={}
+                            C['id'] = i[0].strip() #.replace(' ','')
+                            C['val'] = i[1]
+                            opcoes.append(C)
+                        
                        for instance in instances:
-                           tmp.append(self.decodePickle(instance.value))
-                       
+                            tmp.append(self.decodePickle(instance.value))
+                        
                        for i in tmp:
                            N ={}
                            text = ''
                            for x in i:
                                for opcao in opcoes:
-                                   if x == str(opcao['id']):
+                                   if unicode(x, 'utf-8') == opcao['id']:
                                        text += opcao['val'] + ', ' 
-                           
+                          
                            N['name'] = text
                            N['cont'] = tmp.count(i)
                            
-                           M.append(N)
+                           if not N in M:
+                               M.append(N)
                     
                        E['dados'] = M
                        
@@ -243,7 +244,8 @@ class LoadRelatorioForm(BaseFunc):
                            opcoes.append(C)
                       
                        for instance in instances:
-                           tmp.append(self.decodePickle(instance.value))
+                           data = self.decodePickle(instance.value)
+                           tmp.append(data)
                        
                        for i in tmp:
                            N ={}
@@ -256,7 +258,8 @@ class LoadRelatorioForm(BaseFunc):
                            N['name'] = text
                            N['cont'] = tmp.count(i)
                            
-                           M.append(N)
+                           if not N in M:
+                               M.append(N)
                                
                        D['dados'] = M
                        
