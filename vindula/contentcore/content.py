@@ -162,15 +162,16 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
         
         id_form = int(self.context.forms_id)
         fields = ModelsFormFields().get_Fields_ByIdForm(int(id_form))
-        types = ['list','img','file']
+        types = ['img','file']
         
         campos_vin = []
         text = ''
         if fields:
             for field in fields:
                 if field.flag_ativo:
-                    campos_vin.append(field.title)
-                    text += field.title + ';'
+                    titulo = field.title.replace(';', ',')
+                    campos_vin.append(titulo)
+                    text += titulo + ';'
             text = text[:-1] + '\n'
             
             values = ModelsForm().get_FormValues(id_form)
@@ -181,7 +182,14 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                             data = item.find(fields=field.name_field).one()
 
                             if not field.type_fields in types and data:
-                                    valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', '')
+                                if field.type_fields == 'list':
+                                    valor = ''
+                                    for i in self.decodePickle(data.value):
+                                        valor += i +','
+                                    
+                                else:
+                                    valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', ',')
+                            
                             else:
                                 valor = ''
                             text += '%s;' % (valor)
