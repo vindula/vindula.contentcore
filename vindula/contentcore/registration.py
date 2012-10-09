@@ -238,7 +238,7 @@ class LoadRelatorioForm(BaseFunc):
                        for i in opcao:
                            i = i.split('|')
                            C ={}
-                           C['id'] = i[0].replace(' ','')
+                           C['id'] = i[0].strip() #.replace(' ','')
                            C['val'] = i[1]
                            opcoes.append(C)
                       
@@ -250,7 +250,7 @@ class LoadRelatorioForm(BaseFunc):
                            text = ''
                            for x in i:
                                for opcao in opcoes:
-                                   if x == str(opcao['id']):
+                                   if unicode(x, 'utf-8') == opcao['id']:
                                        text += opcao['val'] + ', ' 
                            
                            N['name'] = text
