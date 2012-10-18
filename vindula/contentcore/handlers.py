@@ -106,6 +106,10 @@ def CreatFormDataBase(context, event):
 def EditFormDataBase(context, event):       
         title = context.Title()
         description = context.Description()
+        
+        campo_chave = context.campo_chave
+        campo_label = context.campo_label
+        
         forms_id = context.forms_id
         
         result = ModelsForm().get_Forns_byId(int(forms_id))
@@ -115,6 +119,13 @@ def EditFormDataBase(context, event):
             
             try:result.description_form = to_utf8(description)
             except:result.description_form = description
+            
+            try:result.campo_label = to_utf8(campo_label)
+            except:result.campo_label = campo_label
+            
+            try:result.campo_chave = to_utf8(campo_chave)
+            except:result.campo_chave = campo_chave
+           
             BaseStore().store.flush()
             
             

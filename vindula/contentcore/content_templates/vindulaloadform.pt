@@ -1,5 +1,6 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
+		
 	</head>
 	<body >
 		<div metal:fill-slot="main" >
@@ -13,12 +14,44 @@
 			             <div id="conteudo">
 			                 <tal:cont content="structure context/text_messenger/output|nothing" />
 			             </div>
-                        <script type="text/javascript" tal:attributes="src string:${view/static}/js/jquery.emoticons.js"></script>
-                        <script type="text/javascript">
-                            $j(document).ready(function(){
-                                $j(".posted").emoticons();
-                            });
-                        </script>
+                        <div metal:use-macro="here/macro-jquery-select/macros/js" />
+			            
+						<script type="text/javascript" tal:attributes="src string:${view/static}/js/select/select_filter.js"></script>
+						<script type="text/javascript" tal:attributes="src string:${view/static}/js/mascara.js"></script>
+			            
+			            <script type="text/javascript" tal:attributes="src string:${view/static}/js/jquery.emoticons.js"></script>
+			            <script type="text/javascript">
+			                $j(document).ready(function(){
+			                    $j(".posted").emoticons();
+			                    
+			                    
+			                    $j(".select-filter").multiselect({
+			                            multiple: false,
+			                            selectedList:5,
+			                            minWidth:150,
+			                            height:100
+			                            
+			                            }).multiselectfilter({
+			                            width:120
+			                            },'refresh');
+										
+                                $j.datepicker.setDefaults($j.datepicker.regional["pt-BR"]);
+					            var D = {showAnim:'blind',
+                                         dateFormat: "dd/mm/yy",
+                                         defaultDate: "1D",
+                                         numberOfMonths: 1,
+                                         minDate: "-5Y"
+                                        };
+								
+								$j(".dateField").each(function(){
+									var name = this.name;
+									var tag = "datepicker-"+name;
+									this.id = tag;
+									$j('#'+tag).datepicker(D);
+								});
+																		
+			                });
+			            </script>
 			             
 			        	<form name="load-form" id="load-form" enctype="multipart/form-data" 
 						      class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/load-form" method="POST">

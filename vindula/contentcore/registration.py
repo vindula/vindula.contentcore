@@ -279,6 +279,10 @@ class LoadRelatorioForm(BaseFunc):
                            elif tipo == 'file':
                                N['text'] = '<a href="%s/form-file?id=%s" target="_blank">%s</a><br />' %(getSite().absolute_url(), instance.id,name)
                                
+                           elif tipo == 'date':
+                               data = self.decodePickle(instance.value)
+                               
+                               N['text'] = data.strftime('%d/%m/%Y')
                            else:
                                N['text'] = instance.value
                        
@@ -316,24 +320,31 @@ class RegistrationCreateFields(BaseFunc):
                   'description_fields'    : {'required': False, 'type':'textarea',  'label':'Descrição',                    'decription':u'Digite a descrição para o campo',                                  'ordem':4},
                   'value_default'         : {'required': False, 'type':'combo',     'label':'Valor Padrão',                 'decription':u'''Digite o comando ou o valor padrão para preenchimento deste campo,\n
                                                                                                                                              este campo funciona com interpretação python''',                 'ordem':5},
+                  'mascara'               : {'required': False, 'type':'choice',    'label':'Tipo da Mascara',              'decription':'Escolha um tipo de mascara para o campo ',                          'ordem':6},
                   
-                  'flag_multi'            : {'required': False, 'type':'bool',      'label':'Campo multiplo',               'decription':u'Selecione se este campo suportara outros campos dentro dele',      'ordem':6},                                                                                                               
-                  'field_ref'             : {'required': False, 'type':'choice',    'label':'Campo multiplo pai',           'decription':u'Selecione o campo multiplo que este campo pertence',               'ordem':7},
+                  'flag_multi'            : {'required': False, 'type':'bool',      'label':'Campo multiplo',               'decription':u'Selecione se este campo suportara outros campos dentro dele',      'ordem':7},                                                                                                               
+                  'field_ref'             : {'required': False, 'type':'choice',    'label':'Campo multiplo pai',           'decription':u'Selecione o campo multiplo que este campo pertence',               'ordem':8},
                   
-                  'required'              : {'required': False, 'type':'bool',      'label':'Campo Obrigatório',            'decription':u'Marque esta opção se o campo for obrigatório',                     'ordem':8},
-                  'ordenacao'             : {'required': False, 'type':'hidden',    'label':'Ordenação',                    'decription':u'',                                                                 'ordem':9},
-                  'flag_ativo'            : {'required': False, 'type':'bool',      'label':'Campo ativo',                  'decription':u'Marque esta opção se o campo estará ativo para o usuário',         'ordem':10},
-                  'forms_id'              : {'required': False, 'type':'hidden',    'label':'Id form',                      'decription':u'',                                                                 'ordem':11}}    
+                  'form_ref'              : {'required': False, 'type':'choice',    'label':'Formulário de Relacionamento', 'decription':u'Selecione o formulario que vai ser relacionando com este campo',   'ordem':9},
+                  
+                  'required'              : {'required': False, 'type':'bool',      'label':'Campo Obrigatório',            'decription':u'Marque esta opção se o campo for obrigatório',                     'ordem':10},
+                  'ordenacao'             : {'required': False, 'type':'hidden',    'label':'Ordenação',                    'decription':u'',                                                                 'ordem':11},
+                  
+                  'flag_ativo'            : {'required': False, 'type':'bool',      'label':'Campo ativo',                  'decription':u'Marque esta opção se o campo estará ativo para o usuário',         'ordem':12},
+                  'forms_id'              : {'required': False, 'type':'hidden',    'label':'Id form',                      'decription':u'',                                                                 'ordem':13}}    
             
         
         lista_itens = {'type_fields':[['text','Campo de Texto'],['textarea','Campo Texto Multiplas Linhas'],
                                       ['bool','Campo Verdadeiro/Falso'],['choice','Campo de Escolha'],
                                       ['list','Campo de Seleção Multipla'],['hidden','Campo Oculto'],
                                       ['img','Campo de Upload de Imagem'],['file','Campo de Upload de Arquivos'],
-                                      ['richtext','Campo de Texto Rico'],['radio','Campo de Opção'],
-                                      
-                                      ['referencia','Campo com referencia a um campo multiplo']
-                                      ]
+                                      ['richtext','Campo de Texto Rico'],['radio','Campo de Opção'],['date','Campo de Data'],
+                                      ['referencia','Campo com referencia a um campo multiplo'],
+                                      ['foreign_key','Campo para referencia com outro formulário'],
+                                      ],
+                       
+                       'mascara':[['Telefone','Telefone'],['Data','Data'],['Integer','Números Inteiros'],
+                                  ['Cpf','CPF'],['Cep','CEP'],['Cnpj','CNPJ']],
                        }
         #Valores Default
         dados_defaul =  ModelsDefaultValue().get_DefaultValues()
@@ -351,6 +362,15 @@ class RegistrationCreateFields(BaseFunc):
         
         lista_itens['field_ref'] = M
         
+        #Formularios de referencia
+        N = []
+        site = context.context.portal_url.getPortalObject()
+        dados_form = self.getBuscaContents(site,'vindula.contentcore.formulariobasico')
+        for i in dados_form:
+            obj = i.getObject()
+            N.append([int(obj.forms_id),obj.title])
+        
+        lista_itens['form_ref'] = N
         
         # divisao dos dicionarios "errors" e "convertidos"
         form_data = {
@@ -374,6 +394,14 @@ class RegistrationCreateFields(BaseFunc):
             errors, data = valida_form(context,campos, context.request.form)  
             
             if not errors:
+                if 'form_ref' in data.keys():
+                    field_ref = data.get('form_ref',None)
+                    if field_ref:
+                        data['form_ref'] = int(data.get('form_ref'))
+                    else:
+                        data['form_ref'] = None
+                    
+                
                 if 'forms_id'in form_keys and 'id_fields' in form_keys:
                     # editando...
                     id_fields = int(form.get('id_fields','0'))
@@ -417,6 +445,7 @@ class RegistrationCreateFields(BaseFunc):
                     D[campo] = getattr(data, campo, '') 
                 
                 form_data['data'] = D
+                
                 return form_data
             else:
                return form_data
@@ -691,6 +720,7 @@ class RegistrationLoadForm(BaseFunc):
                     M['decription'] = field.description_fields
                     M['ordem'] = field.ordenacao
                     M['flag_multi'] = field.flag_multi
+                    M['mascara'] = field.mascara
                     
                     campos[field.name_field] = M
                 else:
@@ -708,6 +738,22 @@ class RegistrationLoadForm(BaseFunc):
                         D.append(L)
                         
                     lista_itens[field.name_field] = D
+                    
+                elif field.type_fields == 'foreign_key':
+                    E = []
+                    form_ref = field.ref_form
+                    
+                    form_ref_id = form_ref.id
+                    label = form_ref.campo_label
+                    key = form_ref.campo_chave
+                    
+                    dados = ModelsFormValues().get_FormValues_byForm_and_Field(form_ref_id,key)
+                    for item in dados:
+                        dados_label = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(form_ref_id, item.instance_id, label)
+                        E.append([item.value, dados_label.value])
+                    
+                    lista_itens[field.name_field] = E
+                    
                     
 #                if field.type_fields == 'list':
 #                    items = field.list_values.splitlines()

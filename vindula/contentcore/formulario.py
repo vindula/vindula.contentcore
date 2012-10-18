@@ -82,6 +82,18 @@ class IFormularioPadrao(form.Schema):
                                  source=ListCamposForm(),
                                  required=False)
     
+    # Campos para referenciamento
+    campo_label = schema.Choice(title=_(u"Campo para visualização"),
+                                 description=_(u"Selecione um campo para ser utilizado na visualização destes dados em outro formulário"),
+                                 source=ListCamposForm(),
+                                 required=False)
+    
+    campo_chave = schema.Choice(title=_(u"Campo para relacionamento"),
+                                 description=_(u"Selecione um campo para relacionado com outro formulário"),
+                                 source=ListCamposForm(),
+                                 required=False)
+    
+    
     acao_destino = schema.Choice(title=_(u"Ação de destino do formulário"),
                                  description=_(u"Selecione um destino para o formulário depois de realizar a ação"),
                                  source=ListDestinoForm(),
@@ -117,10 +129,11 @@ class FormularioPadrao(dexterity.Container):
     """ """
     grok.implements(IFormularioPadrao)
 
-    def getDadosContent(self):
+    def getDadosContent(self,**kwargs):
       id_form = int(self.forms_id)
       fields = ModelsFormFields().get_Fields_ByIdForm(id_form)
       values =  ModelsForm().get_FormValues(id_form)
+      tools = BaseFunc()
       
       L = []
       for item in values:
@@ -131,6 +144,9 @@ class FormularioPadrao(dexterity.Container):
                   if data:
                       if campo.type_fields == u'bool':
                           valor = eval(data.value) 
+                      
+                      if campo.type_fields == u'date':
+                          valor = tools.decodePickle(data.value)
                       
                       elif data.value:
                           valor = data.value
@@ -143,9 +159,13 @@ class FormularioPadrao(dexterity.Container):
                       
                   D[campo.name_field] = valor
           
-          L.append(D)        
-      
-      return L  
+          append = True
+          for arg in kwargs:
+              if D.get(arg) not in kwargs.get(arg) and kwargs.get(arg):
+                  append = False
+          
+          if append: L.append(D)        
+      return L
     
 
        

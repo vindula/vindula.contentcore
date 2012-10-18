@@ -20,6 +20,14 @@ function hideShowFieldRef () {
     };
 }
 
+function hideShowFormRef () {
+    var val = $j("select[name='type_fields']").val();
+    if (val =='foreign_key'){
+        $j('div#field-form_ref').show();
+    }else{
+        $j('div#field-form_ref').hide();
+    };
+}
 
 $j(document).ready(function(){
 	/* Aba de edição do conteudo*/
@@ -29,10 +37,12 @@ $j(document).ready(function(){
 	/* Exibição do campo de list value*/
 	hideShowListValues();
 	hideShowFieldRef();
+	hideShowFormRef();
 	//$j('div#field-list_values').hide();
 	$j("select[name='type_fields']").change(function(){
 	   hideShowListValues();
-	   hideShowFieldRef();  
+	   hideShowFieldRef();
+	   hideShowFormRef();  
 	});
 	
 });

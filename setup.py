@@ -28,6 +28,12 @@ setup(name='vindula.contentcore',
           'setuptools',
           'plone.app.dexterity',
           'plone.namedfile [blobs]',
+          
+          'pisa',
+          'reportlab',
+          'html5lib',
+          'pyPdf',
+          'pyExcelerator',
           # -*- Extra requirements: -*-
       ],
       entry_points="""

@@ -9,7 +9,7 @@ import datetime
 #from Products.TinyMCE.interfaces.utility import ITinyMCE
 
 # Import para envio de E-mail
-#from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import getToolByName
 from zope.app.component.hooks import getSite
 import smtplib
 from email.MIMEMultipart import MIMEMultipart
@@ -67,7 +67,8 @@ class BaseFunc(BaseStore):
              'bool':'Campo Verdadeiro/Falso','choice':'Campo de Escolha',
              'list':'Campo de Seleção Multipla','hidden':'Campo Oculto',
              'img':'Campo de Upload de Imagem','file':'Campo de Upload de Arquivos',
-             'richtext':'Campo de Texto Rico','radio':'Campo de Opção'
+             'richtext':'Campo de Texto Rico','radio':'Campo de Opção',
+             'foreign_key':'Campo de referencia','date':'Campo de Data',
         } 
         
         if type:
@@ -95,6 +96,20 @@ class BaseFunc(BaseStore):
                 return True
         else:
             return True
+        
+    def getBuscaContents(self,context, type):
+        query = {}
+        pc = getToolByName(context, 'portal_catalog')
+
+        query['portal_type'] = type
+        #query['review_state'] = ['published', 'internally_published', 'external']
+        query['path'] = {'query':'/'.join(context.getPhysicalPath())}
+        query['sort_on'] = 'sortable_title' 
+        query['sort_order'] = 'ascending'
+        
+        itens = pc(**query)
+        return itens
+        
     
     def getValue(self,campo,request,data,default_value):
         #import pdb;pdb.set_trace() 
@@ -278,6 +293,15 @@ class BaseFunc(BaseStore):
             else:
                 return ''
         
+        elif tipo == 'date':
+            data = self.decodePickle(valor)
+            try:
+                return data.strftime('%d/%m/%Y')
+            
+            except:
+                return ''
+        
+        
         elif tipo == 'choice':
             valor_campo = ModelsFormValues().get_Values_byID(id)
             id_form = int(self.context.forms_id)
@@ -296,8 +320,29 @@ class BaseFunc(BaseStore):
             
             return valor  
         
-        else:
-            return valor
+        elif tipo == 'foreign_key':
+            if id:
+                valor_campo = ModelsFormValues().get_Values_byID(id)
+                id_form = int(self.context.forms_id)
+    
+                if valor_campo:
+                    campo = ModelsFormFields().get_Fields_ByField(valor_campo.fields,id_form)
+                    
+                    if campo:
+                        form_ref = campo.ref_form
+                        
+                        form_ref_id = form_ref.id
+                        label = form_ref.campo_label
+                        key = form_ref.campo_chave
+                            
+                        dados = ModelsFormValues().get_FormValues_byForm_and_Field(form_ref_id,key)
+                        for item in dados:
+                            if item.value == valor:
+                                dados_label = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(form_ref_id, item.instance_id, label) 
+                                
+                                return dados_label.value
+        
+        return valor
 
     def convertSelect(self,valor, tipo, id):
         if tipo == 'list':
@@ -320,10 +365,34 @@ class BaseFunc(BaseStore):
                     if len(L) >= 2:
                         if L[0] == valor:
                             return L[1]
+            
             return valor
-       
-        else:
-            return valor
+        
+        elif tipo == 'date':
+            data = self.decodePickle(valor)
+            try:
+                return data.strftime('%d/%m/%Y')
+            except:
+                return ''
+        
+        elif tipo == 'foreign_key':
+            campo = ModelsFormFields().get_Fields_byIdField(id)
+            
+            if campo:
+                form_ref = campo.ref_form
+                
+                form_ref_id = form_ref.id
+                label = form_ref.campo_label
+                key = form_ref.campo_chave
+                    
+                dados = ModelsFormValues().get_FormValues_byForm_and_Field(form_ref_id,key)
+                for item in dados:
+                    if item.value == valor:
+                        dados_label = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(form_ref_id, item.instance_id, label) 
+                        
+                        return dados_label.value
+                    
+        return valor
         
 
     def envia_email(self,ctx, msg, assunto, mail_para, arquivos,to_email=None):
@@ -420,6 +489,12 @@ class BaseFunc(BaseStore):
                         continue
                     else:
                         classe = ''
+                        
+                    mascara_campo = campos[campo].get('mascara',None)
+                    if mascara_campo:
+                        mascara="onKeyDown='Mascara(this,{0});' onKeyPress='Mascara(this,{0});' onKeyUp='Mascara(this,{0});'".format(mascara_campo)
+                    else:
+                        mascara = ''                        
                     
                     tmp += "<!-- Campo %s -->"%(campo)
                     tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo)+' '+classe,'field-'+campo)
@@ -454,14 +529,16 @@ class BaseFunc(BaseStore):
                         valor += "<input id='%s' type='file' value='%s' name='%s' size='25' />"%(campo,self.getFile(campo,self.request,data),campo)
                     
                     elif type_campo == 'date':
-                        valor += """<input id='%s' type='text' maxlength='10' onKeyDown='Mascara(this,Data);' onKeyPress='Mascara(this,Data);' onKeyUp='Mascara(this,Data);'
+                        valor += """<input id='%s' type='text' maxlength='10' class="dateField"
                                          value='%s' name='%s' size='25'/>"""%(campo,self.converte_data(self.getValue(campo,self.request,data,default_value),True),campo)
-        
+                                         
+                                        
                     elif type_campo == 'textarea':
                         valor += "<textarea id='%s' name='%s' style='width: 100; height: 81px;'>%s</textarea>"%(campo, campo, self.getValue(campo,self.request,data,default_value)) 
                     
                     elif type_campo == 'bool':
                         valor += "<input id='%s' type='checkbox' value='%s' name='%s' size='25' %s/>"%(campo,'True',campo,self.checked(campo,self.request,data,default_value))
+                        
                     
                     elif type_campo == 'combo':
                         select = False
@@ -510,6 +587,18 @@ class BaseFunc(BaseStore):
 
                             valor += '<br />'
                         valor += "</div>"
+                        
+                    elif type_campo == 'foreign_key':
+                        valor += "<select name='%s' class='select-filter'>"%(campo)
+                        valor += "<option value="">-- Selecione --</option>"
+                        for item in value_choice[campo]:
+                            if item[0] == self.getValue(campo,self.request,data,default_value):
+                                valor +="<option value='%s' selected>%s</option>"%(item[0], item[1])
+                            else:
+                                valor +="<option value='%s'>%s</option>"%(item[0], item[1])
+
+                        valor += "</select>"
+                        
                     
                     elif type_campo == 'richtext':
                         url = self.context.absolute_url()
@@ -523,9 +612,6 @@ class BaseFunc(BaseStore):
                         valor += "<input class='cke_height' type='hidden' value='100px' name='cke_height'></div>"
                         valor += "<textarea id='%s' class='ckeditor_plone' name='%s' rows='25' cols='40' >%s</textarea>"%(campo,campo, self.getValue(campo, self.request,data, default_value))                        
                         
-
-                        
-                        
 #                        utility = getUtility(ITinyMCE)
 #                        conf = utility.getConfiguration(context=self.context,
 #                                                        field=campo,
@@ -537,7 +623,7 @@ class BaseFunc(BaseStore):
 #                        valor += "<textarea id='%s' class='mce_editable' name='%s' rows='25' cols='40' title='%s' >%s</textarea>"%(campo,campo, conf, self.getValue(campo, self.request,data, default_value))
                    
                     elif type_campo != 'referencia':
-                        valor += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo, self.getValue(campo, self.request,data, default_value), campo)
+                        valor += "<input id='%s' type='text' value='%s' name='%s' size='25' %s />"%(campo, self.getValue(campo, self.request,data, default_value), campo, mascara)
     
     
     
@@ -631,7 +717,7 @@ class BaseFunc(BaseStore):
                                 table += '<td>%s</td>'%(valor)
                                 
                             elif type_campo != 'referencia':
-                                valor += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(i.name_field, self.getValue(i.name_field, self.request,data, default_value), i.name_field)
+                                valor += "<input id='%s' type='text' value='%s' name='%s' size='25' %s />"%(i.name_field, self.getValue(i.name_field, self.request,data, default_value), i.name_field,mascara)
 
                                 table += '<td>%s</td>'%(valor)
                                 

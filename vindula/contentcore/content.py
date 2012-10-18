@@ -186,6 +186,10 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                                     valor = ''
                                     for i in self.decodePickle(data.value):
                                         valor += i +','
+                                        
+                                elif field.type_fields == 'date':
+                                    campo_data = self.decodePickle(data.value)
+                                    valor = campo_data.strftime('%d/%m/%Y') 
                                     
                                 else:
                                     valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', ',')
@@ -223,7 +227,6 @@ class VindulaViewForm(grok.View, BaseFunc):
         
         data = ModelsForm().get_FormValues(id_form)
         L = []
-        
         for item in data:
             if self.checkItem(item, form):
                 L.append(item)

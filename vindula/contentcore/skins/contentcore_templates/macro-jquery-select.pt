@@ -1,0 +1,10 @@
+<metal:macro define-macro="js" >
+	
+	<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${context/portal_url}/++resource++vindula.contentcore/js/select/jquery.multiselect.css">
+	<script type="text/javascript" tal:attributes="src string:${context/portal_url}/++resource++vindula.contentcore/js/select/jquery.multiselect.min.js"></script>
+	<script type="text/javascript" tal:attributes="src string:${context/portal_url}/++resource++vindula.contentcore/js/select/jquery.multiselect.filter.min.js"></script>
+	
+	<script type="text/javascript" tal:attributes="src string:${context/portal_url}/++resource++vindula.contentcore/js/select/i18n/jquery.multiselect.br.js"></script>
+	<script type="text/javascript" tal:attributes="src string:${context/portal_url}/++resource++vindula.contentcore/js/select/i18n/jquery.multiselect.filter.br.js"></script>
+	
+</metal:macro>	
