@@ -107,3 +107,7 @@ Changelog
 --------------------
 -Criação do mecanismo de relacionamento entre formularios
 
+1.1.23 - 2012-10-19
+--------------------
+-Criar dos metodos metodos de exportação para pdf e xls 
+

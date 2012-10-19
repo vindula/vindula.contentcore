@@ -395,7 +395,7 @@ class BaseFunc(BaseStore):
         return valor
         
 
-    def envia_email(self,ctx, msg, assunto, mail_para, arquivos,to_email=None):
+    def envia_email(self,ctx, msg, assunto, mail_para, arquivos=[],to_email=None):
         """
         Parte do codigo retirado de:
             - http://dev.plone.org/collective/browser/ATContentTypes/branches/release-1_0-branch/lib/imagetransform.py?rev=10162
