@@ -25,6 +25,11 @@ class ExportacaoView(grok.View):
         
         portal = self.context.portal_url.getPortalObject()
         
+        try:
+            pasta = portal['documentos']['relatorios']
+        except:
+            pasta = portal
+        
         #pdfname += datetime.datetime.now().__str__()
         pdfname = pdfname.replace(':','-')
         pdfname = pdfname.replace(' ','_')
@@ -44,7 +49,7 @@ class ExportacaoView(grok.View):
                 count = 0
                 nome_arquivo = pdfname +'.pdf' 
                 
-                while nome_arquivo in portal.objectIds():
+                while nome_arquivo in pasta.objectIds():
                     nome_arquivo = pdfname + '-' + str(count) +'.pdf' 
                     count +=1
                 
@@ -54,8 +59,8 @@ class ExportacaoView(grok.View):
                           'title': nome_arquivo,
                           'file': pdf_file}
        
-                obj_pdf = portal.invokeFactory(**objeto)
-                obj_pdf = portal[obj_pdf]
+                obj_pdf = pasta.invokeFactory(**objeto)
+                obj_pdf = pasta[obj_pdf]
                 
                 return obj_pdf.absolute_url()
                 
