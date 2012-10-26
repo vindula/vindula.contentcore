@@ -13,7 +13,8 @@ from z3c.relationfield.schema import RelationChoice
 from plone.z3cform.textlines import TextLinesFieldWidget      
 
 from vindula.contentcore.base import BaseFunc
-from vindula.contentcore.models import ModelsForm, ModelsFormFields
+from vindula.contentcore.models.forms import ModelsForm 
+from vindula.contentcore.models.fields import ModelsFormFields 
 
 # import fo SimpleVocabulary
 from zope.interface import implements

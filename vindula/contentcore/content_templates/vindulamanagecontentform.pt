@@ -1,0 +1,136 @@
+<html  metal:use-macro="here/main_template/macros/master">
+	<head>
+		
+		<metal:js fill-slot="javascript_head_slot">
+	        <script type="text/javascript">
+	        	$j = jQuery.noConflict();
+	
+				$j(document).ready(function(){
+				    $j('#import-button').click(function () {
+				        $j(this).hide();
+				        $j('.imgLoader').show();
+				    });
+				});
+				
+	        </script>
+        </metal:js>
+		
+	</head>
+	<body>
+		<div metal:fill-slot="main" tal:define="errors view/errors|nothing;
+		                                        dados  view/dados|nothing">
+		    
+		    		<h1> Gerenciar / Importar Dados no formulario</h1>
+					<div id="internal">    		
+				        <form name="manage-values-form" id="manage-values-form" enctype="multipart/form-data" class="enableAutoFocus" action="manage-values-form" method="POST">
+				        	
+							<!-- Importação/configuração -->
+				            <fieldset tal:condition="not: request/form.config| not: request/form.importar |python:True">
+				            	<legend>Dados do Formul&aacute;rio</legend>
+								
+								<!-- arquivo --> 
+		                        <div class="field" tal:attributes="class python: view.field_class(errors, 'uid_attr')">
+		                            <label for="arquivo">Adicione o arquivo para importação ou configuração</label>
+		                            <span class="fieldRequired" title="Obrigatório">(Obrigatório)</span>
+		                            <div class="formHelp">Aponte qual arquivo sera utilizado para a importação ou configuração.</div>
+									<input id="arquivo" type="file" value="" name="arquivo" size="25" >
+								
+								</div>
+								
+								
+								<br/>
+                                <div style="float:left; width:100%">
+                                    <input style="width:100px" class="button-erp" type="submit" value="Configurar" name="form.config">
+									
+                                    <input style="width:100px;" class="button-erp" type="submit" value="Importar" name="form.importar"
+									       tal:condition="view/configuracao">
+                                </div>
+								
+							</fieldset>
+							
+							<fieldset tal:condition="dados|nothing">
+							     <legend>Dados Importados</legend>
+								 
+								 <p tal:content="dados"></p>
+								 
+						    
+							</fieldset>
+								
+							
+							<!-- Mapeamento do campo -->	 	
+						   	<fieldset tal:condition="request/form.config|nothing">
+						   		<legend>Mapeamento dos Campos</legend>
+						   		<div class="import-user">
+						   			
+						   		
+			                        <table border=0 style="width: 50%;"
+									       id="listing-table" class="listing tableImport"
+									       tal:define="campos_form view/load_fields_form|python:[];
+	                                                   campos_csv view/load_fields_csv|python:[];">
+			                            <tbody>
+			                                <tr><th>Campos do Formulario</th>
+			                                    <th></th>
+			                                    <th>Campos do CSV</th>
+			                                </tr>
+			                                <tr tal:repeat="campo_vin campos_form">
+			                                    <td tal:content="campo_vin/label"></td>
+			                                    <td class="middleColumn">=</td>
+			                                    <td>
+			                                        <select tal:attributes="name campo_vin/name" name="">
+			                                            <option value="">-- Selecione --</option>
+			                                            <tal:repeat repeat="campo_csv campos_csv">
+			                                                <option tal:attributes="value repeat/campo_csv/number"
+			                                                        tal:content="campo_csv"></option>
+			                                            </tal:repeat>
+			                                        </select>
+			                                    </td>
+			                                </tr>
+			                            </tbody>
+			                        </table>
+			                        <div>
+			                            <div class="imgLoader">
+			                            	<img tal:attributes="src string:${view/static}/img/ajaxLoader.gif">
+										</div>
+			                            <input id="import-button" type="submit" name="form.config.save" value="Configurar">
+			                        </div>
+								
+						   		</div>
+								
+						   		
+							</fieldset>
+							
+							
+							<!-- Mapeamento do atual -->        
+							<fieldset tal:define="conf view/configuracao|nothing;
+							                      f_config request/form.config|nothing" 
+							           tal:condition="python:conf and not f_config">
+                                <legend>Mapeamento dos Atual do Arquivo</legend>
+                                
+                                    <table style="width: 50%;"
+                                           id="listing-table" class="listing tableImport">
+
+                                        <tbody>
+                                            <tr><th>Campos do Formulario</th>
+                                                <th>Ordem da coluna do CSV</th>
+                                            </tr>
+                                            <tr tal:repeat="config view/configuracao">
+                                                <td tal:content="config/fields"></td>
+                                                <td>
+                                                    <tal:cond tal:content="string: ${config/campo_csv|nothing} ª coluna"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                
+                                
+                                
+                            </fieldset>
+							
+							
+						</form>
+					</div>
+				
+		    
+		</div>  
+	</body>
+</html>

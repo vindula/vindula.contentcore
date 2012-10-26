@@ -8,9 +8,13 @@ from vindula.contentcore.formulario import IFormularioPadrao
 from vindula.contentcore.conteudo_basico import IConteudoBasico
 
 from vindula.contentcore.validation import to_utf8
-from vindula.contentcore.base import BaseFunc
-from vindula.myvindula.user import BaseStore
-from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormInstance, ModelsFormValues, ModelsParametersForm
+from vindula.contentcore.base import BaseFunc, BaseStore
+
+from vindula.contentcore.models.forms import ModelsForm 
+from vindula.contentcore.models.fields import ModelsFormFields 
+from vindula.contentcore.models.form_values import ModelsFormValues
+from vindula.contentcore.models.form_instance import ModelsFormInstance
+from vindula.contentcore.models.parameters import ModelsParametersForm
 
 
 @grok.subscribe(IFormularioPadrao, IObjectRemovedEvent)

@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-from vindula.myvindula.user import BaseStore
-from vindula.contentcore.models import ModelsFormValues
+#from vindula.myvindula.user import BaseStore
+
 import pickle
 import datetime
-
-#from Products.TinyMCE.utility import TinyMCE, form_adapter
-#from zope.component import getUtility
-#from Products.TinyMCE.interfaces.utility import ITinyMCE
+from zope.component import getUtility
 
 # Import para envio de E-mail
 from Products.CMFCore.utils import getToolByName
@@ -28,11 +25,11 @@ from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import date , datetime 
 
-from vindula.contentcore.models import ModelsFormFields
 
 class BaseStore(object):
    
     def __init__(self, *args, **kwargs):
+        #self.store = getUtility(IZStorm).get('contentcore')
         self.store = getUtility(IZStorm).get('myvindula')
         
         #Lazy initialization of the object
@@ -48,6 +45,9 @@ class BaseStore(object):
         # adiciona a data atual
         self.date_creation = datetime.now()    
 
+
+from vindula.contentcore.models.form_values import ModelsFormValues
+from vindula.contentcore.models.fields import ModelsFormFields
 
 class BaseFunc(BaseStore):
     #default class for standard functions

@@ -10,7 +10,7 @@ from zope.component import getUtility
 #from plone.namedfile.scaling import ImageScaling
 import pickle
 
-from vindula.contentcore.models import ModelsFormFields
+from vindula.contentcore.models.fields import ModelsFormFields
 
 def to_utf8(value):
     return unicode(value, 'utf-8')

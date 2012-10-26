@@ -8,12 +8,20 @@ from zope.security import checkPermission
 from vindula.contentcore.formulario import IFormularioPadrao
 from vindula.contentcore.conteudo_basico import IConteudoBasico 
 from vindula.contentcore.base import BaseFunc
-from vindula.contentcore.models import ModelsForm, ModelsFormFields, ModelsFormValues, ModelsDefaultValue, ModelsFormInstance
+
+from vindula.contentcore.models.forms import ModelsForm 
+from vindula.contentcore.models.fields import ModelsFormFields 
+from vindula.contentcore.models.form_values import ModelsFormValues
+from vindula.contentcore.models.form_instance import ModelsFormInstance
+from vindula.contentcore.models.default_value import ModelsDefaultValue
+from vindula.contentcore.models.configImport import ModelsConfigImport
+
 
 from vindula.contentcore.registration import RegistrationCreateForm, RegistrationCreateFields,RegistrationLoadForm, RegistrationExcluirForm ,\
                                              RegistrationAddDefaultValue, RegistrationExcluirDefault, RegistrationParametrosForm, LoadRelatorioForm    
 
 import datetime
+from copy import copy 
 
 #Views Manage Form--------------------------------------------------    
 class VindulaManageForm(grok.View, BaseFunc):
@@ -137,6 +145,121 @@ class VindulaEditFieldsForm(grok.View, BaseFunc):
     
     def render(self):
         return self.index()
+
+    
+class VindulaManageContentForm(grok.View, BaseFunc):
+    grok.context(IFormularioPadrao)
+    grok.require('cmf.ModifyPortalContent')
+    grok.name('manage-values-form')
+    
+    
+    def update(self):
+        id_form = int(self.context.forms_id)
+        form = self.request.form
+        self.errors = {}
+        self.dados = []
+        self.configuracao = ModelsConfigImport().get_Config_byIdForm(int(id_form))
+        
+        FIELD_BLACKLIST = ['form.config.save','form.importar',]
+        configura = form.get('form.config.save',False)
+        importacao = form.get('form.importar',False)
+        
+        if configura:
+            
+            for field in form.keys():
+                if not field in FIELD_BLACKLIST:
+                    D = {}
+                    D['forms_id'] = id_form
+                    D['fields'] = self.Convert_utf8(field)
+                    D['campo_csv'] = self.Convert_utf8(form.get(field,0))         
+                    
+                    if self.configuracao:
+                        ModelsConfigImport().update_ConfigImport(D['forms_id'],D['fields'],D['campo_csv'])
+                    
+                    else:
+                        ModelsConfigImport().set_ConfigImport(**D)
+                    
+                    if 'form.config.save' in form.keys():
+                        form.pop('form.config.save')    
+            
+        elif importacao:
+#            import pdb;pdb.set_trace()
+            if 'arquivo' in form.keys():
+                file = form.get('arquivo').read().splitlines()
+                
+                for linha in file[1:]:
+                    colunas = linha.split(';')
+                    dados = {}
+                    
+                    for campo in self.configuracao:
+                        dados[self.Convert_utf8(campo.fields)] = self.Convert_utf8(colunas[int(campo.campo_csv)-1])
+                        
+                    chave_form = self.context.campo_chave
+                    result = ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(id_form,chave_form,dados[chave_form])
+                    
+                    if result:
+                        id_instance = result.instance_id
+                        for i in dados:
+                            ModelsFormValues().update_form_value(id_form,id_instance,dados[i],i)
+                    
+                    else:
+                        id_instance = ModelsFormInstance().set_FormInstance(id_form)
+                        for i in dados:
+                            valor = dados[i]
+                            if valor:
+                                ModelsFormValues().set_form_value(id_form,id_instance,valor,i)
+                                                                                                     
+                    self.dados.append(dados)
+                    
+                    
+                    
+                
+                
+                
+              
+        
+
+
+    def load_fields_csv(self):
+        form = self.request.form
+        colunas_csv = []                   
+        if 'arquivo' in form.keys():
+          
+            file = form.get('arquivo').read()
+            colunas_csv = file.split('\n')[0].replace('"', '').split(';')
+
+        return colunas_csv
+    
+
+    def load_fields_form(self):
+        form = self.request.form
+        id_form = self.context.forms_id
+        fields_vin = []
+        i=0
+        
+        fields = ModelsFormFields().get_Fields_ByIdForm(int(id_form))
+               
+        
+        camposAux = copy(fields)
+        for item in camposAux:
+            fields_vin.append(item.ordenacao)
+        
+        if fields:
+            
+            for field in fields:
+                index = field.ordenacao
+                D = {}
+                D['name'] = field.name_field
+                D['label'] = field.title
+    
+                pos = fields_vin.index(index)
+                fields_vin.pop(pos)
+                fields_vin.insert(pos, D) 
+                
+                
+        return fields_vin
+
+
 
 class VindulaEditParametrosForm(grok.View, BaseFunc):
     grok.context(IFormularioPadrao)
