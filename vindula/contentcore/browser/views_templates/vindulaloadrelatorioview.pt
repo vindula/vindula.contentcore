@@ -65,7 +65,7 @@
 								<tr tal:condition="item/flag_multi|nothing">
 								    <td>
                                         <tal:rep repeat="ref item/dados|python:[]">
-                                            <tal:cont content="ref/title"></tal:cont>    
+                                            <tal:cont content="ref/title|nothing"></tal:cont>    
                                             
                                             <table tal:condition="not: item/text|nothing" width="100%">
                                                 <tr>

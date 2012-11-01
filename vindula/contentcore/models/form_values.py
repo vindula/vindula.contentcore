@@ -35,7 +35,7 @@ class ModelsFormValues(Storm, BaseStore):
         result = self.get_FormValues_byForm_and_Instance_and_Field(id_form,id_instance,campo)
         if result:
             D={}
-            D['valor_old'] = result.value or 'Campo em Blob'
+            D['valor_old'] = result.value or u'Campo em Blob'
             D['instance_id'] = id_instance
             D['forms_id'] =  id_form
             D['fields'] = campo
@@ -50,7 +50,7 @@ class ModelsFormValues(Storm, BaseStore):
                 else:
                     result.value_blob = valor   
                     result.value = None 
-                    D['valor_new'] = 'Campo em Blob'
+                    D['valor_new'] = u'Campo em Blob'
             
             else:
                 D['valor_new'] = self.Convert_utf8(valor)
@@ -64,7 +64,6 @@ class ModelsFormValues(Storm, BaseStore):
             
         else:
             self.set_form_value(id_form, id_instance, valor, campo)
-            
                                             
 
     def set_form_value(self,id_form, id_instance, valor,campo):
@@ -86,7 +85,7 @@ class ModelsFormValues(Storm, BaseStore):
             
         ModelsFormValues().set_FormValues(**D)
         
-        D['valor_new'] = D['value'] or 'Campo em Blob'
+        D['valor_new'] = D['value'] or u'Campo em Blob'
         D['valor_old'] = None
         
         D.pop('value')
@@ -94,10 +93,6 @@ class ModelsFormValues(Storm, BaseStore):
         
         ModelsLog().set_log(**D)
          
-           
-
-
-
 
     def get_Values_byID(self,id):
         data = self.store.find(ModelsFormValues, ModelsFormValues.id==int(id)).one()

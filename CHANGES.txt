@@ -118,5 +118,5 @@ Changelog
 1.1.25 - 2012-11-01
 --------------------
 - Correção da mascara no campo multiplo
-
+- Correção para gravar o log de arquivo Blob
 
