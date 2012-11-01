@@ -29,5 +29,6 @@
 
   <!--plone:static directory="static" type="theme" /-->
   <!-- -*- extra stuff goes here -*- -->
-
+    
+	<!--include file="storm.zcml" /-->
 </configure>

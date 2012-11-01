@@ -115,4 +115,8 @@ Changelog
 ---------------------
 - Criação da tela de importação e configuração dos dados para o formulario
 
+1.1.25 - 2012-11-01
+--------------------
+- Correção da mascara no campo multiplo
+
 

@@ -489,7 +489,7 @@ class BaseFunc(BaseStore):
                         continue
                     else:
                         classe = ''
-                        
+
                     mascara_campo = campos[campo].get('mascara',None)
                     if mascara_campo:
                         mascara="onKeyDown='Mascara(this,{0});' onKeyPress='Mascara(this,{0});' onKeyUp='Mascara(this,{0});'".format(mascara_campo)
@@ -641,6 +641,13 @@ class BaseFunc(BaseStore):
                         id_form = int(self.context.forms_id)
                         ref = ModelsFormFields().get_fields_byIdForm_and_RefField(id_form,campo)
                         for i in ref:
+                            
+                            mascara_campo = i.mascara or ''
+                            if mascara_campo:
+                                mascara="onKeyDown='Mascara(this,{0});' onKeyPress='Mascara(this,{0});' onKeyUp='Mascara(this,{0});'".format(mascara_campo)
+                            else:
+                                mascara = ''
+                            
                             table += '<tr><td>%s</td>'%(i.title)
                             
                             valor = ''
