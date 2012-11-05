@@ -8,7 +8,7 @@ CREATE TABLE  `myvindulaDB`.`vin_contentcore_log` (
   `forms_id` int(11) NOT NULL,
   `fields` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 
 
 CREATE  TABLE IF NOT EXISTS `myvindulaDB`.`vin_contentcore_configImport` (

@@ -972,6 +972,13 @@ class RegistrationLoadForm(BaseFunc):
                                     
                                 decode = self.decodePickle(data.get(campo))
                                 arquivos.append(decode)
+                            
+                            elif campos[campo].get('type','') == 'list':
+                                txt = ''
+                                for i in self.decodePickle(data.get(campo)):
+                                    txt += i +', ' 
+                                
+                                x = "%s: %s" % (campos[campo].get('label',''),txt)
                                                                 
                             else:
                                 x = "%s: %s" % (campos[campo].get('label',''),data.get(campo,''))
