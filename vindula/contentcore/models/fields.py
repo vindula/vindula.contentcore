@@ -39,6 +39,14 @@ class ModelsFormFields(Storm, BaseStore):
         self.store.flush()
         #return form.id       
 
+    def remove_FormFields(self,id_field):
+        results = self.get_Fields_byIdField(id_field)
+        
+        if results:
+            self.store.remove(results)
+            self.store.flush()   
+
+
     def get_Fields_byIdField(self, id):
         data = self.store.find(ModelsFormFields, ModelsFormFields.id==id).one()
         if data:

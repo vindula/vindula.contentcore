@@ -120,3 +120,9 @@ Changelog
 - Correção da mascara no campo multiplo
 - Correção para gravar o log de arquivo Blob
 
+1.1.26 - 2012-11-05
+--------------------
+- Adção do mecanismo de excluir campos
+ 
+
+

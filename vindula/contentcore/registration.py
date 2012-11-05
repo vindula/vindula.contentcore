@@ -393,6 +393,17 @@ class RegistrationCreateFields(BaseFunc):
         if 'form.voltar' in form_keys:
             success_voltar = context.context.absolute_url() +  '/edit-form' #?forms_id='+str(id_form)
             context.request.response.redirect(success_voltar)
+        
+        # se clicar no botão "excluir"
+        elif 'form.excluir' in form_keys:
+            id_fields = int(form.get('id_fields','0'))
+            ModelsFormFields().remove_FormFields(id_fields)
+            
+            
+            IStatusMessage(context.request).addStatusMessage(_(u"Campo excluido com com sucesso"), "info")
+            url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id_form)
+            context.request.response.redirect(url)
+        
           
         # se clicou no botao "Salvar"
         elif 'form.submited' in form_keys:

@@ -36,6 +36,10 @@
 						<div style="float:left; width:100%">
 							<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
 							<input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited">
+							
+							<input style="width:100px;" tal:condition="view/check_exclud_fields|nothing"
+							       class="button-erp" type="submit" value="Excluir" name="form.excluir">
+							
 						</div>
 					</fieldset>
 				</form>

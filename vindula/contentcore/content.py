@@ -143,6 +143,21 @@ class VindulaEditFieldsForm(grok.View, BaseFunc):
     def load_form(self):
         return RegistrationCreateFields().registration_processes(self)
     
+    def check_exclud_fields(self):
+        id_form = int(self.context.forms_id)
+        id_fields = int(self.request.form.get('id_fields','0')) 
+        
+        field = ModelsFormFields().get_Fields_byIdField(id_fields)
+        check = ModelsFormValues().get_FormValues_byForm_and_Field(id_form,field.name_field)
+        
+        if check:
+            return False
+        else:
+            if field.ref_mult.count():
+                return False
+            else:
+                return True
+    
     def render(self):
         return self.index()
 

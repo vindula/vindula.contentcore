@@ -547,9 +547,9 @@ class BaseFunc(BaseStore):
                         for item in value_choice[campo]:
                             if item[0] == self.getValue(campo,self.request,data,default_value):
                                 select = True
-                                valor +="<option value='%s' selected>%s</option>"%(item[0], item[1])
+                                valor +="<option value='%s' selected>%s</option>"%(item[0], item[-1])
                             else:
-                                valor +="<option value='%s'>%s</option>"%(item[0], item[1])
+                                valor +="<option value='%s'>%s</option>"%(item[0], item[-1])
                         valor += "</select>"
                         if select:
                             valor += "<input id='%s' type='text' value='%s' name='%s' size='25'/>"%(campo,'', campo)
@@ -571,9 +571,9 @@ class BaseFunc(BaseStore):
                         valor += "<option value="">-- Selecione --</option>"
                         for item in value_choice[campo]:
                             if item[0] == self.getValue(campo,self.request,data,default_value):
-                                valor +="<option value='%s' selected>%s</option>"%(item[0], item[1])
+                                valor +="<option value='%s' selected>%s</option>"%(item[0], item[-1])
                             else:
-                                valor +="<option value='%s'>%s</option>"%(item[0], item[1])
+                                valor +="<option value='%s'>%s</option>"%(item[0], item[-1])
 
                         valor += "</select>"
                     
@@ -581,9 +581,9 @@ class BaseFunc(BaseStore):
                         valor += "<div id='%s' >"%(campo)
                         for item in value_choice[campo]: 
                             if item[0] == self.getValue(campo,self.request,data,default_value):
-                                valor += "<input type='radio' name='%s' value='%s' checked >%s" %(campo, item[0], item[1])
+                                valor += "<input type='radio' name='%s' value='%s' checked >%s" %(campo, item[0], item[-1])
                             else:
-                                valor += "<input type='radio' name='%s' value='%s' >%s" %(campo, item[0], item[1])
+                                valor += "<input type='radio' name='%s' value='%s' >%s" %(campo, item[0], item[-1])
 
                             valor += '<br />'
                         valor += "</div>"
@@ -593,9 +593,9 @@ class BaseFunc(BaseStore):
                         valor += "<option value="">-- Selecione --</option>"
                         for item in value_choice[campo]:
                             if item[0] == self.getValue(campo,self.request,data,default_value):
-                                valor +="<option value='%s' selected>%s</option>"%(item[0], item[1])
+                                valor +="<option value='%s' selected>%s</option>"%(item[0], item[-1])
                             else:
-                                valor +="<option value='%s'>%s</option>"%(item[0], item[1])
+                                valor +="<option value='%s'>%s</option>"%(item[0], item[-1])
 
                         valor += "</select>"
                         
@@ -633,7 +633,7 @@ class BaseFunc(BaseStore):
     
                         if type_campo in ['list','radio']:
                             for item in value_choice[campo]: 
-                                table += '<th class="posted">%s</th>'%( item[1])
+                                table += '<th class="posted">%s</th>'%( item[-1])
                         
                         else:    
                             table += '<th>%s</th>'%('Responda')
@@ -654,7 +654,7 @@ class BaseFunc(BaseStore):
                             if type_campo == 'list':
                                 for item in value_choice[campo]:
                                     valor = ''
-                                    lable =  item[1]
+                                    lable =  item[-1]
                                     if item[0] in self.getValueList(i.name_field,self.request,data,default_value):
                                         valor += "<input value='%s' type='checkbox' checked name='%s'/>"%(item[0],i.name_field)
                                     else:
@@ -715,9 +715,9 @@ class BaseFunc(BaseStore):
                                 valor += "<option value="">-- Selecione --</option>"
                                 for item in value_choice[campo]:
                                     if item[0] == self.getValue(i.name_field,self.request,data,default_value):
-                                        valor +="<option value='%s' selected>%s</option>"%(item[0], item[1])
+                                        valor +="<option value='%s' selected>%s</option>"%(item[0], item[-1])
                                     else:
-                                        valor +="<option value='%s'>%s</option>"%(item[0], item[1])
+                                        valor +="<option value='%s'>%s</option>"%(item[0], item[-1])
         
                                 valor += "</select>"
                             
@@ -737,12 +737,9 @@ class BaseFunc(BaseStore):
                 
                 else:
                     tmp += ''
-                
                     
                 html.pop(index)
                 html.insert(index, tmp)    
-                
             
             return html
-        
         
