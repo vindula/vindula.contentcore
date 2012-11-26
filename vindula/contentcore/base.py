@@ -287,9 +287,11 @@ class BaseFunc(BaseStore):
         elif tipo == 'file':
             if id:
                 arquivo = self.decodePickle(valor)
-                
-                name = arquivo.get('filename','')
-                return '<a href="../form-file?id=%s" target="_blank">%s</a><br />'%(id,name)
+                if arquivo != '':
+                    name = arquivo.get('filename','')
+                    return '<a href="../form-file?id=%s" target="_blank">%s</a><br />'%(id,name)
+                else:
+                    return ''
             else:
                 return ''
         

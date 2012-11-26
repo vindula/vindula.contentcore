@@ -125,4 +125,6 @@ Changelog
 - Adção do mecanismo de excluir campos
 - Melhoria na visualização do e-mail para campo de escolha 
 
-
+1.1.27 - 2012-11-26
+--------------------
+- Correção para quando utilizar um campo do tipo file, verificar se o arquivo existe.
