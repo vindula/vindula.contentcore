@@ -128,3 +128,7 @@ Changelog
 1.1.27 - 2012-11-26
 --------------------
 - Correção para quando utilizar um campo do tipo file, verificar se o arquivo existe.
+
+1.1.28 - 2012-11-26
+--------------------
+- Ativando a opção de permitir ou não comentários no content types Vindula Formulario Basico
