@@ -329,8 +329,8 @@ class RegistrationCreateFields(BaseFunc):
                                                                                                                                              este campo funciona com interpretação python''',                 'ordem':5},
                   'mascara'               : {'required': False, 'type':'choice',    'label':'Tipo da Mascara',              'decription':'Escolha um tipo de mascara para o campo ',                          'ordem':6},
                   
-                  'flag_multi'            : {'required': False, 'type':'bool',      'label':'Campo multiplo',               'decription':u'Selecione se este campo suportara outros campos dentro dele',      'ordem':7},                                                                                                               
-                  'field_ref'             : {'required': False, 'type':'choice',    'label':'Campo multiplo pai',           'decription':u'Selecione o campo multiplo que este campo pertence',               'ordem':8},
+                  'flag_multi'            : {'required': False, 'type':'bool',      'label':'Campo múltiplo',               'decription':u'Selecione se este campo suportara outros campos dentro dele',      'ordem':7},                                                                                                               
+                  'field_ref'             : {'required': False, 'type':'choice',    'label':'Campo múltiplo pai',           'decription':u'Selecione o campo multiplo que este campo pertence',               'ordem':8},
                   
                   'form_ref'              : {'required': False, 'type':'choice',    'label':'Formulário de Relacionamento', 'decription':u'Selecione o formulario que vai ser relacionando com este campo',   'ordem':9},
                   
@@ -346,7 +346,7 @@ class RegistrationCreateFields(BaseFunc):
                                       ['list','Campo de Seleção Multipla'],['hidden','Campo Oculto'],
                                       ['img','Campo de Upload de Imagem'],['file','Campo de Upload de Arquivos'],
                                       ['richtext','Campo de Texto Rico'],['radio','Campo de Opção'],['date','Campo de Data'],
-                                      ['referencia','Campo com referencia a um campo multiplo'],
+                                      ['referencia','Campo com referencia a um campo múltiplo'],
                                       ['foreign_key','Campo para referencia com outro formulário'],
                                       ],
                        

@@ -112,7 +112,7 @@ class IFormularioPadrao(form.Schema):
     
     #form.widget(parameto = TextLinesFieldWidget)
     parameto = schema.TextLine(title=_(u"Envia parâmetro a outro formulário ou página"),
-                               description=_(u"Digite primeiro a url que o formulário será eviado junto com os parâmetros que serão cadastrado posteriormente"),
+                               description=_(u"Digite primeiro a url que o formulário será enviado junto com os parâmetros que serão cadastrado posteriormente"),
                                default=u'http://',
                                required=False)
 
