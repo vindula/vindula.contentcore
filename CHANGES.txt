@@ -132,3 +132,7 @@ Changelog
 1.1.28 - 2012-11-26
 --------------------
 - Ativando a opção de permitir ou não comentários no content types Vindula Formulario Basico
+
+1.1.29 - 2013-01-23
+--------------------
+- Correção do bug ao utilizar a palavra reservada 'outro', ou seja, nenhum campo criado poderia ser chamado de outro.

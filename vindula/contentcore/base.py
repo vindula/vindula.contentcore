@@ -478,7 +478,7 @@ class BaseFunc(BaseStore):
                 index = campos[campo].get('ordem',0)
                 tmp = ""
                 valor = ''
-                if not 'outro' in campo:
+                if not 'outros_hidden' in campo:
                     
                     type_campo = campos[campo]['type']
                     if type_campo == 'richtext':

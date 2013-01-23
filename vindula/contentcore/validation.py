@@ -26,7 +26,7 @@ def valida_form(ctx, configuracao, form):
     # var 'campo' - usado para verificar se campo e obrigatorio
     # var 'valor' - usado para converter dos dados inseridos no fomulario
     for campo in configuracao.keys():
-        if not 'outro' in campo:
+        if not 'outros_hidden' in campo:
             valor = form.get(campo, u'')   #configuracao[campo]['campo_form'], '')
             # logica para verificacao de obrigatoriedade de campo
             
