@@ -3,7 +3,8 @@ from Products.statusmessages.interfaces import IStatusMessage
 from vindula.contentcore import MessageFactory as _
 from zope.app.component.hooks import getSite
 from vindula.contentcore.base import BaseFunc
-from datetime import date , datetime 
+from datetime import date , datetime
+import pickle
 from vindula.contentcore.validation import valida_form
 
 from vindula.contentcore.models.forms import ModelsForm 
@@ -795,7 +796,7 @@ class RegistrationLoadForm(BaseFunc):
             # Inicia o processamento do formulario
             # chama a funcao que valida os dados extraidos do formulario (valida_form)
             errors, data = valida_form(context, campos, context.request.form)
-          
+
             if not errors:
                 
                 if isForm: 
@@ -972,14 +973,14 @@ class RegistrationLoadForm(BaseFunc):
                                     
                                 decode = self.decodePickle(data.get(campo))
                                 arquivos.append(decode)
-                            
                             elif campos[campo].get('type','') == 'list':
                                 txt = ''
                                 for i in self.decodePickle(data.get(campo)):
                                     txt += i +', ' 
                                 
                                 x = "%s: %s" % (campos[campo].get('label',''),txt)
-                                                                
+                            elif campos[campo].get('type', '') == 'date':
+                                x = "%s: %s" % (campos[campo].get('label',''),pickle.loads(data.get(campo,'')).strftime('%d/%m/%Y'))                          
                             else:
                                 x = "%s: %s" % (campos[campo].get('label',''),data.get(campo,''))
                             
@@ -997,7 +998,6 @@ class RegistrationLoadForm(BaseFunc):
                         envio = False
                         for email in emails:
                             envio = self.envia_email(context,msg, assunto, email,arquivos,to_email)
-                        
                         if envio:
                             IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
                         else:

@@ -53,9 +53,8 @@ def valida_form(ctx, configuracao, form):
                         
             if configuracao[campo]['type'] == date or\
                 configuracao[campo]['type'] == 'date' :
-                if valor != '':   
-
-                    try: 
+                if valor != '':
+                    try:
                         if valor.find('/') != -1:
                             data = valor.split('/') # pega a string no formato '00/00/0000' e transforma em tupla dividindo os elementos
                             
@@ -70,7 +69,6 @@ def valida_form(ctx, configuracao, form):
                                 try:
                                     valor_convert = pickle.dumps(date(ano, mes, dia))
                                     convertidos[campo] = to_utf8(valor_convert)
-
                                 except:
                                     errors[campo] = u'Data inválida.'
                         else:
