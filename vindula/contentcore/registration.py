@@ -796,8 +796,11 @@ class RegistrationLoadForm(BaseFunc):
             # Inicia o processamento do formulario
             # chama a funcao que valida os dados extraidos do formulario (valida_form)
             errors, data = valida_form(context, campos, context.request.form)
-
+            
             if not errors:
+                
+                #Ordenando os campos pela chave 'ordem'
+                campos = dict(sorted(campos.items(), key=lambda campo: campo[1]['ordem']))
                 
                 if isForm: 
                     #Rotina para a ação de destino do formulario e ação do formulario
@@ -846,15 +849,12 @@ class RegistrationLoadForm(BaseFunc):
                         
                 else:
                     destino_form = success_url
-                
+
                 for acao in acoes:
                     if acao == 'savedb' or acao == 'content_type':
                         if 'id_instance' in form_keys:
                             # editando...
                             id_instance = int(form.get('id_instance',0))
-                            #results = ModelsFormValues().get_FormValues_byForm_and_Instance(id_form,id_instance)
-                            #if results:
-                                
                             for campo in campos.keys():
                                     #if not 'outro' in campo:
                                    #for result in results:
@@ -863,66 +863,6 @@ class RegistrationLoadForm(BaseFunc):
                                 #D={}
                                 if valor or campos.get(campo,{}).get('type',None) == u'bool':
                                     ModelsFormValues().update_form_value(id_form,id_instance,valor,campo)
-                                               
-#                                               if type(valor) != bool:
-#                                                   if len(valor) < 65000:
-#                                                       if type(valor) == unicode:
-#                                                           result.value = valor.strip()
-#                                                           result.value_blob = None
-#                                                       else:
-#                                                           result.value = unicode(str(valor), 'utf-8')
-#                                                           result.value_blob = None
-#                                                   else:
-#                                                       result.value_blob = valor   
-#                                                       result.value = None 
-#                                               else:
-#                                                   D['value'] = unicode(str(valor), 'utf-8')
-#                                               
-#                                               result.date_creation = datetime.now()
-#                                               self.store.commit()
-#                                           
-#                                           elif campos[campo]['type'] == u'bool':
-#                                                result.value = unicode(str(valor), 'utf-8')
-#                                                    
-#                                                result.date_creation = datetime.now()
-#                                                self.store.commit()             
-                                    
-#                                    else:
-#                                       if results.find(fields=campo).count() == 0 and not 'outro' in campo:
-#                                            valor = data[campo]
-#                                            if valor:
-#                                                D={}
-#                                                D['forms_id'] = id_form
-#                                                D['instance_id'] = id_instance
-#                                                D['fields'] = campo
-#                                                
-#                                                if type(valor) != bool:
-#                                                    if len(valor) < 65000:
-#                                                        if type(valor) == unicode:
-#                                                            D['value'] = valor.strip()
-#                                                            D['value_blob'] = None
-#                                                        else:
-#                                                            D['value'] = unicode(str(valor), 'utf-8')
-#                                                            D['value_blob'] = None
-#                                                    else:
-#                                                        D['value'] = None
-#                                                        D['value_blob'] = valor
-#                                                else:
-#                                                    D['value'] = unicode(str(valor), 'utf-8')
-#                                                    
-#                                                ModelsFormValues().set_FormValues(**D)
-#                                            
-#                                            elif campos[campo]['type'] == u'bool':
-#                                                D={}
-#                                                D['forms_id'] = id_form
-#                                                D['instance_id'] = id_instance
-#                                                D['fields'] = campo
-#
-#                                                D['value'] = unicode(str(valor), 'utf-8')
-#                                                D['value_blob'] = None
-#                                                    
-#                                                ModelsFormValues().set_FormValues(**D)
-        
                         else:
                             #adicionando...
                             id_instance = ModelsFormInstance().set_FormInstance(id_form)
@@ -960,11 +900,7 @@ class RegistrationLoadForm(BaseFunc):
                         
                         msg = []
                         arquivos = []
-                        i=0
-                        while i < len(campos.keys()):
-                            msg.append(i)
-                            i+=1
-                       
+
                         for campo in campos:
                             index = campos[campo].get('ordem',0)
                             x = ''
@@ -980,12 +916,10 @@ class RegistrationLoadForm(BaseFunc):
                                 
                                 x = "%s: %s" % (campos[campo].get('label',''),txt)
                             elif campos[campo].get('type', '') == 'date':
-                                x = "%s: %s" % (campos[campo].get('label',''),pickle.loads(data.get(campo,'')).strftime('%d/%m/%Y'))                          
+                                x = "%s: %s" % (campos[campo].get('label',''),pickle.loads(data.get(campo,'')).strftime('%d/%m/%Y'))                         
                             else:
                                 x = "%s: %s" % (campos[campo].get('label',''),data.get(campo,''))
-                            
-                            msg.pop(index)
-                            msg.insert(index, x)  
+                            msg.append(x)  
                         
                         if context.context.email_padrao:
                             to_email = data.get(context.context.email_padrao)
