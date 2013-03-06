@@ -501,11 +501,11 @@ class BaseFunc(BaseStore):
                     tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo)+' '+classe,'field-'+campo)
                     
                     if type_campo != 'hidden':
-                        tmp += "   <label for='%s'>%s</label>"%(campo,campos[campo]['label'])
-                        if campos[campo]['required'] == True and type_campo != 'hidden':
+                        tmp += "   <label for='%s'>%s</label>"%(campo,campos[campo].get('label', ''))
+                        if campos[campo].get('required', '') == True and type_campo != 'hidden':
                             tmp += "   <span class='fieldRequired' title='Obrigatório'>(Obrigatório)</span>"
         
-                        tmp += "   <div class='formHelp'>%s</div>"%(campos[campo]['decription'])   
+                        tmp += "   <div class='formHelp'>%s</div>"%(campos[campo].get('decription', ''))
                         tmp += "   <div >%s</div>"%(errors.get(campo,''))
                     
                     if type_campo == 'hidden':

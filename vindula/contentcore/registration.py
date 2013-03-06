@@ -4,7 +4,6 @@ from vindula.contentcore import MessageFactory as _
 from zope.app.component.hooks import getSite
 from vindula.contentcore.base import BaseFunc
 from datetime import date , datetime
-import pickle
 from vindula.contentcore.validation import valida_form
 
 from vindula.contentcore.models.forms import ModelsForm 
@@ -13,6 +12,9 @@ from vindula.contentcore.models.form_values import ModelsFormValues
 from vindula.contentcore.models.form_instance import ModelsFormInstance
 from vindula.contentcore.models.default_value import ModelsDefaultValue
 from vindula.contentcore.models.parameters import ModelsParametersForm
+
+import pickle
+import collections
 
 
 
@@ -800,7 +802,7 @@ class RegistrationLoadForm(BaseFunc):
             if not errors:
                 
                 #Ordenando os campos pela chave 'ordem'
-                campos = dict(sorted(campos.items(), key=lambda campo: campo[1]['ordem']))
+                campos = collections.OrderedDict((sorted(campos.items(), key=lambda campo: campo[1]['ordem'])))
                 
                 if isForm: 
                     #Rotina para a ação de destino do formulario e ação do formulario
@@ -902,7 +904,6 @@ class RegistrationLoadForm(BaseFunc):
                         arquivos = []
 
                         for campo in campos:
-                            index = campos[campo].get('ordem',0)
                             x = ''
                             if campos[campo].get('type','') == 'file' or \
                                 campos[campo].get('type','') == 'img':
@@ -913,7 +914,6 @@ class RegistrationLoadForm(BaseFunc):
                                 txt = ''
                                 for i in self.decodePickle(data.get(campo)):
                                     txt += i +', ' 
-                                
                                 x = "%s: %s" % (campos[campo].get('label',''),txt)
                             elif campos[campo].get('type', '') == 'date':
                                 x = "%s: %s" % (campos[campo].get('label',''),pickle.loads(data.get(campo,'')).strftime('%d/%m/%Y'))                         
