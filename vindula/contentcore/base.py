@@ -479,20 +479,19 @@ class BaseFunc(BaseStore):
                 tmp = ""
                 valor = ''
                 if not 'outros_hidden' in campo:
+                    type_campo = campos[campo].get('type', '')
                     
-                    type_campo = campos[campo]['type']
                     if type_campo == 'richtext':
                         classe = 'richTextWidget'
                     elif type_campo == 'referencia':
                         tmp += ''
                         html.pop(index)
                         html.insert(index, tmp)
-                        
                         continue
                     else:
                         classe = ''
 
-                    mascara_campo = campos[campo].get('mascara',None)
+                    mascara_campo = campos[campo].get('mascara', None)
                     if mascara_campo:
                         mascara="onKeyDown='Mascara(this,{0});' onKeyPress='Mascara(this,{0});' onKeyUp='Mascara(this,{0});'".format(mascara_campo)
                     else:
@@ -534,13 +533,11 @@ class BaseFunc(BaseStore):
                         valor += """<input id='%s' type='text' maxlength='10' class="dateField"
                                          value='%s' name='%s' size='25'/>"""%(campo,self.converte_data(self.getValue(campo,self.request,data,default_value),True),campo)
                                          
-                                        
                     elif type_campo == 'textarea':
                         valor += "<textarea id='%s' name='%s' style='width: 100; height: 81px;'>%s</textarea>"%(campo, campo, self.getValue(campo,self.request,data,default_value)) 
                     
                     elif type_campo == 'bool':
                         valor += "<input id='%s' type='checkbox' value='%s' name='%s' size='25' %s/>"%(campo,'True',campo,self.checked(campo,self.request,data,default_value))
-                        
                     
                     elif type_campo == 'combo':
                         select = False
@@ -600,7 +597,6 @@ class BaseFunc(BaseStore):
                                 valor +="<option value='%s'>%s</option>"%(item[0], item[-1])
 
                         valor += "</select>"
-                        
                     
                     elif type_campo == 'richtext':
                         url = self.context.absolute_url()
@@ -626,8 +622,6 @@ class BaseFunc(BaseStore):
                    
                     elif type_campo != 'referencia':
                         valor += "<input id='%s' type='text' value='%s' name='%s' size='25' %s />"%(campo, self.getValue(campo, self.request,data, default_value), campo, mascara)
-    
-    
     
                     if campos[campo].get('flag_multi'):
                         table = ''
