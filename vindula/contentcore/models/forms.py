@@ -68,9 +68,16 @@ class ModelsForm(Storm, BaseStore):
         return form.id       
     
     def get_NextForm(self):
-        table = 'vin_contentcore_forms'
-        data = self.store.execute("SELECT Auto_increment FROM information_schema.tables WHERE table_name='%s'AND table_schema = DATABASE();"%(table))
-
-        if data.rowcount != 0:
-            x = data.get_one()
-            return int(x[0])
+        data = self.store.find(ModelsForm).max(ModelsForm.id)
+        if data:
+            return data + 1
+        else:
+            return 1 
+                        
+                        
+#        table = 'vin_contentcore_forms'
+#        data = self.store.execute("SELECT Auto_increment FROM information_schema.tables WHERE table_name='%s'AND table_schema = DATABASE();"%(table))
+#
+#        if data.rowcount != 0:
+#            x = data.get_one()
+#            return int(x[0])
