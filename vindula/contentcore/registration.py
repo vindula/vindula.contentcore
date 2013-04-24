@@ -14,7 +14,13 @@ from vindula.contentcore.models.default_value import ModelsDefaultValue
 from vindula.contentcore.models.parameters import ModelsParametersForm
 
 import pickle
-import collections
+
+try:
+  #python 2.7
+  from collections import OrderedDict
+except ImportError:
+  #python 2.6
+  from vindula.contentcore.ordered_dict import OrderedDict
 
 
 
@@ -802,7 +808,7 @@ class RegistrationLoadForm(BaseFunc):
             if not errors:
 
                 #Ordenando os campos pela chave 'ordem'
-                campos = collections.OrderedDict((sorted(campos.items(), key=lambda campo: campo[1]['ordem'])))
+                campos = OrderedDict((sorted(campos.items(), key=lambda campo: campo[1]['ordem'])))
 
                 if isForm:
                     #Rotina para a ação de destino do formulario e ação do formulario

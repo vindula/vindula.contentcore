@@ -25,7 +25,12 @@ from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import date , datetime
 
-import collections
+try:
+    # python 2.7
+    from collections import OrderedDict
+except ImportError:
+    # python 2.6
+    from vindula.contentcore.ordered_dict import OrderedDict
 
 class BaseStore(object):
 
@@ -474,7 +479,7 @@ class BaseFunc(BaseStore):
             #     html.append(i)
             #     i+=1
             #Ordenando os campos pela chave 'ordem'
-            campos = collections.OrderedDict((sorted(campos.items(), key=lambda campo: campo[1]['ordem'])))
+            campos = OrderedDict((sorted(campos.items(), key=lambda campo: campo[1]['ordem'])))
 
             for campo in campos.keys():
                 # index = campos[campo].get('ordem',0)
