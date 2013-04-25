@@ -922,7 +922,7 @@ class RegistrationLoadForm(BaseFunc):
                                     txt += i +', '
                                 x = "%s: %s" % (campos[campo].get('label',''),txt)
                             elif campos[campo].get('type', '') == 'date':
-                                x = "%s: %s" % (campos[campo].get('label',''),pickle.loads(str(data.get(campo,u'')).strftime('%d/%m/%Y'))
+                                x = "%s: %s" % (campos[campo].get('label',''),pickle.loads(str(data.get(campo,u''))).strftime('%d/%m/%Y'))
                             else:
                                 x = "%s: %s" % (campos[campo].get('label',''),data.get(campo,''))
                             msg.append(x)
