@@ -492,8 +492,9 @@ class BaseFunc(BaseStore):
                         classe = 'richTextWidget'
                     elif type_campo == 'referencia':
                         tmp += ''
-                        html.pop(index)
-                        html.insert(index, tmp)
+#                       html.pop(index)
+#                       html.insert(index, tmp)
+			html.append(tmp)
                         continue
                     else:
                         classe = ''
