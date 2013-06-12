@@ -829,7 +829,7 @@ class RegistrationLoadForm(BaseFunc):
                         if url.find('http://') != -1:
                             destino_form = str(context.context.url)
                         else:
-                            destino_dorm = context.context.absolute_url() + str(context.context.url)
+                            destino_form = context.context.absolute_url() + str(context.context.url)
 
                 elif acao_destino == 'parameto':
                     if context.context.parameto:
@@ -853,7 +853,7 @@ class RegistrationLoadForm(BaseFunc):
                         if url.find('http://') != -1:
                             destino_form = url + '?'+string
                         else:
-                            destino_dorm = context.context.absolute_url() + url + '?'+string
+                            destino_form = context.context.absolute_url() + url + '?'+string
 
                 else:
                     destino_form = success_url
@@ -904,6 +904,10 @@ class RegistrationLoadForm(BaseFunc):
                             emails = emails.splitlines()
                         else:
                             emails = []
+
+                        if context.context.email_remetente:
+                            emails.append(data.get(context.context.email_remetente))
+
                         assunto = 'E-mail enviado do Formulário - %s'%(context.context.Title())
 
                         msg = []
