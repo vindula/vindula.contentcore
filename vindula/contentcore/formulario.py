@@ -10,11 +10,11 @@ from vindula.contentcore import MessageFactory as _
 
 from plone.formwidget.contenttree import ObjPathSourceBinder
 from z3c.relationfield.schema import RelationChoice
-from plone.z3cform.textlines import TextLinesFieldWidget      
+from plone.z3cform.textlines import TextLinesFieldWidget
 
 from vindula.contentcore.base import BaseFunc
-from vindula.contentcore.models.forms import ModelsForm 
-from vindula.contentcore.models.fields import ModelsFormFields 
+from vindula.contentcore.models.forms import ModelsForm
+from vindula.contentcore.models.fields import ModelsFormFields
 
 # import fo SimpleVocabulary
 from zope.interface import implements
@@ -23,7 +23,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema.vocabulary import SimpleTerm
 from plone.app.textfield import RichText
 
-from z3c.form.browser.checkbox import CheckBoxFieldWidget 
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
 
 def to_utf8(value):
     return unicode(value, 'utf-8')
@@ -32,7 +32,7 @@ class ListCamposForm(object):
     """ Create SimpleVocabulary for fields of form """
     implements(IContextSourceBinder)
     def __init__(self):
-        self.object = object 
+        self.object = object
     def __call__(self, context):
         terms = []
         #terms.append(SimpleTerm('', '--NOVALUE--', _(u'option_category', default=u'Padrão')))
@@ -40,15 +40,15 @@ class ListCamposForm(object):
             id_form = int(context.forms_id)
         except:
             id_form = 0
-         
+
         if id_form:
             fields = ModelsFormFields().get_Fields_ByIdForm(id_form)
-            
+
             for campo in fields:
                   if campo.flag_ativo:
                       terms.append(SimpleTerm(campo.name_field, campo.name_field, _(u'option_category', default=campo.title)))
-        
-        return SimpleVocabulary(terms)    
+
+        return SimpleVocabulary(terms)
 
 # Interface and schema
 class IFormularioPadrao(form.Schema):
@@ -58,58 +58,63 @@ class IFormularioPadrao(form.Schema):
     forms_id = schema.TextLine(title=u"Form ID",
                               description=u"campo do formulario",
                               required=True)
-    
+
     view_title = schema.Bool(title=_(u"Visualizar o Título"),
                                      description=_(u"Marque esta opção para visualizar o título do formulário."),
                                      default=True,
                                      required=False)
-    
+
     text_messenger = RichText(title=_(u"Texto Para o topo do formulário"),
                                      description=_(u"Digite o texto que será mostrado no topo do formulario"),
                                      required=False)
-    
+
     form.widget(acao_saida = CheckBoxFieldWidget)
     acao_saida = schema.Set(title=_(u"Ação de saída do formulário"),
                             description=_(u"Selecione uma ou mais ações que o formulário deve executar ao salvar"),# <br /> (Use a tecla control para seleciona mais de umvalor)."),
                             value_type=schema.Choice(source=ListExitForm()),
                             required=True)
-    
+
     list_email = schema.Text(title=_(u"Lista de Email"),
                             description=_(u"Crie uma lista de e-mails dos destinatários que irão receber os dados do formulário <br /> (Digite um email por linha)."),
                             required=False)
-    
+
+    email_remetente = schema.Choice(title=_(u"Email Destinatario"),
+                                  description=_(u"Selecione um campo para detinatario do e-mail que irão receber os dados do formulário."),
+                                  source=ListCamposForm(),
+                                  required=False)
+
     email_padrao = schema.Choice(title=_(u"E-mail padrão"),
                                  description=_(u"Selecione um campo para remetente de e-mail, enviado pelo formulário"),
                                  source=ListCamposForm(),
                                  required=False)
-    
+
     # Campos para referenciamento
     campo_label = schema.Choice(title=_(u"Campo para visualização"),
                                  description=_(u"Selecione um campo para ser utilizado na visualização destes dados em outro formulário"),
                                  source=ListCamposForm(),
                                  required=False)
-    
+
     campo_chave = schema.Choice(title=_(u"Campo para relacionamento"),
                                  description=_(u"Selecione um campo para relacionado com outro formulário"),
                                  source=ListCamposForm(),
                                  required=False)
-    
-    
+
+
     acao_destino = schema.Choice(title=_(u"Ação de destino do formulário"),
                                  description=_(u"Selecione um destino para o formulário depois de realizar a ação"),
                                  source=ListDestinoForm(),
                                  required=True)
-   
+
     doc_plone = RelationChoice(title=_(u"Enviar o usuário a um documento do plone"),
-                               description=_(u"Selecione o objeto no portal para que o usuário seja direcionado após o formulário realizar a ação"),                      
+                               description=_(u"Selecione o objeto no portal para que o usuário seja direcionado após o formulário realizar a ação"),
                                source=ObjPathSourceBinder(review_state='published'),
                                required=False,)
-    
+
     url = schema.TextLine(title=_(u"Redireciona o usuário para uma url especifica"),
                               description=_(u"Digite a url que o usuário será redirecionado após o formulário realizar a ação"),
                               default=u'http://',
                               required=False)
-    
+
     #form.widget(parameto = TextLinesFieldWidget)
     parameto = schema.TextLine(title=_(u"Envia parâmetro a outro formulário ou página"),
                                description=_(u"Digite primeiro a url que o formulário será enviado junto com os parâmetros que serão cadastrado posteriormente"),
@@ -123,7 +128,7 @@ class IFormularioPadrao(form.Schema):
 
 @form.default_value(field=IFormularioPadrao['forms_id'])
 def forms_idDefaultValue(value):
-    return ModelsForm().get_NextForm()        
+    return ModelsForm().get_NextForm()
 
 
 class FormularioPadrao(dexterity.Container):
@@ -135,7 +140,7 @@ class FormularioPadrao(dexterity.Container):
       fields = ModelsFormFields().get_Fields_ByIdForm(id_form)
       values =  ModelsForm().get_FormValues(id_form)
       tools = BaseFunc()
-      
+
       L = []
       for item in values:
           D = {}
@@ -144,35 +149,35 @@ class FormularioPadrao(dexterity.Container):
                   data = item.find(fields=campo.name_field).one()
                   if data:
                       if campo.type_fields == u'bool':
-                          valor = eval(data.value) 
-                      
+                          valor = eval(data.value)
+
                       if campo.type_fields == u'date':
                           valor = tools.decodePickle(data.value)
-                      
+
                       elif data.value:
                           valor = data.value
-                      
+
                       else:
                           valor = data.value_blob
-                          
-                  else:        
+
+                  else:
                       valor = ''
-                      
+
                   D[campo.name_field] = valor
-          
+
           append = True
           for arg in kwargs:
               if D.get(arg) not in kwargs.get(arg) and kwargs.get(arg):
                   append = False
-          
-          if append: L.append(D)        
-      return L
-    
 
-       
+          if append: L.append(D)
+      return L
+
+
+
 #view
 class FormularioPadraoView(grok.View, BaseFunc):
     grok.context(IFormularioPadrao)
     grok.require('zope2.View')
     grok.name('view')
-    
+
