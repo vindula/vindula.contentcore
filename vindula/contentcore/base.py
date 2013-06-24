@@ -24,18 +24,15 @@ from storm.locals import Store
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import date , datetime
-
-<<<<<<< HEAD
 from vindula.contentcore.layoutemail import LayoutEmail
 
-=======
 try:
     # python 2.7
     from collections import OrderedDict
 except ImportError:
     # python 2.6
     from vindula.contentcore.ordered_dict import OrderedDict
->>>>>>> 9c7509d4bfb2143af8f19abe18ed9d4520c0d0fb
+
 
 class BaseStore(object):
 
@@ -430,15 +427,11 @@ class BaseFunc(BaseStore):
 
         mensagem['To'] = mail_para
         mensagem.preamble = 'This is a multi-part message in MIME format.'
-<<<<<<< HEAD
+
 
         email_layout_obj = LayoutEmail(msg=msg, ctx=ctx.context)        
         mensagem.attach(MIMEText(email_layout_obj.layout(), 'html', 'utf-8'))
         
-=======
-        mensagem.attach(MIMEText(msg, 'html', 'utf-8'))
-
->>>>>>> 9c7509d4bfb2143af8f19abe18ed9d4520c0d0fb
         # Atacha os arquivos
         for f in arquivos:
             if type(f) == dict:
@@ -506,7 +499,7 @@ class BaseFunc(BaseStore):
                         tmp += ''
 #                       html.pop(index)
 #                       html.insert(index, tmp)
-			html.append(tmp)
+#                       html.append(tmp)
                         continue
                     else:
                         classe = ''
@@ -759,4 +752,3 @@ class BaseFunc(BaseStore):
                 html.append(tmp)
 
             return html
-

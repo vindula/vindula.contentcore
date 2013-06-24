@@ -5,15 +5,8 @@ from zope.app.component.hooks import getSite
 from vindula.contentcore.base import BaseFunc
 from datetime import date , datetime
 from vindula.contentcore.validation import valida_form
-<<<<<<< HEAD
-from html import HTML
 from vindula.contentcore.models.forms import ModelsForm 
 from vindula.contentcore.models.fields import ModelsFormFields 
-=======
-
-from vindula.contentcore.models.forms import ModelsForm
-from vindula.contentcore.models.fields import ModelsFormFields
->>>>>>> 9c7509d4bfb2143af8f19abe18ed9d4520c0d0fb
 from vindula.contentcore.models.form_values import ModelsFormValues
 from vindula.contentcore.models.form_instance import ModelsFormInstance
 from vindula.contentcore.models.default_value import ModelsDefaultValue
@@ -1017,5 +1010,4 @@ class RegistrationExcluirForm(BaseFunc):
 
             IStatusMessage(ctx.request).addStatusMessage(_(u"Registro removido com sucesso."), "info")
             ctx.request.response.redirect(success_url)
-
 
