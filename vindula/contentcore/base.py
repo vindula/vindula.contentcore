@@ -25,6 +25,8 @@ from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import date , datetime 
 
+from vindula.contentcore.layoutemail import LayoutEmail
+
 
 class BaseStore(object):
    
@@ -420,7 +422,9 @@ class BaseFunc(BaseStore):
         
         mensagem['To'] = mail_para
         mensagem.preamble = 'This is a multi-part message in MIME format.'
-        mensagem.attach(MIMEText(msg, 'html', 'utf-8'))
+
+        email_layout_obj = LayoutEmail(msg=msg, ctx=ctx.context)        
+        mensagem.attach(MIMEText(email_layout_obj.layout(), 'html', 'utf-8'))
         
         # Atacha os arquivos
         for f in arquivos:
