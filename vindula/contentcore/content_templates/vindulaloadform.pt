@@ -76,7 +76,7 @@
     							<div style="float:left; width:100%">
     								<input tal:condition="request/id_instance|nothing"
     										style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
-    								<input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited">
+    								<input style="width:100px;" class="button-erp" type="submit" value="Enviar" name="form.submited">
     							</div>
     						</fieldset>
 					</form>
