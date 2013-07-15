@@ -4,6 +4,7 @@ from zope import schema
 from vindula.controlpanel.vocabularies import ListExitForm, ListDestinoForm
 
 from Products.CMFCore.permissions import View
+from zope.app.component.hooks import getSite
 
 from plone.directives import form, dexterity
 from vindula.contentcore import MessageFactory as _
@@ -24,6 +25,7 @@ from zope.schema.vocabulary import SimpleTerm
 from plone.app.textfield import RichText
 
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
+from Products.UserAndGroupSelectionWidget.z3cform import widget
 
 def to_utf8(value):
     return unicode(value, 'utf-8')
@@ -126,6 +128,34 @@ class IFormularioPadrao(form.Schema):
                                required=False)
 
 
+    active_workflow = schema.Bool(title=_(u"Ativar sistema de controle do formulario"),
+                                  description=_(u"Marque esta opção para controlar o fluxo das informações."),
+                                  default=False,
+                                  required=False)
+
+    # form.widget(list_users_nivel2=widget.UsersAndGroupsSelectionFieldWidget)
+    list_users_nivel2 = schema.Text(title=_(u"Lista do usuário que terão acesso ao nivel 2 do formulario"),
+                                    description=_(u"Indique os usuario que poderão ver e editar os dados do formulario."),
+                                    required=False,)
+
+    # form.widget(list_users_nivel3=widget.UsersAndGroupsSelectionFieldWidget)
+    list_users_nivel3 = schema.Text(title=_(u"Lista do usuário que terão acesso ao nivel 3 do formulario"),
+                                    description=_(u"Indique os usuario que poderão ver e editar os dados do formulario."),
+                                    required=False,)
+    
+    # Fieldset News
+    form.fieldset('advanced',
+                  label=_(u"Configuração avançada"),
+                  fields=['email_remetente',
+                          'email_padrao',
+                          'campo_label',
+                          'campo_chave',
+                          'active_workflow',
+                          'list_users_nivel2',
+                          'list_users_nivel3'])
+
+
+
 @form.default_value(field=IFormularioPadrao['forms_id'])
 def forms_idDefaultValue(value):
     return ModelsForm().get_NextForm()
@@ -134,6 +164,21 @@ def forms_idDefaultValue(value):
 class FormularioPadrao(dexterity.Container):
     """ """
     grok.implements(IFormularioPadrao)
+
+    @property
+    def is_active_workflow(self):
+        member =  getSite().restrictedTraverse('@@plone_portal_state').member()
+        list_users_nivel2 = self.list_users_nivel2
+        list_users_nivel3 = self.list_users_nivel3
+
+        if member:
+            user_login = member.getUserName()
+            if user_login in list_users_nivel2 or\
+            user_login in list_users_nivel2:
+                    return True
+
+        return False
+
 
     def getDadosContent(self,**kwargs):
       id_form = int(self.forms_id)
@@ -172,7 +217,6 @@ class FormularioPadrao(dexterity.Container):
 
           if append: L.append(D)
       return L
-
 
 
 #view

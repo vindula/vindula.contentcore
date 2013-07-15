@@ -13,7 +13,10 @@ import pickle
 from vindula.contentcore.models.fields import ModelsFormFields
 
 def to_utf8(value):
-    return unicode(value, 'utf-8')
+    try:
+        return unicode(value, 'utf-8')
+    except TypeError:
+        return value
 
 
 def valida_form(ctx, configuracao, form):
@@ -180,8 +183,16 @@ def valida_form(ctx, configuracao, form):
     
             #logica para converter campos tipo File           
             elif configuracao[campo]['type'] == 'file':
-                data = valor.read()
-                filename = valor.filename
+                if isinstance(valor, str):
+                    valor = pickle.loads(valor)
+                    
+                    data  =  valor.get('data', '')
+                    filename =  valor.get('filename', '')
+
+                else:
+                    data = valor.read()
+                    filename = valor.filename
+
                 if configuracao[campo]['required'] == True and len(data) == 0:
                     errors[campo] = u'Este campo é obrigatório' # indica o campo vazio
 

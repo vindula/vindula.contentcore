@@ -14,6 +14,7 @@ from vindula.contentcore.models.default_value import ModelsDefaultValue
 from vindula.contentcore.models.parameters import ModelsParametersForm
 
 import pickle
+from copy import copy 
 
 try:
   #python 2.7
@@ -725,7 +726,74 @@ class RegistrationLoadForm(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
 
-    def registration_processes(self,context,isForm=True):
+    def gera_dict_campos(self, models_fields, ):
+        campos = {}
+        lista_itens = {}
+        default_value = {}
+
+        for field in models_fields:
+            if field.flag_ativo:
+                M={}
+                M['required'] = field.required
+                M['type'] = field.type_fields
+                M['label'] = field.title
+                M['decription'] = field.description_fields
+                M['ordem'] = field.ordenacao
+                M['flag_multi'] = field.flag_multi
+                M['mascara'] = field.mascara
+
+                campos[field.name_field] = M
+            # else:
+            #     campos['outro'+str(n)] = {'ordem':field.ordenacao}
+            #     n += 1
+
+            if field.type_fields == 'choice' or\
+               field.type_fields == 'list' or\
+               field.type_fields == 'radio':
+                items = field.list_values.splitlines()
+                D=[]
+                for i in items:
+                    L = i.split(' | ')
+                    #D[L[0].replace(' ','')] = L[1]
+                    D.append(L)
+
+                lista_itens[field.name_field] = D
+
+            elif field.type_fields == 'foreign_key':
+                E = []
+                form_ref = field.ref_form
+
+                form_ref_id = form_ref.id
+                label = form_ref.campo_label
+                key = form_ref.campo_chave
+
+                dados = ModelsFormValues().get_FormValues_byForm_and_Field(form_ref_id,key)
+                for item in dados:
+                    dados_label = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(form_ref_id, item.instance_id, label)
+                    E.append([item.value, dados_label.value])
+
+                lista_itens[field.name_field] = E
+
+            if field.value_default:
+                default_value[field.name_field] = field.value_default
+
+        return campos, lista_itens, default_value
+
+
+    def gera_dict_data(self,campos, id_form,id_instance):
+        D = {}
+        data_value = ModelsFormValues().get_FormValues_byForm_and_Instance(id_form,id_instance)
+
+        if data_value:
+            for campo in campos.keys():
+                for data in data_value:
+                    if data.fields == campo:
+                        D[campo] = data.value
+
+        return D
+
+
+    def registration_processes(self,context,isForm=True, models_fields=None):
         form = context.request # var tipo 'dict' que guarda todas as informacoes do formulario (keys,items,values)
         form_keys = form.keys() # var tipo 'list' que guarda todas as chaves do formulario (keys)
 
@@ -738,51 +806,11 @@ class RegistrationLoadForm(BaseFunc):
         n = 0
         fields = ModelsForm().get_Forns_byId(int(id_form))
         if fields:
-            for field in fields.fields:
-                if field.flag_ativo:
-                    M={}
-                    M['required'] = field.required
-                    M['type'] = field.type_fields
-                    M['label'] = field.title
-                    M['decription'] = field.description_fields
-                    M['ordem'] = field.ordenacao
-                    M['flag_multi'] = field.flag_multi
-                    M['mascara'] = field.mascara
-
-                    campos[field.name_field] = M
-                # else:
-                #     campos['outro'+str(n)] = {'ordem':field.ordenacao}
-                #     n += 1
-
-                if field.type_fields == 'choice' or\
-                   field.type_fields == 'list' or\
-                   field.type_fields == 'radio':
-                    items = field.list_values.splitlines()
-                    D=[]
-                    for i in items:
-                        L = i.split(' | ')
-                        #D[L[0].replace(' ','')] = L[1]
-                        D.append(L)
-
-                    lista_itens[field.name_field] = D
-
-                elif field.type_fields == 'foreign_key':
-                    E = []
-                    form_ref = field.ref_form
-
-                    form_ref_id = form_ref.id
-                    label = form_ref.campo_label
-                    key = form_ref.campo_chave
-
-                    dados = ModelsFormValues().get_FormValues_byForm_and_Field(form_ref_id,key)
-                    for item in dados:
-                        dados_label = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(form_ref_id, item.instance_id, label)
-                        E.append([item.value, dados_label.value])
-
-                    lista_itens[field.name_field] = E
-
-                if field.value_default:
-                    default_value[field.name_field] = field.value_default
+            if models_fields:
+                campos,lista_itens,default_value = self.gera_dict_campos(models_fields)
+               
+            else:
+                campos,lista_itens,default_value = self.gera_dict_campos(fields.fields)
 
         # divisao dos dicionarios "errors" e "convertidos"
         form_data = {
@@ -913,6 +941,17 @@ class RegistrationLoadForm(BaseFunc):
                         msg = []
                         arquivos = []
 
+                        if models_fields:
+                            campos_old = copy(campos)
+                            data_old = copy(data)
+                            
+                            campos = self.gera_dict_campos(fields.fields)[0]
+                            id_instance = int(form.get('id_instance','0'))
+                            data = self.gera_dict_data(campos, int(id_form),id_instance)
+
+                            if 'email' in data_old.keys():
+                                emails.append(data_old.get('email',''))
+
                         for campo in campos:
                             x = ''
                             if campos[campo].get('type','') == 'file' or \
@@ -925,8 +964,11 @@ class RegistrationLoadForm(BaseFunc):
                                 for i in self.decodePickle(data.get(campo)):
                                     txt += i +', '
                                 x = "%s: %s" % (campos[campo].get('label',''),txt)
+                            
                             elif campos[campo].get('type', '') == 'date':
-                                x = "%s: %s" % (campos[campo].get('label',''),pickle.loads(str(data.get(campo,u''))).strftime('%d/%m/%Y'))
+                                x = "%s: %s" % (campos[campo].get('label',''),
+                                                pickle.loads(str(data.get(campo,u''))).strftime('%d/%m/%Y'))
+                            
                             else:
                                 x = "%s: %s" % (campos[campo].get('label',''),data.get(campo,''))
                             msg.append(x)
@@ -946,6 +988,10 @@ class RegistrationLoadForm(BaseFunc):
                             IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
                         else:
                             IStatusMessage(context.request).addStatusMessage(_(u"Não foi possivel enviar o e-mail contate o administrados do portal."), "error")
+ 
+                        if models_fields:
+                            campos = campos_old
+                            data = data_old
 
                 #Redirect back to the front page with a status message
                 mensagem = context.context.mensagem
@@ -967,19 +1013,10 @@ class RegistrationLoadForm(BaseFunc):
         # se for um formulario de edicao
         elif 'id_instance' in form_keys:
             id_instance = int(form.get('id_instance','0'))
-            data_value = ModelsFormValues().get_FormValues_byForm_and_Instance(int(id_form),id_instance)
 
-            if data_value:
-                D = {}
-                for campo in campos.keys():
-                    for data in data_value:
-                        if data.fields == campo:
-                            D[campo] = data.value
-
-                form_data['data'] = D
-                return form_data
-            else:
-                return form_data
+            form_data['data'] = self.gera_dict_data(campos, int(id_form),id_instance)
+            
+            return form_data
 
         else:
             return form_data

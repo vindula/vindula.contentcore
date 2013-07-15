@@ -1,0 +1,129 @@
+<html metal:use-macro="here/main_template/macros/master">
+    <head>
+
+        <metal:js fill-slot="javascript_head_slot">
+            
+            <script type="text/javascript">
+
+                $j(document).ready(function(){
+                    /* Aba de edição do conteudo */
+                    $j('#contentview-view').removeClass('selected');
+                    $j('#contentview-workflow').addClass('selected');
+
+                });
+
+            </script>
+        
+        </metal:js>
+
+    </head>
+    <body>
+        <div metal:fill-slot="main">
+            <meta:macro metal:define-macro="page-view">
+                <div >
+                    <fieldset>
+                        <legend>Solicitações em Aberto</legend>
+                        
+                        <meta:macro metal:define-macro="table_list">
+                            <tal:define define="Batch python:modules['Products.CMFPlone'].Batch;
+                                                b_size python:20;
+                                                b_start python:0;
+                                                b_start request/b_start | b_start;
+                                                gerenciar gerenciar|python:True;
+                                                status status|python:False;
+
+                                                values values|view/pedidos|python:[];
+
+                                                batch python:Batch(values, b_size, int(b_start), pagerange=len(values))" >
+
+                                <table id="listing-table" class="listing">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Sobrenome/Username</th>
+                                            <th>Data da Solicitação</th>
+                                            <th tal:condition="gerenciar">Gerenciar</th>
+                                            <th tal:condition="status">Status da Solicitação</th>
+                                            <th tal:condition="not: gerenciar">Observação</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tal:rep repeat="pedido batch">
+                                            <tr tal:define="dados_user_pedido python: view.get_user(pedido.instance_id);">
+                                                
+                                                <td tal:define="field python: view.get_value_field(pedido.instance_id,'nome');
+                                                                field_value field/value|nothing;"
+                                                    tal:content="python: field_value or dados_user_pedido.get('name','')">Nome </td>
+                                                
+                                                <td tal:define="field_username python: view.get_value_field(pedido.instance_id,'username');
+                                                                field_sobrenome python: view.get_value_field(pedido.instance_id,'sobrenome');
+                                                                
+                                                                field_value_sob field_sobrenome/value|nothing;
+                                                                field_value_user field_username/value|string: ;"
+                                                                
+                                                    tal:content="python: field_value_sob or field_value_user">Sobrenome </td>
+                                                
+                                                <td tal:content="python: pedido.date_creation.strftime('%d/%m/%Y')"> Data </td>
+                                                <td tal:condition="gerenciar">
+                                                    <a href="" tal:attributes="href string:${context/absolute_url}/item-pedidos?id_instance=${pedido/instance_id|nothing}">Gerenciar</a>
+                                                </td>
+                                                
+                                                <td tal:condition="status"
+                                                    tal:define="field python: view.get_value_field(pedido.instance_id,'status')"
+                                                    tal:content="field/value|string: ">Status
+                                                </td>
+
+                                                <td tal:condition="not: gerenciar"
+                                                    tal:define="field python: view.get_value_field(pedido.instance_id,'observacao_responsavel')"
+                                                    tal:content="field/value|string: ">Obs
+                                                </td>
+
+                                            </tr>
+                                        </tal:rep>    
+                                    </tbody>
+                                </table>
+
+                                <div class="navigation-users" id="content-macro">
+                                    <div metal:use-macro="here/batch_macros/macros/navigation" />
+                                </div>
+
+                            </tal:define>
+                        </meta:macro>
+    
+                    </fieldset>
+                    <fieldset>
+                        <legend>Solicitações aguardando aprovação superior </legend>
+                        
+                        <tal:def define="values view/pedidos_nivel2">
+                            <div metal:use-macro="here/list-pedidos/macros/table_list" />
+                        </tal:def>
+
+                    </fieldset>
+                    <fieldset>
+                        <legend>Solicitações concluidas (Aprovados)</legend>
+                        
+                        <tal:def define="values view/pedidos_aprovado;
+                                         gerenciar python:False">
+                            <div metal:use-macro="here/list-pedidos/macros/table_list" />
+                        </tal:def>
+
+                    </fieldset>                    
+                    <fieldset>
+                        <legend>Solicitações concluidas (Reprovados)</legend>
+                        
+                        <tal:def define="values view/pedidos_reprovado;
+                                         gerenciar python:False">
+                            <div metal:use-macro="here/list-pedidos/macros/table_list" />
+                        </tal:def>
+
+                    </fieldset>                    
+
+
+
+                </div>
+            
+            </meta:macro>
+        </div>
+    </body>
+</html>

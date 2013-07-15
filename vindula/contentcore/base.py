@@ -3,6 +3,7 @@
 
 import pickle
 import datetime
+import sys
 from zope.component import getUtility
 
 # Import para envio de E-mail
@@ -24,6 +25,8 @@ from storm.locals import Store
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.statusmessages.interfaces import IStatusMessage
 from datetime import date , datetime
+
+from vindula.myvindula.tools.utils import UtilMyvindula
 
 try:
     # python 2.7
@@ -116,6 +119,19 @@ class BaseFunc(BaseStore):
         itens = pc(**query)
         return itens
 
+    #Retorna o username do usuario logado, usado para valor padrão do formulario
+    def get_username_login(self):
+        user_login = getSite().portal_membership.getAuthenticatedMember()
+        return user_login.getUserName()
+
+
+    #Retorna o email do usuario logado, usado para valor padrão do formulario
+    def get_email_user_login(self):
+        tool = UtilMyvindula()
+        obj_user = tool.get_prefs_user(self.get_username_login())
+
+        return obj_user.get('email','none')
+
 
     def getValue(self,campo,request,data,default_value):
         if campo in request.keys():
@@ -136,7 +152,9 @@ class BaseFunc(BaseStore):
                     return default
                 else:
                     return ''
-            except:
+            except :
+                e = sys.exc_info()[0]
+                print 'Error: %s - %s' %(e, default_value.get(campo,'None'))
                 return ''
 
     def getValueList(self,campo,request,data,default_value):

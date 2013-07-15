@@ -7,23 +7,31 @@ from datetime import datetime
 
 from vindula.contentcore.base import BaseStore
 from vindula.contentcore.models.log import ModelsLog
+from vindula.contentcore.models.fields import ModelsFormFields
 
 
 
 class ModelsFormValues(Storm, BaseStore):
     __storm_table__ = 'vin_contentcore_form_values'
-    
+
     id = Int(primary=True)
     value = Unicode()
     value_blob = Pickle()
     date_creation = DateTime()
-    
+
     forms_id = Int()
     instance_id = Int()
     fields = Unicode()
-    
+
     instancia = Reference(instance_id, "ModelsFormInstance.instance_id")
-    
+
+    @property
+    def get_field(self):
+        field = self.fields
+        form = self.forms_id
+        return ModelsFormFields().get_Fields_ByField(field,form)
+
+
     def set_FormValues(self,**kwargs):
         # adicionando...
         values = ModelsFormValues(**kwargs)
@@ -39,60 +47,60 @@ class ModelsFormValues(Storm, BaseStore):
             D['instance_id'] = id_instance
             D['forms_id'] =  id_form
             D['fields'] = campo
-            
-            
+
+
             if type(valor) != bool:
                 if len(valor) < 65000:
                     D['valor_new'] = self.Convert_utf8(valor.strip())
                     result.value = self.Convert_utf8(valor.strip())
                     result.value_blob = None
-            
+
                 else:
-                    result.value_blob = valor   
-                    result.value = None 
+                    result.value_blob = valor
+                    result.value = None
                     D['valor_new'] = u'Campo em Blob'
-            
+
             else:
                 D['valor_new'] = self.Convert_utf8(valor)
                 result.value = self.Convert_utf8(valor)
-                
+
             if D['valor_new'] != D['valor_old']:
-                ModelsLog().set_log(**D)  
-            
+                ModelsLog().set_log(**D)
+
             result.date_creation = datetime.now()
             self.store.commit()
-            
+
         else:
             self.set_form_value(id_form, id_instance, valor, campo)
-                                            
+
 
     def set_form_value(self,id_form, id_instance, valor,campo):
         D = {}
         D['forms_id'] = id_form
         D['instance_id'] = id_instance
         D['fields'] = campo
-                                            
+
         if type(valor) != bool:
             if len(valor) < 65000:
                 D['value'] = self.Convert_utf8(valor.strip())
                 D['value_blob'] = None
-                
+
             else:
                 D['value'] = None
                 D['value_blob'] = valor
         else:
             D['value'] = self.Convert_utf8(valor)
-            
+
         ModelsFormValues().set_FormValues(**D)
-        
+
         D['valor_new'] = D['value'] or u'Campo em Blob'
         D['valor_old'] = None
-        
+
         D.pop('value')
         D.pop('value_blob')
-        
+
         ModelsLog().set_log(**D)
-         
+
 
     def get_Values_byID(self,id):
         data = self.store.find(ModelsFormValues, ModelsFormValues.id==int(id)).one()
@@ -117,18 +125,15 @@ class ModelsFormValues(Storm, BaseStore):
             return data
         else:
             return []
-        
+
     def  get_FormValues_byForm_and_Field_and_Value(self, id_form,field,value):
         data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==id_form,
                                                  ModelsFormValues.fields==field,
-                                                 ModelsFormValues.value==value).one()
-        if data:
-            return data
-        else:
-            return None           
-    
+                                                 ModelsFormValues.value==value) #.one()
+        return data
 
-        
+
+
     def get_FormValues_byForm_and_Instance(self, id_form, id_instance):
         data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==id_form,
                                                  ModelsFormValues.instance_id==id_instance)
@@ -136,19 +141,19 @@ class ModelsFormValues(Storm, BaseStore):
             return data
         else:
             return []
-        
+
     def get_FormValues_byForm(self, id_form):
         data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==id_form)
         if data.count()>0:
             return data
         else:
             return []
-        
-        
-        
+
+
+
 
     def Convert_utf8(self,valor):
-        try: 
+        try:
             return unicode(valor,'utf-8')
         except UnicodeDecodeError:
             return valor.decode("utf-8", "ignore")
@@ -157,4 +162,3 @@ class ModelsFormValues(Storm, BaseStore):
                 return valor
             else:
                 return u'erro ao converter os caracteres'
-        

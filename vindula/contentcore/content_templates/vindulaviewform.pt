@@ -59,7 +59,9 @@
                 	
                     <metal:page metal:define-macro="page">    	
                     	<div class="overFlowHor" id="content-tabela">
-                    	    <tal:define define="values view/get_FormValues;
+                    	    
+
+                            <tal:define define="values view/get_FormValues;
                                                 values_filter  view/get_FormValues_filtro;
                                                 instances_form view/get_Form_instance;
                                                 
