@@ -207,7 +207,7 @@ def EditFormDataBase(context, event):
                                'type_fields':u'hidden',
                                'title': u'username do usuario logado',
                                'description_fields':u'Guarda o username do usuario logado, não editar este campo',
-                               'value_default':u'self.get_email_user_login()',
+                               'value_default':u'self.get_username_login()',
                                'ordenacao':3,
                                'required':False,
                                'flag_ativo':True}
