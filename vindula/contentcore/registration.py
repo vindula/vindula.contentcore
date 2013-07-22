@@ -947,6 +947,7 @@ class RegistrationLoadForm(BaseFunc):
                             campos = self.gera_dict_campos(fields.fields)[0]
                             id_instance = int(form.get('id_instance','0'))
                             data = self.gera_dict_data(campos, int(id_form),id_instance)
+                            data.update(data_old)
 
                             if 'email' in data_old.keys():
                                 emails.append(data_old.get('email',''))
