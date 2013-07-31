@@ -45,6 +45,13 @@ class VindulaListPedidosView(grok.View, BaseFunc):
     grok.require('zope2.View')
     grok.name('list-pedidos')
 
+    list_status = [{'id':'em_andamento','valor': 'Solicitação em Andamento'},
+                   {'id':'cliente',     'valor': 'Aguardando Cliente'},
+                   {'id':'aprovado',    'valor': 'Aprovado'},
+                   {'id':'reprovado',   'valor': 'Reprovado'},
+                   {'id':'enviar_para', 'valor': 'Enviar Para'}
+                   ]
+
     def __init__(self, context, request):
         super(VindulaListPedidosView,self).__init__(context=context, request=request)
         self.form_id = int(self.context.forms_id)
@@ -62,7 +69,7 @@ class VindulaListPedidosView(grok.View, BaseFunc):
 
 
         pedidos_nivel2 = []
-        self.pedidos = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'status',u'open'))
+        self.pedidos = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'status',[u'open', u'em_andamento',u'cliente']))
          
         member =  self.context.restrictedTraverse('@@plone_portal_state').member()
         if member:
@@ -104,6 +111,12 @@ class VindulaListPedidosView(grok.View, BaseFunc):
 
         return {}
 
+    def get_status(self, valor):
+        for i in self.list_status:
+            if i.get('id') == valor:
+                return i.get('valor')
+        return valor
+
 
 class VindulaPedidoView(VindulaListPedidosView):
     grok.context(IFormularioPadrao)
@@ -113,8 +126,12 @@ class VindulaPedidoView(VindulaListPedidosView):
     back_list = [u'status',u'nivel',u'observacao_responsavel',u'username']
 
     def list_user_nivel(self):
-        list_users_nivel2 = self.context.list_users_nivel2.replace('\r','')
-        list_users_nivel3 = self.context.list_users_nivel3.replace('\r','')
+        list_users_nivel2 = self.context.list_users_nivel2 or ''
+        list_users_nivel3 = self.context.list_users_nivel3 or ''
+        
+        list_users_nivel2 = list_users_nivel2.replace('\r','')
+        list_users_nivel3 = list_users_nivel3.replace('\r','')
+
         return list_users_nivel2.split('\n') + list_users_nivel3.split('\n')
 
 

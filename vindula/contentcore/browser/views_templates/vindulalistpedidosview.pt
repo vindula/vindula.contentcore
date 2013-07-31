@@ -21,7 +21,7 @@
         <div metal:fill-slot="main">
             <meta:macro metal:define-macro="page-view">
                 <div >
-                    <fieldset>
+                    <fieldset tal:define="status python:True">
                         <legend>Solicitações em Aberto</legend>
                         
                         <meta:macro metal:define-macro="table_list">
@@ -65,18 +65,20 @@
                                                     tal:content="python: field_value_sob or field_value_user">Sobrenome </td>
                                                 
                                                 <td tal:content="python: pedido.date_creation.strftime('%d/%m/%Y')"> Data </td>
-                                                <td tal:condition="gerenciar">
-                                                    <a href="" tal:attributes="href string:${context/absolute_url}/item-pedidos?id_instance=${pedido/instance_id|nothing}">Gerenciar</a>
-                                                </td>
                                                 
                                                 <td tal:condition="status"
-                                                    tal:define="field python: view.get_value_field(pedido.instance_id,'status')"
-                                                    tal:content="field/value|string: ">Status
+                                                    tal:define="field python: view.get_value_field(pedido.instance_id,'status');
+                                                                value field/value|string: "
+                                                    tal:content="python:view.get_status(value)">Status
                                                 </td>
 
                                                 <td tal:condition="not: gerenciar"
                                                     tal:define="field python: view.get_value_field(pedido.instance_id,'observacao_responsavel')"
                                                     tal:content="field/value|string: ">Obs
+                                                </td>
+
+                                                <td tal:condition="gerenciar">
+                                                    <a href="" tal:attributes="href string:${context/absolute_url}/item-pedidos?id_instance=${pedido/instance_id|nothing}">Gerenciar</a>
                                                 </td>
 
                                             </tr>
@@ -95,7 +97,8 @@
                     <fieldset>
                         <legend>Solicitações aguardando aprovação superior </legend>
                         
-                        <tal:def define="values view/pedidos_nivel2">
+                        <tal:def define="values view/pedidos_nivel2;
+                                         status python:True">
                             <div metal:use-macro="here/list-pedidos/macros/table_list" />
                         </tal:def>
 
