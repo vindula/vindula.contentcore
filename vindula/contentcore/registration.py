@@ -783,11 +783,18 @@ class RegistrationLoadForm(BaseFunc):
         D = {}
         data_value = ModelsFormValues().get_FormValues_byForm_and_Instance(id_form,id_instance)
 
+        list_status = {'em_andamento' : 'Solicitação em Andamento',
+                       'cliente' : 'Aguardando Cliente',
+                       'aprovado': 'Aprovado',
+                       'reprovado' :'Reprovado',
+                       'enviar_para': 'Enviar Para',
+                       'open':'Em Aberto'}
+
         if data_value:
             for campo in campos.keys():
                 for data in data_value:
                     if data.fields == campo:
-                        D[campo] = data.value
+                        D[campo] = list_status.get(data.value,data.value)
 
         return D
 

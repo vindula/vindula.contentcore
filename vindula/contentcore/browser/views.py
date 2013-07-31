@@ -45,15 +45,16 @@ class VindulaListPedidosView(grok.View, BaseFunc):
     grok.require('zope2.View')
     grok.name('list-pedidos')
 
-    list_status = [{'id':'em_andamento','valor': 'Solicitação em Andamento'},
-                   {'id':'cliente',     'valor': 'Aguardando Cliente'},
-                   {'id':'aprovado',    'valor': 'Aprovado'},
-                   {'id':'reprovado',   'valor': 'Reprovado'},
-                   {'id':'enviar_para', 'valor': 'Enviar Para'}
-                   ]
-
     def __init__(self, context, request):
         super(VindulaListPedidosView,self).__init__(context=context, request=request)
+        
+        self.list_status = [{'id':'em_andamento','valor': 'Solicitação em Andamento'},
+                            {'id':'cliente',     'valor': 'Aguardando Cliente'},
+                            {'id':'aprovado',    'valor': 'Aprovado'},
+                            {'id':'reprovado',   'valor': 'Reprovado'},
+                            {'id':'enviar_para', 'valor': 'Enviar Para'}
+                            ]
+
         self.form_id = int(self.context.forms_id)
 
     def rs_to_list(self, rs):
@@ -80,7 +81,6 @@ class VindulaListPedidosView(grok.View, BaseFunc):
             pedidos_nivel2 = ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id, u'nivel',username) 
 
         self.pedidos_nivel2 = self.rs_to_list(pedidos_nivel2)
-
 
         self.pedidos_aprovado = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'status',u'aprovado'))
         self.pedidos_reprovado = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'status',u'reprovado'))
@@ -112,6 +112,8 @@ class VindulaListPedidosView(grok.View, BaseFunc):
         return {}
 
     def get_status(self, valor):
+        self.list_status.append({'id':'open','valor': 'Em Aberto'})
+
         for i in self.list_status:
             if i.get('id') == valor:
                 return i.get('valor')
@@ -155,7 +157,6 @@ class VindulaPedidoView(VindulaListPedidosView):
                 models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list))
 
             RegistrationLoadForm().registration_processes(self, models_fields=models_fields)
-
 
             IStatusMessage(self.request).addStatusMessage(_(u"Pedido editado com sucesso."), "info")
             self.request.response.redirect('%s/list-pedidos' % self.context.absolute_url())
