@@ -148,7 +148,6 @@ class VindulaPedidoView(VindulaListPedidosView):
         
         form = self.request.form
         
-        instance_id = form.get('instance_id','0')
         submited = form.get('submited',False)
 
         if submited:
@@ -162,8 +161,33 @@ class VindulaPedidoView(VindulaListPedidosView):
             self.request.response.redirect('%s/list-pedidos' % self.context.absolute_url())
 
 
+class VindulaMyPedidoView(VindulaPedidoView):
+    grok.context(IFormularioPadrao)
+    grok.require('zope2.View')
+    grok.name('my-pedido')
+ 
+    def update(self):
+        self.back_list.append(u'my_observacao')
+        #Checagem de permição na view
+        # if not self.context.is_active_workflow:
+        #     self.request.response.redirect('%s/' % self.context.absolute_url())        
+        
+        form = self.request.form
+        
+        submited = form.get('submited',False)
 
-class VindulaMyPedidoView(VindulaListPedidosView):
+        if submited:
+            fields = self.get_fields()
+            if fields:
+                models_fields = fields.find(ModelsFormFields.name_field.is_in([u'my_observacao']))
+
+            RegistrationLoadForm().registration_processes(self, models_fields=models_fields)
+
+            IStatusMessage(self.request).addStatusMessage(_(u"Pedido editado com sucesso."), "info")
+            self.request.response.redirect('%s/my-pedidos' % self.context.absolute_url())
+
+
+class VindulaMyListPedidoView(VindulaListPedidosView):
     grok.context(IFormularioPadrao)
     grok.require('zope2.View')
     grok.name('my-pedidos')
@@ -182,11 +206,3 @@ class VindulaMyPedidoView(VindulaListPedidosView):
 
 
         self.meus_pedidos = pedidos
-
-
-
-
-
-
-
-

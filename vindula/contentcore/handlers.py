@@ -16,6 +16,46 @@ from vindula.contentcore.models.form_values import ModelsFormValues
 from vindula.contentcore.models.form_instance import ModelsFormInstance
 from vindula.contentcore.models.parameters import ModelsParametersForm
 
+campos_controle = [{'name_field':u'status',
+                   'type_fields':u'hidden',
+                   'title': u'Status do Pedido',
+                   'description_fields':u'Guarda os status do pedido, não editar este campo',
+                   'value_default':u'"open"',
+                   'ordenacao':0,
+                   'required':False,
+                   'flag_ativo':True},
+                   {'name_field':u'nivel',
+                   'type_fields':u'hidden',
+                   'title': u'Nivel do Pedido',
+                   'description_fields':u'Guarda os nivel do pedido, não editar este campo',
+                   'ordenacao':1,
+                   'required':False,
+                   'flag_ativo':True},
+                   {'name_field':u'observacao_responsavel',
+                   'type_fields':u'hidden',
+                   'title': u'Observação do responsavel',
+                   'description_fields':u'Guarda a observação do responsavel os nivel do pedido, não editar este campo',
+                   'ordenacao':2,
+                   'required':False,
+                   'flag_ativo':True},
+                   {'name_field':u'my_observacao',
+                   'type_fields':u'hidden',
+                   'title': u'Observação do usuario',
+                   'description_fields':u'Guarda a observação do usuario dono do pedido, não editar este campo',
+                   'ordenacao':3,
+                   'required':False,
+                   'flag_ativo':True},                   
+                   {'name_field':u'username',
+                   'type_fields':u'hidden',
+                   'title': u'username do usuario logado',
+                   'description_fields':u'Guarda o username do usuario logado, não editar este campo',
+                   'value_default':u'self.get_username_login()',
+                   'ordenacao':4,
+                   'required':False,
+                   'flag_ativo':True}
+                   ]
+
+
 
 @grok.subscribe(IFormularioPadrao, IObjectRemovedEvent)
 def ExcludFormDataBase(context, event):
@@ -71,38 +111,6 @@ def CreatFormDataBase(context, event):
 
     if context.active_workflow:
 
-        campos_controle = [{'name_field':u'status',
-                           'type_fields':u'hidden',
-                           'title': u'Status do Pedido',
-                           'description_fields':u'Guarda os status do pedido, não editar este campo',
-                           'value_default':u'"open"',
-                           'ordenacao':0,
-                           'required':False,
-                           'flag_ativo':True},
-                           {'name_field':u'nivel',
-                           'type_fields':u'hidden',
-                           'title': u'Nivel do Pedido',
-                           'description_fields':u'Guarda os nivel do pedido, não editar este campo',
-                           'ordenacao':1,
-                           'required':False,
-                           'flag_ativo':True},
-                           {'name_field':u'observacao_responsavel',
-                           'type_fields':u'hidden',
-                           'title': u'Observação do responsavel',
-                           'description_fields':u'Guarda a observação do responsavel os nivel do pedido, não editar este campo',
-                           'ordenacao':2,
-                           'required':False,
-                           'flag_ativo':True},
-                           {'name_field':u'username',
-                           'type_fields':u'hidden',
-                           'title': u'username do usuario logado',
-                           'description_fields':u'Guarda o username do usuario logado, não editar este campo',
-                           'value_default':u'self.get_username_login()',
-                           'ordenacao':3,
-                           'required':False,
-                           'flag_ativo':True}
-                           ]
-
         for campo in campos_controle:
             campo['forms_id'] = int(id_form)
 
@@ -147,10 +155,6 @@ def CreatFormDataBase(context, event):
                 ModelsFormValues().set_FormValues(**D)
 
 
-
-
-
-
 @grok.subscribe(IFormularioPadrao, IObjectModifiedEvent)
 def EditFormDataBase(context, event):
         title = context.Title()
@@ -180,38 +184,6 @@ def EditFormDataBase(context, event):
 
         if context.active_workflow:
             result_fields_form = ModelsFormFields().get_Fields_ByIdForm(forms_id)
-
-            campos_controle = [{'name_field':u'status',
-                               'type_fields':u'hidden',
-                               'title': u'Status do Pedido',
-                               'description_fields':u'Guarda os status do pedido, não editar este campo',
-                               'value_default':u'"open"',
-                               'ordenacao':0,
-                               'required':False,
-                               'flag_ativo':True},
-                               {'name_field':u'nivel',
-                               'type_fields':u'hidden',
-                               'title': u'Nivel do Pedido',
-                               'description_fields':u'Guarda os nivel do pedido, não editar este campo',
-                               'ordenacao':1,
-                               'required':False,
-                               'flag_ativo':True},
-                              {'name_field':u'observacao_responsavel',
-                               'type_fields':u'hidden',
-                               'title': u'Observação do responsavel',
-                               'description_fields':u'Guarda a observação do responsavel os nivel do pedido, não editar este campo',
-                               'ordenacao':2,
-                               'required':False,
-                               'flag_ativo':True},
-                               {'name_field':u'username',
-                               'type_fields':u'hidden',
-                               'title': u'username do usuario logado',
-                               'description_fields':u'Guarda o username do usuario logado, não editar este campo',
-                               'value_default':u'self.get_username_login()',
-                               'ordenacao':3,
-                               'required':False,
-                               'flag_ativo':True}
-                               ]
 
             for campo in campos_controle:
                 campo['forms_id'] = int(forms_id)
