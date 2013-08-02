@@ -1,0 +1,26 @@
+<html metal:use-macro="here/main_template/macros/master">
+    <head>
+
+    </head>
+    <body>
+        <div metal:fill-slot="main">
+            <meta:macro metal:define-macro="page-view">
+                <div >
+                    <fieldset>
+                        <legend>Minhas Solicitações</legend>
+                        
+                        <tal:def define="values view/meus_pedidos;
+                                         gerenciar python:False;
+                                         my_solicitacao python:True;
+                                         status python:True;">
+                            <div metal:use-macro="here/list-pedidos/macros/table_list" />
+                        </tal:def>
+
+                    </fieldset>
+
+                </div>
+            
+            </meta:macro>
+        </div>
+    </body>
+</html>
