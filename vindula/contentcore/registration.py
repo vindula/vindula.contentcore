@@ -779,7 +779,7 @@ class RegistrationLoadForm(BaseFunc):
         return campos, lista_itens, default_value
 
 
-    def gera_dict_data(self,campos, id_form,id_instance):
+    def gera_dict_data(self,campos, id_form,id_instance, convert_str=True):
         D = {}
         data_value = ModelsFormValues().get_FormValues_byForm_and_Instance(id_form,id_instance)
 
@@ -794,7 +794,10 @@ class RegistrationLoadForm(BaseFunc):
             for campo in campos.keys():
                 for data in data_value:
                     if data.fields == campo:
-                        D[campo] = list_status.get(data.value,data.value)
+                        if convert_str:
+                            D[campo] = list_status.get(data.value,data.value)
+                        else:
+                            D[campo] = data.value
 
         return D
 
@@ -805,6 +808,7 @@ class RegistrationLoadForm(BaseFunc):
 
         id_form = int(context.context.forms_id)
         success_url = context.context.absolute_url()
+        active_workflow = context.context.active_workflow
 
         campos = {}
         lista_itens = {}
@@ -905,6 +909,12 @@ class RegistrationLoadForm(BaseFunc):
                                 #D={}
                                 if valor or campos.get(campo,{}).get('type',None) == u'bool':
                                     ModelsFormValues().update_form_value(id_form,id_instance,valor,campo)
+
+                            if active_workflow:
+                                status_field = data.get('status',None)
+                                if status_field == 'cliente' and not models_fields:
+                                    ModelsFormValues().update_form_value(id_form,id_instance,u'open',u'status')
+
                         else:
                             #adicionando...
                             id_instance = ModelsFormInstance().set_FormInstance(id_form)
@@ -973,8 +983,11 @@ class RegistrationLoadForm(BaseFunc):
                                 x = "%s: %s" % (campos[campo].get('label',''),txt)
                             
                             elif campos[campo].get('type', '') == 'date':
-                                x = "%s: %s" % (campos[campo].get('label',''),
-                                                pickle.loads(str(data.get(campo,u''))).strftime('%d/%m/%Y'))
+                                try:
+                                    x = "%s: %s" % (campos[campo].get('label',''),
+                                                    pickle.loads(str(data.get(campo,u''))).strftime('%d/%m/%Y'))
+                                except:
+                                    x = "%s: %s" % (campos[campo].get('label',''), '')
                             
                             else:
                                 x = "%s: %s" % (campos[campo].get('label',''),data.get(campo,''))
@@ -1004,8 +1017,19 @@ class RegistrationLoadForm(BaseFunc):
                 mensagem = context.context.mensagem
                 if mensagem:
                     IStatusMessage(context.request).addStatusMessage(_(mensagem), "info")
+ 
 
-                context.request.response.redirect(destino_form)
+                if 'id_instance' in form_keys and isForm and active_workflow:
+                    context.request.response.redirect(success_url+'/my-pedidos')
+
+                else:
+                    context.request.response.redirect(destino_form)
+
+                #Ajustes para a demanda Ticke #135
+                campos_demanda = data.get('demanda','')
+                if campos_demanda in ['fornecedor_1', 'fornecedor_2', 'Fornecedor Novo', 'Fornecedor Renovação']:
+                    text = 'Para que sua solicitação seja atendida, por favor, entregar o formulário de solicitação padrão para área de compras!'
+                    IStatusMessage(context.request).addStatusMessage(_(text), "warning")
 
                 if not acoes:
                     # Menssagem de Erro na ação - volta para a view do formulario
@@ -1021,7 +1045,7 @@ class RegistrationLoadForm(BaseFunc):
         elif 'id_instance' in form_keys:
             id_instance = int(form.get('id_instance','0'))
 
-            form_data['data'] = self.gera_dict_data(campos, int(id_form),id_instance)
+            form_data['data'] = self.gera_dict_data(campos, int(id_form),id_instance,False)
             
             return form_data
 
