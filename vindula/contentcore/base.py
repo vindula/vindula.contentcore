@@ -531,11 +531,11 @@ class BaseFunc(BaseStore):
                     tmp += "<!-- Campo %s -->"%(campo)
                     tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo)+' '+classe,'field-'+campo)
 
-                    if type_campo != 'hidden':
+                    if type_campo != 'hidden' and type_campo !='bool':
                         tmp += "   <label for='%s'>%s</label>"%(campo,campos[campo].get('label', ''))
-                        if campos[campo].get('required', '') == True and type_campo != 'hidden':
-                            tmp += "   <span class='fieldRequired' title='Obrigatório'>(Obrigatório)</span>"
-
+                   
+                    if campos[campo].get('required', '') == True and type_campo != 'hidden':
+                        tmp += "   <span class='fieldRequired' title='Obrigatório'>(Obrigatório)</span>"
                         tmp += "   <div class='formHelp'>%s</div>"%(campos[campo].get('decription', ''))
                         tmp += "   <div >%s</div>"%(errors.get(campo,''))
 
@@ -734,6 +734,8 @@ class BaseFunc(BaseStore):
 
                             elif type_campo == 'bool':
                                 valor += "<input id='%s' type='checkbox' value='%s' name='%s' size='25' %s/>"%(i.name_field,'True',i.name_field,self.checked(i.name_field,self.request,data,default_value))
+                                tmp += "   <label class='label-input' for='%s'>%s</label>"%(campo,campos[campo].get('label', ''))
+                                tmp += "   <div class='formHelp'>%s</div>"%(campos[campo].get('decription', ''))
 
                                 table += '<td>%s</td>'%(valor)
 
@@ -761,6 +763,10 @@ class BaseFunc(BaseStore):
                         tmp += table + "</div>"
                     else:
                         tmp += valor + "</div>"
+                    if type_campo != 'hidden' and type_campo =='bool':
+                        tmp += "   <label class='label-input' for='%s'>%s</label>"%(campo,campos[campo].get('label', ''))
+                        tmp += "   <div class='formHelp'>%s</div>"%(campos[campo].get('decription', ''))
+                        tmp += "   <div >%s</div>"%(errors.get(campo,''))
 
                 else:
                     tmp += ''
