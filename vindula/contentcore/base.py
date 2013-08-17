@@ -159,6 +159,20 @@ class BaseFunc(BaseStore):
                 print 'Error: %s - %s' %(e, default_value.get(campo,'None'))
                 return ''
 
+    def getValuePickle(self,campo,request,data,default_value):
+        if campo in request.keys():
+            if request.get(campo, None):
+                return request.get(campo,'')
+            else:
+                return ''
+        elif campo in data.keys():
+            if data.get(campo,None) != None:
+                value = data.get(campo,'') 
+                return self.decodePickle(value)
+            else:
+                return ''
+
+
     def getValueList(self,campo,request,data,default_value):
         if campo in request.keys():
             if request.get(campo, None):
@@ -205,7 +219,11 @@ class BaseFunc(BaseStore):
             if request.get(campo, None):
                 return ''
             else:
-                id_form = int(request.get('forms_id','0'))
+                if hasattr(self, 'context'):
+                    default_form_id = self.context.forms_id
+                else:
+                    default_form_id = 0
+                id_form = int(request.get('forms_id',default_form_id))
                 id_instance = int(request.get('id_instance','0'))
                 field = campo
                 result = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(id_form,id_instance,field)
@@ -213,7 +231,11 @@ class BaseFunc(BaseStore):
                     return '../form-file?id=%s' % result.id
 
         elif campo in data.keys():
-            id_form = int(request.get('forms_id','0'))
+            if hasattr(self, 'context'):
+                default_form_id = self.context.forms_id
+            else:
+                default_form_id = 0
+            id_form = int(request.get('forms_id',default_form_id))
             id_instance = int(request.get('id_instance','0'))
             field = campo
             result = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(id_form,id_instance,field)
@@ -562,7 +584,7 @@ class BaseFunc(BaseStore):
 
                     elif type_campo == 'date':
                         valor += """<input id='%s' type='text' maxlength='10' class="dateField"
-                                         value='%s' name='%s' size='25'/>"""%(campo,self.converte_data(self.getValue(campo,self.request,data,default_value),True),campo)
+                                         value='%s' name='%s' size='25'/>"""%(campo,self.converte_data(self.getValuePickle(campo,self.request,data,default_value),True),campo)
 
                     elif type_campo == 'textarea':
                         valor += "<textarea id='%s' name='%s' style='width: 100; height: 81px;'>%s</textarea>"%(campo, campo, self.getValue(campo,self.request,data,default_value))
@@ -723,7 +745,7 @@ class BaseFunc(BaseStore):
 
                             elif type_campo == 'date':
                                 valor += """<input id='%s' type='text' maxlength='10' onKeyDown='Mascara(this,Data);' onKeyPress='Mascara(this,Data);' onKeyUp='Mascara(this,Data);'
-                                                 value='%s' name='%s' size='25'/>"""%(i.name_field,self.converte_data(self.getValue(i.name_field,self.request,data,default_value),True),i.name_field)
+                                                 value='%s' name='%s' size='25'/>"""%(i.name_field,self.converte_data(self.getValuePickle(i.name_field,self.request,data,default_value),True),i.name_field)
 
                                 table += '<td>%s</td>'%(valor)
 

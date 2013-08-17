@@ -30,6 +30,7 @@
                                                 b_start python:0;
                                                 b_start request/b_start | b_start;
                                                 gerenciar gerenciar|python:True;
+                                                my_solicitacao my_solicitacao|python:False;
                                                 status status|python:False;
 
                                                 values values|view/pedidos|python:[];
@@ -45,6 +46,7 @@
                                             <th tal:condition="gerenciar">Gerenciar</th>
                                             <th tal:condition="status">Status da Solicitação</th>
                                             <th tal:condition="not: gerenciar">Observação</th>
+                                            <th tal:condition="my_solicitacao">Editar Socilitaçao</th>
 
                                         </tr>
                                     </thead>
@@ -81,6 +83,14 @@
                                                     <a href="" tal:attributes="href string:${context/absolute_url}/item-pedidos?id_instance=${pedido/instance_id|nothing}">Gerenciar</a>
                                                 </td>
 
+                                                <td tal:condition="my_solicitacao" 
+                                                    tal:define="field_status python: view.get_value_field(pedido.instance_id,'status');
+                                                                value_status field_status/value|string: "  >
+                                                    <a href="" tal:attributes="href string:${context/absolute_url}/?id_instance=${pedido/instance_id|nothing}"
+                                                               tal:condition="python:value_status=='cliente'" >Editar</a>
+                                                    <span tal:condition="python:value_status!='cliente'">Não editavel</span>
+                                                </td>
+
                                             </tr>
                                         </tal:rep>    
                                     </tbody>
@@ -97,7 +107,7 @@
                     <fieldset>
                         <legend>Solicitações aguardando aprovação superior </legend>
                         
-                        <tal:def define="values view/pedidos_nivel2;
+                        <tal:def define="values view/pedidos_nivel2|python:[];
                                          status python:True">
                             <div metal:use-macro="here/list-pedidos/macros/table_list" />
                         </tal:def>
@@ -106,7 +116,7 @@
                     <fieldset>
                         <legend>Solicitações concluidas (Aprovados)</legend>
                         
-                        <tal:def define="values view/pedidos_aprovado;
+                        <tal:def define="values view/pedidos_aprovado|python:[];
                                          gerenciar python:False">
                             <div metal:use-macro="here/list-pedidos/macros/table_list" />
                         </tal:def>
@@ -115,7 +125,7 @@
                     <fieldset>
                         <legend>Solicitações concluidas (Reprovados)</legend>
                         
-                        <tal:def define="values view/pedidos_reprovado;
+                        <tal:def define="values view/pedidos_reprovado|python:[];
                                          gerenciar python:False">
                             <div metal:use-macro="here/list-pedidos/macros/table_list" />
                         </tal:def>

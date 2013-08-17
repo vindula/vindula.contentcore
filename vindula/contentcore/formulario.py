@@ -168,8 +168,8 @@ class FormularioPadrao(dexterity.Container):
     @property
     def is_active_workflow(self):
         member =  getSite().restrictedTraverse('@@plone_portal_state').member()
-        list_users_nivel2 = self.list_users_nivel2
-        list_users_nivel3 = self.list_users_nivel3
+        list_users_nivel2 = self.list_users_nivel2 or []
+        list_users_nivel3 = self.list_users_nivel3 or []
 
         if member:
             user_login = member.getUserName()
