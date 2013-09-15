@@ -3,6 +3,7 @@ from five import grok
 from zope.interface import Interface
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.layout.navigation.interfaces import INavigationRoot
+from Products.CMFCore.utils import getToolByName
 
 from Products.statusmessages.interfaces import IStatusMessage
 from vindula.contentcore import MessageFactory as _
@@ -16,6 +17,12 @@ from vindula.contentcore.formulario import IFormularioPadrao
 
 from vindula.myvindula.tools.utils import UtilMyvindula
 
+import simplejson as json
+from random import choice
+
+list_colors = ['#00FF40', '#FFE51E', '#0040FF', '#FF4B4B', '#FF00BF',
+               '#000000', '#006600', '#00FFFF', '#FF6600', '#CC00FF' ]
+
 # Views
 class VindulaLoadRelatorioView(grok.View, BaseFunc):
     grok.context(IFormularioPadrao)
@@ -23,7 +30,45 @@ class VindulaLoadRelatorioView(grok.View, BaseFunc):
     grok.name('relatorio-form')
 
     def load_form(self):
-        return LoadRelatorioForm().registration_processes(self)
+        return LoadRelatorioForm().registration_processes(self) 
+
+    def get_static(self):
+        ctx = self.context
+        portal = getToolByName(ctx, 'portal_url').getPortalObject()
+        url_portal = portal.absolute_url()
+        return url_portal +'/++resource++vindula.contentcore/'
+
+
+
+class VindulaGraficosView(VindulaLoadRelatorioView):
+    grok.context(IFormularioPadrao)
+    grok.require('zope2.View')
+    grok.name('graficos-form')
+
+    def get_categorias(self, dados):
+        L = []
+        if dados:
+            for item in dados:
+                L.append(item.get('name',''))
+
+        return json.dumps(L)
+
+    def get_series(self, dados):
+        D = {}
+        r = lambda: random.randint(0,255)
+        if dados:
+            L = []
+            for item in dados:
+                L.append({'y': item.get('cont','0'),
+                          'color': choice(list_colors)
+                          }
+                        )
+
+        D['name'] = 'Respostas'
+        D['data'] = L
+
+        return json.dumps(D)
+
 
 class VindulaAvisosView(grok.View):
     grok.context(IFormularioPadrao)

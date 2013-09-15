@@ -38,6 +38,12 @@
                         title="Gerar relat&oacute;rio dos registros existentes" alt="Gerar relat&oacute;rio dos registros existentes" />
                 </a>
 
+                <a alt="gerar graficos" title="gerar graficos" class="control"
+                   tal:attributes="href string:${context/absolute_url|nothing}/graficos-form">
+                   <img tal:attributes="src string:${view/static}/img/grafico_registro.png"
+                        title="Gerar graficos dos registros existentes" alt="Gerar graficos dos registros existentes" />
+                </a>
+
                 <a alt="filtro em nova janela" title="filtro em nova janela" class="control"
                    tal:attributes="href string:${context/absolute_url|nothing}/view-dado-newwindows" target="_blank">
                    <img tal:attributes="src string:${view/static}/img/newWindows.png"
