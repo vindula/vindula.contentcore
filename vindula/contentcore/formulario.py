@@ -80,7 +80,7 @@ class IFormularioPadrao(form.Schema):
                             description=_(u"Crie uma lista de e-mails dos destinatários que irão receber os dados do formulário <br /> (Digite um email por linha)."),
                             required=False)
 
-    email_copia_remetente = schema.Choice(title=_(u"Cópia remetente"),
+    email_copia_remetente = schema.Bool(title=_(u"Cópia remetente"),
                                   description=_(u"Ativa o envio de uma cópia do formulário ao usuário solicitante."),
                                   source=ListCamposForm(),
                                   required=False)
@@ -151,7 +151,8 @@ class IFormularioPadrao(form.Schema):
     # Fieldset News
     form.fieldset('advanced',
                   label=_(u"Configuração avançada"),
-                  fields=['email_remetente',
+                  fields=['email_copia_remetente',
+                          'email_remetente',
                           'email_padrao',
                           'campo_label',
                           'campo_chave',
