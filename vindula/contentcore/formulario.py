@@ -80,8 +80,13 @@ class IFormularioPadrao(form.Schema):
                             description=_(u"Crie uma lista de e-mails dos destinatários que irão receber os dados do formulário <br /> (Digite um email por linha)."),
                             required=False)
 
-    email_remetente = schema.Choice(title=_(u"Email Destinatario"),
-                                  description=_(u"Selecione um campo para detinatario do e-mail que irão receber os dados do formulário."),
+    email_copia_remetente = schema.Choice(title=_(u"Cópia remetente"),
+                                  description=_(u"Ativa o envio de uma cópia do formulário ao usuário solicitante."),
+                                  source=ListCamposForm(),
+                                  required=False)
+
+    email_remetente = schema.Choice(title=_(u"Email Destinatário"),
+                                  description=_(u"Selecione um campo para destinatário do e-mail que irão receber os dados do formulário."),
                                   source=ListCamposForm(),
                                   required=False)
 

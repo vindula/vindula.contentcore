@@ -22,8 +22,6 @@ except ImportError:
   #python 2.6
   from vindula.contentcore.ordered_dict import OrderedDict
 
-
-
 class RegistrationCreateForm(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
@@ -314,8 +312,6 @@ class LoadRelatorioForm(BaseFunc):
 
         return L
 
-
-
 class RegistrationCreateFields(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
@@ -580,7 +576,6 @@ class RegistrationExcluirDefault(BaseFunc):
             IStatusMessage(ctx.request).addStatusMessage(_(u'Valor removido com sucesso.'), 'info')
             ctx.request.response.redirect(success_url)
 
-
 class RegistrationParametrosForm(BaseFunc):
     def to_utf8(self, value):
         return unicode(value, 'utf-8')
@@ -674,7 +669,6 @@ class RegistrationParametrosForm(BaseFunc):
         else:
             return form_data
 
-
 class RegistrationEditViewForm(BaseFunc):
     def to_utf8(self, value):
         return unicode(value, 'utf-8')
@@ -719,7 +713,6 @@ class RegistrationEditViewForm(BaseFunc):
         #se formulario de listagem dos campos
         else:
             return form_data
-
 
 class RegistrationLoadForm(BaseFunc):
     def to_utf8(value):
@@ -952,6 +945,13 @@ class RegistrationLoadForm(BaseFunc):
                         if context.context.email_remetente:
                             emails.append(data.get(context.context.email_remetente))
 
+                        #Adicionei esse try para não quebrar onde nao foi feito Update Schema
+                        try:
+                            if context.context.email_copia_remetente:
+                                emails.append(context.context.get_email_user_login())
+                        except:
+                            print 'vindula.contentcore: E-mail copia remetente não enviado.'
+
                         assunto = 'E-mail enviado do Formulário - %s'%(context.context.Title())
 
                         msg = []
@@ -1051,7 +1051,6 @@ class RegistrationLoadForm(BaseFunc):
 
         else:
             return form_data
-
 
 class RegistrationExcluirForm(BaseFunc):
 
