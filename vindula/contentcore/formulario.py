@@ -82,7 +82,6 @@ class IFormularioPadrao(form.Schema):
 
     email_copia_remetente = schema.Bool(title=_(u"Cópia remetente"),
                                   description=_(u"Ativa o envio de uma cópia do formulário ao usuário solicitante."),
-                                  source=ListCamposForm(),
                                   required=False)
 
     email_remetente = schema.Choice(title=_(u"Email Destinatário"),
