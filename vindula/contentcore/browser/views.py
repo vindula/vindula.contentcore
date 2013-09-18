@@ -55,9 +55,9 @@ class VindulaGraficosView(VindulaLoadRelatorioView):
 
     def get_series(self, dados):
         D = {}
+        L = []
         r = lambda: random.randint(0,255)
         if dados:
-            L = []
             for item in dados:
                 L.append({'y': item.get('cont','0'),
                           'color': choice(list_colors)
