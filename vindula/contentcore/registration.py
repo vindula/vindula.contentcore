@@ -347,6 +347,7 @@ class RegistrationCreateFields(BaseFunc):
                   'ordenacao'             : {'required': False, 'type':'hidden',    'label':'Ordenação',                    'decription':u'',                                                                 'ordem':11},
 
                   'flag_ativo'            : {'required': False, 'type':'bool',      'label':'Campo ativo',                  'decription':u'Marque esta opção se o campo estará ativo para o usuário',         'ordem':12},
+                  'flag_float_left'       : {'required': False, 'type':'bool',      'label':'Campo Lateral',                'decription':u'Marque esta opção para que o campo fique direita de outro campo','ordem':14},
                   'forms_id'              : {'required': False, 'type':'hidden',    'label':'Id form',                      'decription':u'',                                                                 'ordem':13}}
 
 
@@ -740,6 +741,7 @@ class RegistrationLoadForm(BaseFunc):
                 M['ordem'] = field.ordenacao
                 M['flag_multi'] = field.flag_multi
                 M['mascara'] = field.mascara
+                M['flag_float_left'] = field.flag_float_left
 
                 campos[field.name_field] = M
             # else:

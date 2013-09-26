@@ -26,6 +26,7 @@ class ModelsFormFields(Storm, BaseStore):
     ordenacao = Int()
     required = Bool()
     flag_ativo = Bool()
+    flag_float_left = Bool()
     forms_id = Int()
 
     ref_mult = ReferenceSet(name_field, "ModelsFormFields.field_ref")

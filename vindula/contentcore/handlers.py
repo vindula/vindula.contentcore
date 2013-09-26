@@ -52,9 +52,42 @@ campos_controle = [{'name_field':u'status',
                    'value_default':u'self.get_username_login()',
                    'ordenacao':4,
                    'required':False,
-                   'flag_ativo':True}
-                   ]
+                   'flag_ativo':True},
 
+                   #Campos extra da solicitação
+                   {'name_field':u'cotacao01',
+                   'type_fields':u'hidden',
+                   'title': u'Cotação 01',
+                   'description_fields':u'Guarda a primeira cotação, não editar este campo',
+                   'value_default':u'',
+                   'ordenacao':5,
+                   'required':False,
+                   'flag_ativo':True},
+                   {'name_field':u'cotacao02',
+                   'type_fields':u'hidden',
+                   'title': u'Cotação 02',
+                   'description_fields':u'Guarda a primeira cotação, não editar este campo',
+                   'value_default':u'',
+                   'ordenacao':6,
+                   'required':False,
+                   'flag_ativo':True},
+                  {'name_field':u'cotacao03',
+                   'type_fields':u'hidden',
+                   'title': u'Cotação 03',
+                   'description_fields':u'Guarda a primeira cotação, não editar este campo',
+                   'value_default':u'',
+                   'ordenacao':7,
+                   'required':False,
+                   'flag_ativo':True},
+                  {'name_field':u'arquivoauxiliarsolicitacao2',
+                   'type_fields':u'file',
+                   'title': u'Arquivo auxiliar de gerenciamento',
+                   'description_fields':u'Guarda os Arquivo auxiliar de gerenciamento do pedido, não editar este campo',
+                   'value_default':u'',
+                   'ordenacao':8,
+                   'required':False,
+                   'flag_ativo':True},
+                   ]
 
 
 @grok.subscribe(IFormularioPadrao, IObjectRemovedEvent)
@@ -124,7 +157,7 @@ def CreatFormDataBase(context, event):
         fields_org = ModelsFormFields().get_Fields_ByIdForm(int(org.forms_id))
 
         campos = ['name_field','type_fields', 'list_values','title','value_default',\
-                  'description_fields','ordenacao','required','flag_ativo']
+                  'description_fields','ordenacao','required','flag_ativo', 'flag_float_left']
 
         for item in fields_org:
             D={}

@@ -550,6 +550,14 @@ class BaseFunc(BaseStore):
                     else:
                         mascara = ''
 
+                    #Classe para campo oculto
+                    if type_campo == 'hidden':                        
+                        classe += ' hidden_field'
+
+                    #Campo Com Float Left
+                    if campos[campo].get('flag_float_left', False):
+                        classe += ' float_left'
+
                     tmp += "<!-- Campo %s -->"%(campo)
                     tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo)+' '+classe,'field-'+campo)
 
@@ -783,6 +791,8 @@ class BaseFunc(BaseStore):
                         tmp += table + "</div>"
                     else:
                         tmp += valor + "</div>"
+                    
+                    
 
                 else:
                     tmp += ''

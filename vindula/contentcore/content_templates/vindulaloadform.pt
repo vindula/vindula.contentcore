@@ -52,6 +52,22 @@
 																		
 			                });
 			            </script>
+			            <style type="text/css">
+			            	#field-arquivoauxiliarsolicitacao2{
+			            		display: none;
+			            	}
+			            	#load-form div.field{
+			            		float: left;
+			            	}
+			            	#load-form div.hidden_field{
+			            		float: none;
+			            	}
+			            	#load-form div.float_left{
+			            		clear: none;
+			            		margin-left: 20px;
+			            	}
+			            	
+			            </style>
 			             
 			        	<form name="load-form" id="load-form" enctype="multipart/form-data" 
 						      class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/load-form" method="POST">
@@ -65,7 +81,7 @@
     			            	<legend>Adicionar Novo Registro</legend>
     							<tal:def define="html python:view.geraCampos(form_data)">
     								<tal:rep repeat="x html">
-    									<div tal:content="structure x"/>
+    									<div tal:replace="structure x"/>
     								</tal:rep>
     							</tal:def>
     

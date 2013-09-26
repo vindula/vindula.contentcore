@@ -43,14 +43,16 @@
                                     <b tal:content="field/title|string: ">Title</b>:
 
                                     <tal:def define="valor_pedido python:view.get_value_field(id_instance, field.name_field)">
-                                        
-                                        <span tal:define="tipo field/type_fields|nothing;
-                                                          valor_blob valor_pedido/value_blob|nothing;
-                                                          valor_normal valor_pedido/value|nothing;
-                                                          
-                                                          valor python: valor_normal or valor_blob;
-                                                          id_campo valor_pedido/id|nothing;"
-                                              tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)" />
+
+                                        <tal:error tal:on-error="string: Erro ao carregar campo ${field/title|nothing}">
+                                          <span tal:define="tipo field/type_fields|nothing;
+                                                            valor_blob valor_pedido/value_blob|nothing;
+                                                            valor_normal valor_pedido/value|nothing;
+                                                            
+                                                            valor python: valor_normal or valor_blob;
+                                                            id_campo valor_pedido/id|nothing;"
+                                                tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)" />
+                                        </tal:error>
 
                                     </tal:def>
                                 </div>
@@ -65,14 +67,59 @@
                                     <input type="hidden" name="email" id="email" value=""
                                            tal:define="dados_user python: view.get_user(id_instance);"
                                            tal:attributes="value dados_user/email|string: " />
+                  
+                                    
 
                                     <tal:def define="status_save python:view.get_value_field(id_instance, u'status');
                                                      status_save status_save/value|string: ;
                                                      nivel_save python:view.get_value_field(id_instance, u'nivel');
                                                      nivel_save nivel_save/value|string: ;
                                                      obj_save python:view.get_value_field(id_instance, u'observacao_responsavel');
-                                                     obj_save obj_save/value|string: ;">
-                                      
+                                                     obj_save obj_save/value|string: ;
+
+                                                     cotacao01_save python:view.get_value_field(id_instance, u'cotacao01');
+                                                     cotacao01_save cotacao01_save/value|string: ;
+
+                                                     cotacao02_save python:view.get_value_field(id_instance, u'cotacao02');
+                                                     cotacao02_save cotacao02_save/value|string: ; 
+
+                                                     cotacao03_save python:view.get_value_field(id_instance, u'cotacao03');
+                                                     cotacao03_save cotacao03_save/value|string: ;
+                                                     
+                                                     arquivoauxiliar2_save python:view.get_value_field(id_instance, u'arquivoauxiliarsolicitacao2');">
+                                     
+
+                                      <div class="field " id="field-cotacao01">
+                                        <label for="cotacao01">Cotação 01</label>
+                                        <div class="formHelp">Informe o valor em Reais</div>
+                                        <div></div>
+                                        <input id="cotacao01" type="text" value="" name="cotacao01" size="25"
+                                               tal:attributes="value cotacao01_save" />  
+                                      </div>
+                                      <div class="field " id="field-cotacao02">
+                                        <label for="cotacao02">Cotação 02</label>
+                                        <div class="formHelp">Informe o valor em Reais</div>
+                                        <div></div>
+                                        <input id="cotacao02" type="text" value="" name="cotacao02" size="25"
+                                               tal:attributes="value cotacao02_save" />
+                                      </div>
+                                      <div class="field " id="field-cotacao03">
+                                        <label for="cotacao03">Cotação 03</label>
+                                        <div class="formHelp">Informe o valor em Reais</div>
+                                        <div></div>
+                                        <input id="cotacao03" type="text" value="" name="cotacao03" size="25"
+                                               tal:attributes="value cotacao03_save" />
+                                      </div>
+                                             
+                                      <div class="field " id="field-arquivoauxiliarsolicitacao2">
+                                          <label for="arquivoauxiliarsolicitacao2">Arquivo Auxiliar</label>
+                                          <div class="formHelp">Faça upload de um arquivo auxiliar a esta solicitação.</div>
+                                          <div tal:condition="arquivoauxiliar2_save">
+                                              <a target="_blank" tal:attributes="href string:${context/absolute_url}/form-file?id=${arquivoauxiliar2_save/id|nothing}">Download arquivo</a><br />
+                                          </div>
+                                          <input id="arquivoauxiliarsolicitacao2" type="file" value="" name="arquivoauxiliarsolicitacao2" size="25">
+                                      </div>
+
                                       <tal:rep repeat="item view/list_status|python:[]">
                                         <input type="radio" name="status" id="status" value=""  
                                                 tal:define="status_item item/id|nothing" 
