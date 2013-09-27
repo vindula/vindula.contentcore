@@ -12,6 +12,8 @@ from vindula.contentcore.models.form_instance import ModelsFormInstance
 from vindula.contentcore.models.default_value import ModelsDefaultValue
 from vindula.contentcore.models.parameters import ModelsParametersForm
 
+from vindula.myvindula.tools.utils import UtilMyvindula
+
 import pickle
 from copy import copy 
 
@@ -107,12 +109,18 @@ class RegistrationCreateForm(BaseFunc):
 
 class LoadRelatorioForm(BaseFunc):
 
-    def registration_processes(self,ctx):
+    def registration_processes(self,ctx,filtro={}):
         id_form = int(ctx.context.forms_id)
 
         #formulario =  ModelsForm().get_Forns_byId(id_form)
-        valores =  ModelsForm().get_FormValues(id_form)
+#        valores =  ModelsForm().get_FormValues(id_form)
+        
+        if filtro:
+            valores_filtrados = ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(id_form, filtro['field'], filtro['value'])
+            valores_filtrados = [i.instance_id for i in valores_filtrados]
+        
         campos = ModelsFormFields().get_Fields_ByIdForm(id_form)
+        
         L=[]
         for campo in campos:
            D={}
@@ -218,7 +226,11 @@ class LoadRelatorioForm(BaseFunc):
 
 
            instances = ModelsFormValues().get_FormValues_byForm_and_Field(id_form, campo.name_field)
+           
            if instances:
+               if filtro:
+                   instances = instances.find(ModelsFormValues.instance_id.is_in(valores_filtrados))
+               
                D['quant'] =  instances.count()
 
                tipo = campo.type_fields
@@ -370,7 +382,17 @@ class RegistrationCreateFields(BaseFunc):
         for i in dados_defaul:
             L.append([i.value,i.lable])
         lista_itens['value_default'] = L
-
+        
+        tool = UtilMyvindula()
+        user_fields = tool.get_Dic_Campos()
+        L = []
+        for field in user_fields:
+            if field != 'photograph':
+                text = 'self.getDataFieldByUser("%s")' % (field)
+                label = '%s do usuário autenticado' % (user_fields[field]['label'])
+                L.append([text,label])
+        lista_itens['value_default'] += L
+        
         #Campos de referencia
         M =[]
         dados_ref = ModelsFormFields().get_Fields_ByIdForm(id_form)

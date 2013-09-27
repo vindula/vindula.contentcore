@@ -101,7 +101,6 @@ class IFormularioPadrao(form.Schema):
                                  source=ListCamposForm(),
                                  required=False)
 
-
     acao_destino = schema.Choice(title=_(u"Ação de destino do formulário"),
                                  description=_(u"Selecione um destino para o formulário depois de realizar a ação"),
                                  source=ListDestinoForm(),
@@ -143,6 +142,10 @@ class IFormularioPadrao(form.Schema):
                                     description=_(u"Indique os usuario que poderão ver e editar os dados do formulario."),
                                     required=False,)
     
+    campo_filtro = schema.Choice(title=_(u"Campo para filtro"),
+                                 description=_(u"Selecione um campo para filtrar os resultados do relatório"),
+                                 source=ListCamposForm(),
+                                 required=False)
     # Fieldset News
     form.fieldset('advanced',
                   label=_(u"Configuração avançada"),

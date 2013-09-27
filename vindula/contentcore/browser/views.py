@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from five import grok
+from storm.locals import Select
 from zope.interface import Interface
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.layout.navigation.interfaces import INavigationRoot
@@ -30,15 +31,32 @@ class VindulaLoadRelatorioView(grok.View, BaseFunc):
     grok.name('relatorio-form')
 
     def load_form(self):
-        return LoadRelatorioForm().registration_processes(self) 
+        if self.request.form.get('submit_filter'):
+            if self.request.form.get('value_filter'):
+                value = self.request.form.get('value_filter').decode('utf-8')
+                return LoadRelatorioForm().registration_processes(self, filtro={'field': self.context.campo_filtro, 'value': value}) 
+        else:
+            return LoadRelatorioForm().registration_processes(self) 
 
     def get_static(self):
         ctx = self.context
         portal = getToolByName(ctx, 'portal_url').getPortalObject()
         url_portal = portal.absolute_url()
         return url_portal +'/++resource++vindula.contentcore/'
+    
 
-
+    def get_values_filter(self):
+        self.filter = self.context.campo_filtro
+        
+        if self.filter:
+            result = ModelsFormValues().get_FormValues_byForm_and_Field(int(self.context.forms_id),self.filter)
+            if result.count() > 0:
+                L = []
+                for i in result:
+                    if i.value not in L:
+                        L.append(i.value)
+            return L
+        
 
 class VindulaGraficosView(VindulaLoadRelatorioView):
     grok.context(IFormularioPadrao)

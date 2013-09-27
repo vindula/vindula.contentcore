@@ -9,3 +9,10 @@
 	display:table;
 	float:left;
 }
+
+.filtro-contentcore {
+    background: #EEEDEC;
+    padding: 5px;
+    border-radius: 3px;
+    
+}
