@@ -205,7 +205,7 @@
                                                 
                                                 <td>
                                                     <tal:def define="instance python: item[0].instancia">
-                                                        <tal:cont content="python: instance.date_creation.strftime('%d/%m/%Y')" />
+                                                        <tal:cont content="python: instance.date_creation.strftime('%d/%m/%Y %H:%M:%S')" />
                                                         
                                                     </tal:def>    
                                                     

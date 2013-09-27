@@ -396,7 +396,7 @@ class VindulaViewForm(grok.View, BaseFunc):
     def find_group_by_data(self, valores):
         L = []
         for valor in valores:
-            V = valor.date_creation.strftime('%d/%m/%Y')
+            V = valor.date_creation.strftime('%d/%m/%Y %H:%M:%S')
             if not V in L:
                 L.append(V)
 
@@ -434,7 +434,7 @@ class VindulaViewForm(grok.View, BaseFunc):
 
             elif campo == 'date_creation':
                 valor = form.get(campo,'')
-                if valor and item[0].instancia.date_creation.strftime('%d/%m/%Y') != valor:
+                if valor and item[0].instancia.date_creation.strftime('%d/%m/%Y %H:%M:%S') != valor:
                     return False
 
         return True
