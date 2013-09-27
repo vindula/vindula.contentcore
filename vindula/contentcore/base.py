@@ -352,20 +352,21 @@ class BaseFunc(BaseStore):
 
 
         elif tipo == 'choice':
-            valor_campo = ModelsFormValues().get_Values_byID(id)
-            id_form = int(self.context.forms_id)
+            if id:
+                valor_campo = ModelsFormValues().get_Values_byID(id)
+                id_form = int(self.context.forms_id)
 
-            if valor_campo:
-                campo = ModelsFormFields().get_Fields_ByField(valor_campo.fields,id_form)
-
-                items = campo.list_values.splitlines()
-                D=[]
-                for i in items:
-                    L = i.split(' | ')
-
-                    if len(L) >= 2:
-                        if L[0] == valor:
-                            return L[1]
+                if valor_campo:
+                    campo = ModelsFormFields().get_Fields_ByField(valor_campo.fields,id_form)
+    
+                    items = campo.list_values.splitlines()
+                    D=[]
+                    for i in items:
+                        L = i.split(' | ')
+    
+                        if len(L) >= 2:
+                            if L[0] == valor:
+                                return L[1]
 
             return valor
 
