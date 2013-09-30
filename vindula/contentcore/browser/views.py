@@ -34,9 +34,10 @@ class VindulaLoadRelatorioView(grok.View, BaseFunc):
         if self.request.form.get('submit_filter'):
             if self.request.form.get('value_filter'):
                 value = self.request.form.get('value_filter').decode('utf-8')
-                return LoadRelatorioForm().registration_processes(self, filtro={'field': self.context.campo_filtro, 'value': value}) 
-        else:
-            return LoadRelatorioForm().registration_processes(self) 
+                if value.strip():
+                    return LoadRelatorioForm().registration_processes(self, filtro={'field': self.context.campo_filtro, 'value': value}) 
+        
+        return LoadRelatorioForm().registration_processes(self) 
 
     def get_static(self):
         ctx = self.context
@@ -46,10 +47,11 @@ class VindulaLoadRelatorioView(grok.View, BaseFunc):
     
 
     def get_values_filter(self):
-        self.filter = self.context.campo_filtro
+        filter = ModelsFormFields().get_Fields_ByField(self.context.campo_filtro, int(self.context.forms_id))
+        self.filter = [filter.title, filter.name_field]
         
         if self.filter:
-            result = ModelsFormValues().get_FormValues_byForm_and_Field(int(self.context.forms_id),self.filter)
+            result = ModelsFormValues().get_FormValues_byForm_and_Field(int(self.context.forms_id),self.filter[1])
             if result.count() > 0:
                 L = []
                 for i in result:
