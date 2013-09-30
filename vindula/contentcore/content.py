@@ -293,6 +293,39 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
 
     def render(self):
         pass
+    
+    def checkItem(self, item, form):
+        for campo in form.keys():
+            if campo not in ['b_start','date_creation']:
+
+                valor = form.get(campo,'')
+                field = item.find(fields=self.Convert_utf8(campo)).one()
+
+                if not valor :
+                    continue
+                if not field:
+                    return False
+
+                elif type(valor) == list:
+                    existe = False
+                    for val in valor:
+                        if field:
+                            if field.value == self.Convert_utf8(val):
+                                existe = True
+                                break
+
+                    if not existe:
+                        return False
+                elif field:
+                    if not field.value == self.Convert_utf8(valor):
+                        return False
+
+            elif campo == 'date_creation':
+                valor = form.get(campo,'')
+                if valor and item[0].instancia.date_creation.strftime('%d/%m/%Y %H:%M:%S') != valor:
+                    return False
+
+        return True
 
     def update(self):
         self.request.response.setHeader("Content-Type", "text/csv", 0)
@@ -302,9 +335,18 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
         id_form = int(self.context.forms_id)
         fields = ModelsFormFields().get_Fields_ByIdForm(int(id_form))
         types = ['img','file']
+        form = self.request.form
 
         campos_vin = []
         text = ''
+
+        values = ModelsForm().get_FormValues(id_form)
+        L = []
+        for item in values:
+            if self.checkItem(item, form):
+                L.append(item)
+        values = L
+
         if fields:
             for field in fields:
                 if field.flag_ativo:
@@ -313,7 +355,6 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                     text += titulo + ';'
             text = text[:-1] + '\n'
 
-            values = ModelsForm().get_FormValues(id_form)
             if values:
                 for item in values:
                     for field in fields:

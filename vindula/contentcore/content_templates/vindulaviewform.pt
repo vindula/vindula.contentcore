@@ -27,7 +27,7 @@
    		    		
     		<fieldset>
     		    <legend>Op&ccedil;&otilde;es</legend>
-    			<a alt="exportar registro" title="exportar registro" class="control"
+    			<a id="link-export" alt="exportar registro" title="exportar registro" class="control"
     			   tal:attributes="href string:${context/absolute_url|nothing}/export-form">
     			   <img tal:attributes="src string:${view/static}/img/exportar_registro.png"
     			        title="Exportar registro existentes via csv" alt="Exportar registro existentes via csv" />
