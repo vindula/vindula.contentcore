@@ -14,6 +14,10 @@
 			
     		</script>
 		</metal:js>
+        
+        <metal:styleslot fill-slot="style_slot">
+            <link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${context/portal_url}/++resource++vindula.contentcore/css/style_views.css">
+        </metal:styleslot>
 	</head>
 	<body >
 		<div metal:fill-slot="main" >
@@ -21,7 +25,35 @@
 		    	<!--link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css"-->
 				<div id="interna-form" tal:define="form_data view/load_form | python:{};">    		
 			        
-					<h1 > Relat&oacute;rios dos dados do formul&aacute;rio</h1>		
+					<h1 > Relat&oacute;rios dos dados do formul&aacute;rio</h1>	
+                    
+                    <fieldset>
+                        <legend>Filtrar</legend>
+                        <form action="">
+                            <div id="filtro" class="filtro-contentcore"
+                                 tal:define="values_filter view/get_values_filter"
+                                 tal:condition="values_filter">
+                                
+                                <div class="container-filter">
+                                    <label tal:content="python:view.filter[0]" for="value_filter"></label>
+                                    <select name="value_filter">
+                                        <option tal:attributes="value string: ">--Selecione um filtro--</option>
+                                        <tal:rep repeat="filter values_filter">
+                                            <option tal:attributes="value filter;
+                                                                    selected python:request.get('value_filter') == filter and 'selected' or ''"
+                                                    tal:content="filter"></option>
+                                        </tal:rep>
+                                    </select>
+                                </div>
+                                
+                                <div class="field-news-right float-right">
+                                    <input type="submit" value="Aplicar" class="bt_comments" id="searchItems" name="submit_filter" value="filtrar"/>
+                                </div>
+                                <div class="visualClear"></div> 
+                            </div>
+                        </form>
+                    </fieldset>
+                    
 					<fieldset>
 		            	<legend>Relat&oacute;rio</legend>
 						
