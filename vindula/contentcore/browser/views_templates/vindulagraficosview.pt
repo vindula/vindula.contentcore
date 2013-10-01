@@ -123,7 +123,7 @@
 
 												<script type="text/javascript" tal:content="python: '''
 
-													var conf_%(cont_for)s = {
+													var conf_ref_%(cont_for)s = {
 												        xAxis: {
 												            categories: %(categorias)s
 												        },
@@ -131,7 +131,7 @@
 												 	}
 
 													$j(function () {
-												        $j('#%(id_name)s').highcharts($j.extend(custom_config, conf_%(cont_for)s));
+												        $j('#%(id_name)s').highcharts($j.extend(custom_config, conf_ref_%(cont_for)s));
 												    
 												    });'''%{'categorias':view.get_categorias(ref.get('dados')),
 												    		'series':view.get_series(ref.get('dados')),
