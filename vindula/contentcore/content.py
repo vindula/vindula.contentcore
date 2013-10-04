@@ -148,15 +148,17 @@ class VindulaEditFieldsForm(grok.View, BaseFunc):
         id_fields = int(self.request.form.get('id_fields','0'))
 
         field = ModelsFormFields().get_Fields_byIdField(id_fields)
-        check = ModelsFormValues().get_FormValues_byForm_and_Field(id_form,field.name_field)
+        if field:
+            check = ModelsFormValues().get_FormValues_byForm_and_Field(id_form,field.name_field)
 
-        if check:
-            return False
-        else:
-            if field.ref_mult.count():
+            if check:
                 return False
             else:
-                return True
+                if field.ref_mult.count():
+                    return False
+                else:
+                    return True
+        return True
 
     def render(self):
         return self.index()

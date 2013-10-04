@@ -990,8 +990,8 @@ class RegistrationLoadForm(BaseFunc):
                             data = self.gera_dict_data(campos, int(id_form),id_instance)
                             data.update(data_old)
 
-                            if 'email' in data_old.keys():
-                                emails.append(data_old.get('email',''))
+                            if 'email' in data.keys():
+                                emails.append(data.get('email',''))
 
                         for campo in campos:
                             x = ''
@@ -1027,11 +1027,12 @@ class RegistrationLoadForm(BaseFunc):
 
                         envio = False
                         for email in emails:
-                            envio = self.envia_email(context,msg, assunto, email,arquivos,to_email)
-                        if envio:
-                            IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
-                        else:
-                            IStatusMessage(context.request).addStatusMessage(_(u"Não foi possivel enviar o e-mail contate o administrados do portal."), "error")
+                            if email:
+                                envio = self.envia_email(context,msg, assunto, email,arquivos,to_email)
+                                if envio:
+                                    IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
+                                else:
+                                    IStatusMessage(context.request).addStatusMessage(_(u"Não foi possivel enviar o e-mail contate o administrados do portal."), "error")
  
                         if models_fields:
                             campos = campos_old
