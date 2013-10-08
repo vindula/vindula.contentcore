@@ -52,6 +52,11 @@
 																		
 			                });
 			            </script>
+			            <style type="text/css">
+			            	#field-arquivoauxiliarsolicitacao2{
+			            		display: none;
+			            	}
+			            </style>
 			             
 			        	<form name="load-form" id="load-form" enctype="multipart/form-data" 
 						      class="enableAutoFocus" tal:attributes="action string:${context/absolute_url|nothing}/load-form" method="POST">
