@@ -218,7 +218,7 @@ class VindulaPedidoView(VindulaListPedidosView):
         if submited:
             fields = self.get_fields()
             if fields:
-                models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list))
+                models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list)).order_by(ModelsFormFields.ordenacao)
 
             RegistrationLoadForm().registration_processes(self, models_fields=models_fields)
 

@@ -753,7 +753,7 @@ class RegistrationLoadForm(BaseFunc):
         campos = {}
         lista_itens = {}
         default_value = {}
-
+        import pdb;pdb.set_trace()
         for field in models_fields:
             if field.flag_ativo:
                 M={}
@@ -799,6 +799,9 @@ class RegistrationLoadForm(BaseFunc):
 
             if field.value_default:
                 default_value[field.name_field] = field.value_default
+
+        #Ordenando os campos pela chave 'ordem'
+        campos = OrderedDict((sorted(campos.items(), key=lambda campo: campo[1]['ordem'])))
 
         return campos, lista_itens, default_value
 
