@@ -27,7 +27,7 @@
    		    		
     		<fieldset>
     		    <legend>Op&ccedil;&otilde;es</legend>
-    			<a alt="exportar registro" title="exportar registro" class="control"
+    			<a id="link-export" alt="exportar registro" title="exportar registro" class="control"
     			   tal:attributes="href string:${context/absolute_url|nothing}/export-form">
     			   <img tal:attributes="src string:${view/static}/img/exportar_registro.png"
     			        title="Exportar registro existentes via csv" alt="Exportar registro existentes via csv" />
@@ -36,6 +36,12 @@
                    tal:attributes="href string:${context/absolute_url|nothing}/relatorio-form">
                    <img tal:attributes="src string:${view/static}/img/relatorio_registro.png"
                         title="Gerar relat&oacute;rio dos registros existentes" alt="Gerar relat&oacute;rio dos registros existentes" />
+                </a>
+
+                <a alt="gerar graficos" title="gerar graficos" class="control"
+                   tal:attributes="href string:${context/absolute_url|nothing}/graficos-form">
+                   <img tal:attributes="src string:${view/static}/img/grafico_registro.png"
+                        title="Gerar graficos dos registros existentes" alt="Gerar graficos dos registros existentes" />
                 </a>
 
                 <a alt="filtro em nova janela" title="filtro em nova janela" class="control"
@@ -205,7 +211,7 @@
                                                 
                                                 <td>
                                                     <tal:def define="instance python: item[0].instancia">
-                                                        <tal:cont content="python: instance.date_creation.strftime('%d/%m/%Y')" />
+                                                        <tal:cont content="python: instance.date_creation.strftime('%d/%m/%Y %H:%M:%S')" />
                                                         
                                                     </tal:def>    
                                                     

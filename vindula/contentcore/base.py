@@ -28,6 +28,7 @@ from datetime import date , datetime
 from vindula.contentcore.layoutemail import LayoutEmail
 
 from vindula.myvindula.tools.utils import UtilMyvindula
+from vindula.myvindula.models.instance_funcdetail import ModelsInstanceFuncdetails
 
 try:
     # python 2.7
@@ -158,6 +159,15 @@ class BaseFunc(BaseStore):
                 e = sys.exc_info()[0]
                 print 'Error: %s - %s' %(e, default_value.get(campo,'None'))
                 return ''
+            
+    def getDataFieldByUser(self, field):
+        tool = UtilMyvindula()
+        username = self.context.portal_membership.getAuthenticatedMember().getId()
+        username = username.decode('utf-8')
+        
+        user_instance = ModelsInstanceFuncdetails().get_InstanceFuncdetails(username)
+        
+        return tool.getDadoUser_byField(user_instance, field)
 
     def getValuePickle(self,campo,request,data,default_value):
         if campo in request.keys():
@@ -352,20 +362,21 @@ class BaseFunc(BaseStore):
 
 
         elif tipo == 'choice':
-            valor_campo = ModelsFormValues().get_Values_byID(id)
-            id_form = int(self.context.forms_id)
+            if id:
+                valor_campo = ModelsFormValues().get_Values_byID(id)
+                id_form = int(self.context.forms_id)
 
-            if valor_campo:
-                campo = ModelsFormFields().get_Fields_ByField(valor_campo.fields,id_form)
-
-                items = campo.list_values.splitlines()
-                D=[]
-                for i in items:
-                    L = i.split(' | ')
-
-                    if len(L) >= 2:
-                        if L[0] == valor:
-                            return L[1]
+                if valor_campo:
+                    campo = ModelsFormFields().get_Fields_ByField(valor_campo.fields,id_form)
+    
+                    items = campo.list_values.splitlines()
+                    D=[]
+                    for i in items:
+                        L = i.split(' | ')
+    
+                        if len(L) >= 2:
+                            if L[0] == valor:
+                                return L[1]
 
             return valor
 

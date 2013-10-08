@@ -9,3 +9,18 @@
 	display:table;
 	float:left;
 }
+
+.filtro-contentcore {
+    background: #EEEDEC;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+  .filtro-contentcore .container-filter {
+      float: left;
+      margin-left: 5px;
+  }
+
+  .filtro-contentcore .container-filter label {
+      display: block;
+  }
