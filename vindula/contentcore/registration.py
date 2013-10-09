@@ -62,11 +62,12 @@ class RegistrationCreateForm(BaseFunc):
                 result.ordenacao = numb
 
                 result_prev = result_form.find(ordenacao=numb,forms_id=id_form).one()
-                result_prev.ordenacao = numb+1
+                if result_prev:
+                    result_prev.ordenacao = numb+1
 
-                self.store.commit()
+                    self.store.commit()
 
-                IStatusMessage(context.request).addStatusMessage(_(u"Campo Movindo para cima"), "info")
+                IStatusMessage(context.request).addStatusMessage(_(u"Campo Movido para cima"), "info")
                 url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id_form)
                 context.request.response.redirect(url)
 
@@ -77,11 +78,12 @@ class RegistrationCreateForm(BaseFunc):
                 result.ordenacao = numb
 
                 result_next = result_form.find(ordenacao=numb,forms_id=id_form).one()
-                result_next.ordenacao = numb-1
+                if result_next:
+                    result_next.ordenacao = numb-1
 
-                self.store.commit()
+                    self.store.commit()
 
-                IStatusMessage(context.request).addStatusMessage(_(u"Campo Movindo para baixo"), "info")
+                IStatusMessage(context.request).addStatusMessage(_(u"Campo Movido para baixo"), "info")
                 url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id_form)
                 context.request.response.redirect(url)
 

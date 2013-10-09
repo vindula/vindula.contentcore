@@ -184,6 +184,10 @@ class VindulaListPedidosView(grok.View, BaseFunc):
                 return i.get('valor')
         return valor
 
+    def get_Field(self, campo):
+        data = ModelsFormFields().get_Fields_ByField(campo,self.form_id)
+        return data
+
 
 class VindulaPedidoView(VindulaListPedidosView):
     grok.context(IFormularioPadrao)
