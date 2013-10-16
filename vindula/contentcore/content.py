@@ -331,6 +331,7 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
 
     def update(self):
         self.request.response.setHeader("Content-Type", "text/csv", 0)
+        self.request.response.setHeader("Content-Encoding",'utf-8')
         filename = str(self.context.id)+'-export-register.csv'
         self.request.response.setHeader('Content-Disposition','attachment; filename=%s'%(filename))
 
