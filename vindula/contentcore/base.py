@@ -321,7 +321,10 @@ class BaseFunc(BaseStore):
 
     def decodePickle(self,valor):
         if valor:
-            return pickle.loads(str(valor))
+            try:
+                return pickle.loads(str(valor))
+            except (IndexError, KeyError):
+                return [valor]
         else:
             return ''
 
@@ -406,15 +409,15 @@ class BaseFunc(BaseStore):
 
     def convertSelect(self,valor, tipo, id):
         if tipo == 'list':
+            txt = ''
+            for i in self.decodePickle(valor):
+                if txt:
+                    txt += ', ' + i
+                else:
+                    txt += i
 
-           txt = ''
-           for i in self.decodePickle(valor):
-               txt += i +', '
-
-           return txt
-
+            return txt
         elif tipo == 'choice':
-
             campo = ModelsFormFields().get_Fields_byIdField(id)
             if campo:
                 items = campo.list_values.splitlines()
@@ -427,7 +430,6 @@ class BaseFunc(BaseStore):
                             return L[1]
 
             return valor
-
         elif tipo == 'date':
             data = self.decodePickle(valor)
             try:

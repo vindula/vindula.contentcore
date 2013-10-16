@@ -264,7 +264,7 @@ class LoadRelatorioForm(BaseFunc):
 
                    elif tipo == 'list':
                        M = []
-                       tmp = []
+                       respostas = []
                        opcoes = []
                        opcao = campo.list_values.splitlines()
 
@@ -277,18 +277,22 @@ class LoadRelatorioForm(BaseFunc):
 
                        for instance in instances:
                            data = self.decodePickle(instance.value)
-                           tmp.append(data)
+                           for item in data:
+                               respostas.append([item])
 
-                       for i in tmp:
+                       for resposta in respostas:
                            N ={}
                            text = ''
-                           for x in i:
+                           for x in resposta:
                                for opcao in opcoes:
-                                   if unicode(x, 'utf-8') == opcao['id']:
+                                   if isinstance(x, str):
+                                       x = unicode(x, 'utf-8')
+                                       
+                                   if  x == opcao['id']:
                                        text += opcao['val'] + ', '
-
+                            
                            N['name'] = text
-                           N['cont'] = tmp.count(i)
+                           N['cont'] = respostas.count(resposta)
 
                            if not N in M:
                                M.append(N)
