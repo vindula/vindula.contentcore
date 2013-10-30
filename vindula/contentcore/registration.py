@@ -138,6 +138,9 @@ class LoadRelatorioForm(BaseFunc):
 
                    E = {}
                    instances = ModelsFormValues().get_FormValues_byForm_and_Field(id_form, item.name_field)
+                   
+                   if filtro:
+                       instances = instances.find(ModelsFormValues.instance_id.is_in(valores_filtrados))
 
                    E['title'] = item.title
                    E['name'] = item.name_field
