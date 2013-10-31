@@ -191,7 +191,8 @@ class VindulaPedidoView(VindulaListPedidosView):
     grok.name('item-pedidos')
 
     back_list = [u'status',u'nivel',u'observacao_responsavel',u'username',\
-                 u'cotacao01',u'cotacao02',u'cotacao03',u'arquivoauxiliarsolicitacao2']
+                 u'cotacao01',u'cotacao02',u'cotacao03', u'fontecotacao01' ,\
+                 u'fontecotacao02', u'fontecotacao03', u'arquivoauxiliarsolicitacao2']
 
     def list_user_nivel(self):
         list_users_nivel2 = self.context.list_users_nivel2 or ''
@@ -217,6 +218,9 @@ class VindulaPedidoView(VindulaListPedidosView):
         submited = form.get('submited',False)
 
         if submited:
+            if not 'nivel' in form.keys():
+                self.request.form['nivel'] = '--'
+
             fields = self.get_fields()
             if fields:
                 models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list)).order_by(ModelsFormFields.ordenacao)

@@ -141,10 +141,10 @@ def valida_form(ctx, configuracao, form):
                     
                 
             elif configuracao[campo]['type'] == 'hidden':
-                try:
-                    convertidos[campo] = int(valor)
-                except:
-                    convertidos[campo] = to_utf8(valor.strip())
+                # try:
+                #     convertidos[campo] = int(valor)
+                # except:
+                convertidos[campo] = to_utf8(valor.strip())
                     
             elif configuracao[campo]['type'] == 'text':
                 if type(valor) == unicode:
