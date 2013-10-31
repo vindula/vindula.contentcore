@@ -82,9 +82,6 @@
         </metal:js>
         <metal:styleslot fill-slot="style_slot">
             <style type="text/css">
-                #field-arquivoauxiliarsolicitacao2{
-                  display: none;
-                }
                 #load-form div.field{
                   float: left;
                 }
@@ -174,7 +171,7 @@
                                         <label for="cotacao01">Cotação 01</label>
                                         <div class="formHelp">Informe o valor em Reais</div>
                                         <div></div>
-                                        <input id="cotacao01" type="text" value="" name="valor" onKeyPress="return(MascaraMoeda(this,'.',',',event))" size="25"
+                                        <input id="cotacao01" type="text" value="" name="cotacao01" onKeyPress="return(MascaraMoeda(this,'.',',',event))" size="25"
                                                tal:attributes="value cotacao01_save" />  
                                       </div>
 
@@ -219,8 +216,6 @@
                                                tal:attributes="value fontecotacao03_save" />  
                                       </div>
 
-                                      <div class="visualClear"></div>
-
                                       <div class="field " id="field-arquivoauxiliarsolicitacao2">
                                           <label for="arquivoauxiliarsolicitacao2">Arquivo Auxiliar</label>
                                           <div class="formHelp">Faça upload de um arquivo auxiliar a esta solicitação.</div>
@@ -229,6 +224,8 @@
                                           </div>
                                           <input id="arquivoauxiliarsolicitacao2" type="file" value="" name="arquivoauxiliarsolicitacao2" size="25">
                                       </div>
+
+				     <div class="visualClear"></div>
 
                                       <tal:rep repeat="item view/list_status|python:[]">
                                         <input type="radio" name="status" id="status" value=""  
