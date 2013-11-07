@@ -1017,7 +1017,10 @@ class RegistrationLoadForm(BaseFunc):
                 mensagem = context.context.mensagem
                 if mensagem:
                     IStatusMessage(context.request).addStatusMessage(_(mensagem), "info")
- 
+                
+                mensagem_auxiliar = context.context.mensagem_auxiliar
+                if mensagem_auxiliar:
+                    IStatusMessage(context.request).addStatusMessage(_(mensagem_auxiliar), "info")
 
                 if 'id_instance' in form_keys and isForm and active_workflow:
                     context.request.response.redirect(success_url+'/my-pedidos')

@@ -127,6 +127,11 @@ class IFormularioPadrao(form.Schema):
                                description=_(u"Digite a mensagem que será mostrada ao usuário quando o formulário for salvo"),
                                required=False)
 
+    mensagem_auxiliar = schema.TextLine(title=_(u"Mensagem Auxiliar"),
+                               description=_(u"Digite a mensagem que será mostrada ao usuário quando o formulário for salvo"),
+                               required=False)
+
+
 
     active_workflow = schema.Bool(title=_(u"Ativar sistema de controle do formulario"),
                                   description=_(u"Marque esta opção para controlar o fluxo das informações."),
