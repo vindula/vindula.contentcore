@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from five import grok
+from storm.locals import Select
 from zope.interface import Interface
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.layout.navigation.interfaces import INavigationRoot
+from Products.CMFCore.utils import getToolByName
 
 from Products.statusmessages.interfaces import IStatusMessage
 from vindula.contentcore import MessageFactory as _
@@ -16,6 +18,12 @@ from vindula.contentcore.formulario import IFormularioPadrao
 
 from vindula.myvindula.tools.utils import UtilMyvindula
 
+import simplejson as json
+from random import choice
+
+list_colors = ['#00FF40', '#FFE51E', '#0040FF', '#FF4B4B', '#FF00BF',
+               '#000000', '#006600', '#00FFFF', '#FF6600', '#CC00FF' ]
+
 # Views
 class VindulaLoadRelatorioView(grok.View, BaseFunc):
     grok.context(IFormularioPadrao)
@@ -23,7 +31,64 @@ class VindulaLoadRelatorioView(grok.View, BaseFunc):
     grok.name('relatorio-form')
 
     def load_form(self):
-        return LoadRelatorioForm().registration_processes(self)
+        if self.request.form.get('submit_filter'):
+            if self.request.form.get('value_filter'):
+                value = self.request.form.get('value_filter').decode('utf-8')
+                if value.strip():
+                    return LoadRelatorioForm().registration_processes(self, filtro={'field': self.context.campo_filtro, 'value': value}) 
+        
+        return LoadRelatorioForm().registration_processes(self) 
+
+    def get_static(self):
+        ctx = self.context
+        portal = getToolByName(ctx, 'portal_url').getPortalObject()
+        url_portal = portal.absolute_url()
+        return url_portal +'/++resource++vindula.contentcore/'
+    
+
+    def get_values_filter(self):
+        filter = ModelsFormFields().get_Fields_ByField(self.context.campo_filtro, int(self.context.forms_id))
+        self.filter = [filter.title, filter.name_field]
+        
+        if self.filter:
+            result = ModelsFormValues().get_FormValues_byForm_and_Field(int(self.context.forms_id),self.filter[1])
+            if result.count() > 0:
+                L = []
+                for i in result:
+                    if i.value not in L:
+                        L.append(i.value)
+            return L
+        
+
+class VindulaGraficosView(VindulaLoadRelatorioView):
+    grok.context(IFormularioPadrao)
+    grok.require('zope2.View')
+    grok.name('graficos-form')
+
+    def get_categorias(self, dados):
+        L = []
+        if dados:
+            for item in dados:
+                L.append(item.get('name',''))
+
+        return json.dumps(L)
+
+    def get_series(self, dados):
+        D = {}
+        L = []
+        r = lambda: random.randint(0,255)
+        if dados:
+            for item in dados:
+                L.append({'y': item.get('cont','0'),
+                          'color': choice(list_colors)
+                          }
+                        )
+
+        D['name'] = 'Respostas'
+        D['data'] = L
+
+        return json.dumps(D)
+
 
 class VindulaAvisosView(grok.View):
     grok.context(IFormularioPadrao)
@@ -119,13 +184,17 @@ class VindulaListPedidosView(grok.View, BaseFunc):
                 return i.get('valor')
         return valor
 
+    def get_Field(self, campo):
+        data = ModelsFormFields().get_Fields_ByField(campo,self.form_id)
+        return data
+
 
 class VindulaPedidoView(VindulaListPedidosView):
     grok.context(IFormularioPadrao)
     grok.require('zope2.View')
     grok.name('item-pedidos')
 
-    back_list = [u'status',u'nivel',u'observacao_responsavel',u'username']
+    back_list = [u'status',u'nivel',u'observacao_responsavel',u'username', u'arquivoauxiliarsolicitacao2']
 
     def list_user_nivel(self):
         list_users_nivel2 = self.context.list_users_nivel2 or ''
@@ -153,7 +222,7 @@ class VindulaPedidoView(VindulaListPedidosView):
         if submited:
             fields = self.get_fields()
             if fields:
-                models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list))
+                models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list)).order_by(ModelsFormFields.ordenacao)
 
             RegistrationLoadForm().registration_processes(self, models_fields=models_fields)
 

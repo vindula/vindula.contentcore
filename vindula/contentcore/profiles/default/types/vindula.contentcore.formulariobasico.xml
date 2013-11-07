@@ -93,7 +93,7 @@
      <permission value="View"/>
   </action>
 
-  <action title="Minhas de Solicitações" action_id="my_workflow" category="object" condition_expr="context/active_workflow"
+  <action title="Minhas Solicitações" action_id="my_workflow" category="object" condition_expr="context/active_workflow"
     url_expr="string:${object_url}/my-pedidos" visible="True">
      <permission value="View"/>
   </action>

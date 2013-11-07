@@ -148,15 +148,17 @@ class VindulaEditFieldsForm(grok.View, BaseFunc):
         id_fields = int(self.request.form.get('id_fields','0'))
 
         field = ModelsFormFields().get_Fields_byIdField(id_fields)
-        check = ModelsFormValues().get_FormValues_byForm_and_Field(id_form,field.name_field)
+        if field:
+            check = ModelsFormValues().get_FormValues_byForm_and_Field(id_form,field.name_field)
 
-        if check:
-            return False
-        else:
-            if field.ref_mult.count():
+            if check:
                 return False
             else:
-                return True
+                if field.ref_mult.count():
+                    return False
+                else:
+                    return True
+        return True
 
     def render(self):
         return self.index()
@@ -293,18 +295,61 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
 
     def render(self):
         pass
+    
+    def checkItem(self, item, form):
+        for campo in form.keys():
+            if campo not in ['b_start','date_creation']:
+
+                valor = form.get(campo,'')
+                field = item.find(fields=self.Convert_utf8(campo)).one()
+
+                if not valor :
+                    continue
+                if not field:
+                    return False
+
+                elif type(valor) == list:
+                    existe = False
+                    for val in valor:
+                        if field:
+                            if field.value == self.Convert_utf8(val):
+                                existe = True
+                                break
+
+                    if not existe:
+                        return False
+                elif field:
+                    if not field.value == self.Convert_utf8(valor):
+                        return False
+
+            elif campo == 'date_creation':
+                valor = form.get(campo,'')
+                if valor and item[0].instancia.date_creation.strftime('%d/%m/%Y %H:%M:%S') != valor:
+                    return False
+
+        return True
 
     def update(self):
         self.request.response.setHeader("Content-Type", "text/csv", 0)
+        self.request.response.setHeader("Content-Encoding",'utf-8')
         filename = str(self.context.id)+'-export-register.csv'
         self.request.response.setHeader('Content-Disposition','attachment; filename=%s'%(filename))
 
         id_form = int(self.context.forms_id)
         fields = ModelsFormFields().get_Fields_ByIdForm(int(id_form))
         types = ['img','file']
+        form = self.request.form
 
         campos_vin = []
         text = ''
+
+        values = ModelsForm().get_FormValues(id_form)
+        L = []
+        for item in values:
+            if self.checkItem(item, form):
+                L.append(item)
+        values = L
+
         if fields:
             for field in fields:
                 if field.flag_ativo:
@@ -313,7 +358,6 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                     text += titulo + ';'
             text = text[:-1] + '\n'
 
-            values = ModelsForm().get_FormValues(id_form)
             if values:
                 for item in values:
                     for field in fields:
@@ -396,7 +440,7 @@ class VindulaViewForm(grok.View, BaseFunc):
     def find_group_by_data(self, valores):
         L = []
         for valor in valores:
-            V = valor.date_creation.strftime('%d/%m/%Y')
+            V = valor.date_creation.strftime('%d/%m/%Y %H:%M:%S')
             if not V in L:
                 L.append(V)
 
@@ -434,7 +478,7 @@ class VindulaViewForm(grok.View, BaseFunc):
 
             elif campo == 'date_creation':
                 valor = form.get(campo,'')
-                if valor and item[0].instancia.date_creation.strftime('%d/%m/%Y') != valor:
+                if valor and item[0].instancia.date_creation.strftime('%d/%m/%Y %H:%M:%S') != valor:
                     return False
 
         return True

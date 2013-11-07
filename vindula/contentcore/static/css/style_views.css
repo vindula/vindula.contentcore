@@ -9,3 +9,29 @@
 	display:table;
 	float:left;
 }
+
+.filtro-contentcore {
+    background: #EEEDEC;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+  .filtro-contentcore .container-filter {
+      float: left;
+      margin-left: 5px;
+  }
+
+  .filtro-contentcore .container-filter label {
+      display: block;
+  }
+
+.arrow {
+   width: 0; 
+   height: 0; 
+   float: left;
+   border: 5px solid transparent;
+   margin-top: 4px;
+}
+
+  .arrow.close { border-left-color:#000;  }
+  .arrow.open { border-top-color:#000;  }
