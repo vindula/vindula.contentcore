@@ -266,8 +266,13 @@ class LoadRelatorioForm(BaseFunc):
                            text = ''
                            for x in i:
                                for opcao in opcoes:
-                                   if unicode(x, 'utf-8') == opcao['id']:
-                                       text += opcao['val'] + ', '
+                                  try:
+                                    u_x = unicode(x, 'utf-8')
+                                  except:
+                                    u_x = x
+                                  
+                                  if u_x == opcao['id']:
+                                    text += opcao['val'] + ', '
 
                            N['name'] = text
                            N['cont'] = tmp.count(i)
