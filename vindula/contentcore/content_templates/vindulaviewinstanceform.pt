@@ -20,7 +20,8 @@
 																   valor data/value|nothing;
 																	valor_blob data/value_blob|nothing;
 																	id_campo data/id|nothing;"
-														tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)" />
+													  tal:on-error="string: Erro ao carregar o campo ${campo/name_field}"
+													  tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)" />
 										</tal:def>
 									</p>
 								</tal:rep>

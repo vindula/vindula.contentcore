@@ -40,6 +40,7 @@
                                                           
                                                           valor python: valor_normal or valor_blob;
                                                           id_campo valor_pedido/id|nothing;"
+                                              tal:on-error="string: Erro ao carregar o campo ${field/name_field}"
                                               tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)" />
 
                                     </tal:def>

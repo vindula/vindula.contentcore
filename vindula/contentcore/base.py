@@ -95,6 +95,8 @@ class BaseFunc(BaseStore):
         except:
             if type(valor) == unicode:
                 return valor
+            if type(valor) == bool:
+                return unicode(str(valor))
             else:
                 return u'erro ao converter os caracteres'
 
