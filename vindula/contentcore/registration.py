@@ -114,6 +114,7 @@ class LoadRelatorioForm(BaseFunc):
         L=[]
         for campo in campos:
            D={}
+           D['name'] = campo.name_field
            D['titulo'] = campo.title
 
            if campo.flag_multi:
@@ -127,6 +128,7 @@ class LoadRelatorioForm(BaseFunc):
                    instances = ModelsFormValues().get_FormValues_byForm_and_Field(id_form, item.name_field)
 
                    E['title'] = item.title
+                   E['name'] = item.name_field
 
                    if tipo == 'bool':
                        regs = ModelsFormInstance().get_Instance(id_form)
