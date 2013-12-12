@@ -382,7 +382,7 @@ class RegistrationCreateFields(BaseFunc):
                                       ['foreign_key','Campo para referencia com outro formulário'],
                                       ],
 
-                       'mascara':[['Telefone','Telefone'],['Data','Data'],['Integer','Números Inteiros'],
+                       'mascara':[['Telefone','Telefone'],['Celular', 'Celular'],['Data','Data'],['Integer','Números Inteiros'],
                                   ['Cpf','CPF'],['Cep','CEP'],['Cnpj','CNPJ']],
                        }
         #Valores Default
