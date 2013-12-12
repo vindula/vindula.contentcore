@@ -530,11 +530,11 @@ class VindulaViewForm(grok.View, BaseFunc):
     grok.require('cmf.ListFolderContents')
     grok.name('view-form') #Dados
 
-    def get_FormValues(self):
+    def get_FormValues(self,getall=True):
         id_form = int(self.context.forms_id)
         form = self.request.form
 
-        data = ModelsForm().get_FormValues(id_form)
+        data = ModelsForm().get_FormValues(id_form,getall)
         L = []
         for item in data:
             if self.checkItem(item, form):
@@ -569,6 +569,15 @@ class VindulaViewForm(grok.View, BaseFunc):
             V = valor.date_creation.strftime('%d/%m/%Y %H:%M:%S')
             if not V in L:
                 L.append(V)
+
+        return L
+
+    def valores_b(self, all_values,campo):
+        L = []
+        for i in all_values:
+            x = i.find(fields=campo.name_field).one()
+            if x:
+                L.append(x)
 
         return L
 
@@ -608,6 +617,9 @@ class VindulaViewForm(grok.View, BaseFunc):
                     return False
 
         return True
+
+    def get_data(self, item, campo):
+        return item.find(fields=campo.name_field).one()
 
 
 class VindulaDadosNewWindows(grok.View, BaseFunc):
