@@ -411,19 +411,16 @@ class VindulaViewForm(grok.View, BaseFunc):
         form = self.request.form
 
         if 'data_inicial' in form.keys():
-            data_inicial = self.str2datetime(form.get('data_inicial'))
+            data_inicial = self.str2datetime(form.get('data_inicial')) + timedelta(days=1)
         else:
             data_inicial = self.str2datetime(self.get_data_inicial())
 
 
         if 'data_final' in form.keys():
-            data_final = self.str2datetime(form.get('data_final'))
+            data_final = self.str2datetime(form.get('data_final')) - timedelta(days=1)
         else:
             data_final = self.str2datetime(self.get_data_final())
 
-
-        print data_inicial
-        print data_final
 
         data_instance = ModelsFormInstance().store.find(ModelsFormInstance, ModelsFormInstance.forms_id==id_form,
                                                             ModelsFormInstance.date_creation<=data_inicial,

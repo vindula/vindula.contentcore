@@ -16,6 +16,21 @@
 		    <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/i18n/jquery.multiselect.br.js"></script>
 		    <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/i18n/jquery.multiselect.filter.br.js"></script>
 		    <script type="text/javascript" tal:attributes="src string:${view/static}/js/select/select_filter.js"></script>
+
+            <script type="text/javascript">
+                $j(document).ready(function(){
+                    $j.datepicker.setDefaults($j.datepicker.regional["pt-BR"]);
+                    var D = {showAnim:'blind',
+                             dateFormat: "dd/mm/yy",
+                             numberOfMonths: 1,
+                             minDate: "-5Y"
+                            };
+                    
+                    $j("#data_inicial").datepicker(D);
+                    $j("#data_final").datepicker(D);
+                });
+
+            </script>
 		</metal:js>
 	</head>
 	<body>
