@@ -15,8 +15,10 @@ function ajaxBusca(){
         var L = [];
         var string_L = ''
         $j(this).find('option:selected').each(function(){
-            L.push(this.value);
-            string_L += this.value
+            if (this.value){
+                L.push(this.value);
+                string_L += this.value
+            };
         });
         parametros[pai] = L;
         
@@ -29,6 +31,10 @@ function ajaxBusca(){
         }
     });
     
+    parametros['data_inicial'] =  $j('#data_inicial').val();
+    parametros['data_final'] = $j('#data_final').val();
+
+
     $j('#link-export').attr('href', base_url+'export-form'+string_params)
         
     $j.ajax({traditional: true,
@@ -90,4 +96,8 @@ function setPopup(){
 $j(document).ready(function(){
     setFilter();
     setPopup();
+
+    $j('#filter_data').click(function(){
+        ajaxBusca();
+    });
  });

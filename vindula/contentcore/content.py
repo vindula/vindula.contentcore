@@ -21,7 +21,10 @@ from vindula.contentcore.registration import RegistrationCreateForm, Registratio
                                              RegistrationAddDefaultValue, RegistrationExcluirDefault, RegistrationParametrosForm, LoadRelatorioForm
 
 import datetime
+from datetime import datetime, timedelta
 from copy import copy
+
+from storm.expr import Desc
 
 #Views Manage Form--------------------------------------------------
 class VindulaManageForm(grok.View, BaseFunc):
@@ -403,13 +406,39 @@ class VindulaViewForm(grok.View, BaseFunc):
     grok.require('cmf.ListFolderContents')
     grok.name('view-form') #Dados
 
-    def get_FormValues(self):
+    def get_FormValues(self,):
         id_form = int(self.context.forms_id)
         form = self.request.form
 
-        data = ModelsForm().get_FormValues(id_form)
+        if 'data_inicial' in form.keys():
+            data_inicial = self.str2datetime(form.get('data_inicial'))
+        else:
+            data_inicial = self.str2datetime(self.get_data_inicial())
+
+
+        if 'data_final' in form.keys():
+            data_final = self.str2datetime(form.get('data_final'))
+        else:
+            data_final = self.str2datetime(self.get_data_final())
+
+
+        print data_inicial
+        print data_final
+
+        data_instance = ModelsFormInstance().store.find(ModelsFormInstance, ModelsFormInstance.forms_id==id_form,
+                                                            ModelsFormInstance.date_creation<=data_inicial,
+                                                            ModelsFormInstance.date_creation>=data_final,
+                                        ).order_by(Desc(ModelsFormInstance.date_creation))
+
+        L_value = []
+        for item in data_instance: 
+            data = ModelsFormValues().store.find(ModelsFormValues, ModelsFormValues.forms_id==int(item.forms_id),
+                                                     ModelsFormValues.instance_id==int(item.instance_id))
+            if data.count()>0:
+                L_value.append(data)
+
         L = []
-        for item in data:
+        for item in L_value:
             if self.checkItem(item, form):
                 L.append(item)
 
@@ -451,7 +480,7 @@ class VindulaViewForm(grok.View, BaseFunc):
 
     def checkItem(self, item, form):
         for campo in form.keys():
-            if campo not in ['b_start','date_creation']:
+            if campo not in ['b_start','date_creation','data_final','data_inicial']:
 
                 valor = form.get(campo,'')
                 field = item.find(fields=self.Convert_utf8(campo)).one()
@@ -481,6 +510,25 @@ class VindulaViewForm(grok.View, BaseFunc):
                     return False
 
         return True
+
+    def get_data_final(self):
+        date = datetime.now() - timedelta(days=7)
+        return date.strftime('%d/%m/%Y')
+
+    def get_data_inicial(self):
+        date = datetime.now() + timedelta(days=1)
+        return date.strftime('%d/%m/%Y')
+
+    def str2datetime(self, str):
+        split_date = str.split('/')
+        try:
+            return datetime(int(split_date[2]),
+                            int(split_date[1]),
+                            int(split_date[0]))
+        except ValueError:
+            return datetime.now()
+
+
 
 
 class VindulaDadosNewWindows(grok.View, BaseFunc):
