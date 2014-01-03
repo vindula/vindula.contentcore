@@ -52,6 +52,16 @@ campos_controle = [{'name_field':u'status',
                    'value_default':u'self.get_username_login()',
                    'ordenacao':4,
                    'required':False,
+                   'flag_ativo':True},
+
+                   #Campos Extra da Solicitação
+                   {'name_field':u'arquivoauxiliarsolicitacao2',
+                   'type_fields':u'file',
+                   'title': u'Arquivo auxiliar de gerenciamento',
+                   'description_fields':u'Guarda os Arquivo auxiliar de gerenciamento do pedido, não editar este campo',
+                   'value_default':u'',
+                   'ordenacao':5,
+                   'required':False,
                    'flag_ativo':True}
                    ]
 

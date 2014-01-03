@@ -32,22 +32,28 @@
                                                 gerenciar gerenciar|python:True;
                                                 my_solicitacao my_solicitacao|python:False;
                                                 status status|python:False;
+                                                historico historico|python:False;
+
+                                                has_field_cliente_forn python:view.get_Field(u'nome-do-cliente-fornecedor');
 
                                                 values values|view/pedidos|python:[];
-
                                                 batch python:Batch(values, b_size, int(b_start), pagerange=len(values))" >
 
                                 <table id="listing-table" class="listing">
                                     <thead>
                                         <tr>
                                             <th>Nome</th>
-                                            <th>Sobrenome/Username</th>
+                                            
+                                            <th tal:condition="not: has_field_cliente_forn">Sobrenome/Username</th>
+                                            
+                                            <th tal:condition="has_field_cliente_forn">Nome do Cliente/Fornecedor</th>
+                                            
                                             <th>Data da Solicitação</th>
-                                            <th tal:condition="gerenciar">Gerenciar</th>
                                             <th tal:condition="status">Status da Solicitação</th>
                                             <th tal:condition="not: gerenciar">Observação</th>
+                                            <th tal:condition="gerenciar">Gerenciar</th>
+                                            <th tal:condition="historico">Histórico</th>
                                             <th tal:condition="my_solicitacao">Editar Socilitaçao</th>
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -58,14 +64,21 @@
                                                                 field_value field/value|nothing;"
                                                     tal:content="python: field_value or dados_user_pedido.get('name','')">Nome </td>
                                                 
-                                                <td tal:define="field_username python: view.get_value_field(pedido.instance_id,'username');
+                                                <td tal:condition="not: has_field_cliente_forn"
+                                                    tal:define="field_username python: view.get_value_field(pedido.instance_id,'username');
                                                                 field_sobrenome python: view.get_value_field(pedido.instance_id,'sobrenome');
                                                                 
                                                                 field_value_sob field_sobrenome/value|nothing;
                                                                 field_value_user field_username/value|string: ;"
                                                                 
                                                     tal:content="python: field_value_sob or field_value_user">Sobrenome </td>
-                                                
+
+                                                <td tal:condition="has_field_cliente_forn"
+                                                    tal:define="field_nome_cliente python: view.get_value_field(pedido.instance_id,'nome-do-cliente-fornecedor');"
+                                                    tal:content="field_nome_cliente/value|string: ">
+                                                    Nome do Cliente/Fornecedor
+                                                </td>
+                                               
                                                 <td tal:content="python: pedido.date_creation.strftime('%d/%m/%Y')"> Data </td>
                                                 
                                                 <td tal:condition="status"
@@ -82,6 +95,10 @@
                                                 <td tal:condition="gerenciar">
                                                     <a href="" tal:attributes="href string:${context/absolute_url}/item-pedidos?id_instance=${pedido/instance_id|nothing}">Gerenciar</a>
                                                 </td>
+
+                                                <td tal:condition="historico">
+                                                    <a href="" tal:attributes="href string:${context/absolute_url}/item-pedidos?id_instance=${pedido/instance_id|nothing}">Ver Histórico</a>
+                                                </td>                                                
 
                                                 <td tal:condition="my_solicitacao" 
                                                     tal:define="field_status python: view.get_value_field(pedido.instance_id,'status');
@@ -117,7 +134,8 @@
                         <legend>Solicitações concluidas (Aprovados)</legend>
                         
                         <tal:def define="values view/pedidos_aprovado|python:[];
-                                         gerenciar python:False">
+                                         gerenciar python:False;
+                                         historico python:True;">
                             <div metal:use-macro="here/list-pedidos/macros/table_list" />
                         </tal:def>
 
@@ -126,7 +144,8 @@
                         <legend>Solicitações concluidas (Reprovados)</legend>
                         
                         <tal:def define="values view/pedidos_reprovado|python:[];
-                                         gerenciar python:False">
+                                         gerenciar python:False;
+                                         historico python:True;">
                             <div metal:use-macro="here/list-pedidos/macros/table_list" />
                         </tal:def>
 

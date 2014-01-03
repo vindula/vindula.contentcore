@@ -1,9 +1,7 @@
 <html metal:use-macro="here/main_template/macros/master">
     <head>
         <metal:js fill-slot="javascript_head_slot">
-          
             <script type="text/javascript">
-
                 $j(document).ready(function(){
                     /* Aba de edição do conteudo*/
                     $j('#contentview-view').removeClass('selected');
@@ -21,9 +19,7 @@
                     });
 
                 });
-
             </script>
-        
         </metal:js>
 
     </head>
@@ -33,9 +29,15 @@
                 <div>
                     <form action="" name="" enctype="multipart/form-data" method="POST"
                           tal:attributes="action string:${context/absolute_url}/item-pedidos">
-                        <fieldset tal:define="id_instance request/form/id_instance|string:0">
+                        <fieldset tal:define="id_instance request/form/id_instance|string:0;
+                                              status_save python:view.get_value_field(id_instance, u'status');
+                                              status_save_value status_save/value|string: ;
+                                              nivel_save python:view.get_value_field(id_instance, u'nivel');
+                                              obj_save python:view.get_value_field(id_instance, u'observacao_responsavel');
+
+                                              has_form_edit python:status_save_value != 'aprovado' and status_save_value != 'reprovado' and True or False">
+                            
                             <legend>Pedidos em Solicitações</legend>
-                        
                             <tal:def define="fields view/get_fields|python:[]">
 
                               <tal:rep repeat="field fields">
@@ -56,62 +58,87 @@
                                 </div>
                               </tal:rep>
 
-                                <fieldset>
-                                  <legend>Gerencia esta solicitação</legend>
-                                    
-                                    <input type="hidden" name="id_instance" id="id_instance" value="" tal:attributes="value id_instance"/>
-                                    <input type="hidden" name="submited:boolean" id="submited" value="True" />
+                              <br /> 
+                              <label >Historico da Solicitação</label>
+                              <table id="listing-table" class="listing">
+                                <tr>
+                                  <th>Usuario</th>
+                                  <th>Valor antigo</th>
+                                  <th>Data Criação</th>
+                                </tr>
+                                <tal:rep repeat="item obj_save/get_logField|python:[]">
+                                  <tr>
+                                    <td tal:content="item/username|string: " >admin</td>
+                                    <td tal:define="value_new item/valor_new|string: ;
+                                                    value_old item/valor_old|string:  ;"
+                                        tal:content="python: value_old or value_new" >KKKKKKKKK</td>
+                                    <td tal:content="python: item.date_creation.strftime('%d/%m/%Y %H:%M')" >10/10/2010</td>
+                                  </tr>
+                                </tal:rep>
+                              </table>
 
-                                    <input type="hidden" name="email" id="email" value=""
-                                           tal:define="dados_user python: view.get_user(id_instance);"
-                                           tal:attributes="value dados_user/email|string: " />
-
-                                    <tal:def define="status_save python:view.get_value_field(id_instance, u'status');
-                                                     status_save status_save/value|string: ;
-                                                     nivel_save python:view.get_value_field(id_instance, u'nivel');
-                                                     nivel_save nivel_save/value|string: ;
-                                                     obj_save python:view.get_value_field(id_instance, u'observacao_responsavel');
-                                                     obj_save obj_save/value|string: ;">
-                                      
-                                      <tal:rep repeat="item view/list_status|python:[]">
-                                        <input type="radio" name="status" id="status" value=""  
-                                                tal:define="status_item item/id|nothing" 
-                                               tal:attributes="checked python:status_save == status_item and 'checked' or '';
-                                                               value status_item"  />
-                                          <label for="status" tal:content="item/valor|nothing">Aprovado</label><br/>
-
-                                      </tal:rep>
-
-                                      <select name="nivel" id="nivel" tal:attributes="disabled python:status_save != 'enviar_para' and 'disabled' or ''">
-                                          <option value="" >-----------</option>
-                                          <tal:rep repeat="item view/list_user_nivel|python:[]">
-
-                                              <option value="" tal:attributes="value item;
-                                                                               selected python:item==nivel_save and 'selected' or ''"
-                                                               tal:content="item">administrador</option>
-                                          </tal:rep>
-
-                                      </select>
-                                      <br /> 
-
-                                      <label for="observacao_responsavel">Observação</label>
-                                      <textarea id='observacao_responsavel' name='observacao_responsavel' rows='5' cols='40' 
-                                                    tal:content="obj_save"></textarea>
+                              <fieldset tal:condition="has_form_edit">
+                                <legend>Gerencia esta solicitação</legend>
                                   
-                                  </tal:def>
-                                   
+                                  <input type="hidden" name="id_instance" id="id_instance" value="" tal:attributes="value id_instance"/>
+                                  <input type="hidden" name="submited:boolean" id="submited" value="True" />
 
-                                </fieldset>
+                                  <input type="hidden" name="email" id="email" value=""
+                                         tal:define="dados_user python: view.get_user(id_instance);"
+                                         tal:attributes="value dados_user/email|string: " />
 
-                                <!-- Botões de ação -->    
-                                <fieldset>
-                                  <br/>
-                                  <div style="float:left; width:100%">
-                                    <input style="width:100px" class="button-erp" type="button"
-                                           tal:attributes="onClick string: location.href='${context/absolute_url}/list-pedidos'" value="Voltar" name="form.voltar">
-                                    <input style="width:100px" class="button-erp" type="submit" value="Salvar" name="form.submited">
-                                  </div>
-                                </fieldset>
+                                  <tal:def define="nivel_save nivel_save/value|string: ;
+                                                   obj_save_value obj_save/value|string: ;
+                                                   arquivoauxiliar2_save python:view.get_value_field(id_instance, u'arquivoauxiliarsolicitacao2');">
+                                  
+
+                                    <div class="field " id="field-arquivoauxiliarsolicitacao2">
+                                      <label for="arquivoauxiliarsolicitacao2">Arquivo Auxiliar</label>
+                                      <div class="formHelp">Faça upload de um arquivo auxiliar a esta solicitação.</div>
+                                      <div tal:condition="arquivoauxiliar2_save">
+                                          <a target="_blank" tal:attributes="href string:${context/absolute_url}/form-file?id=${arquivoauxiliar2_save/id|nothing}">Download arquivo</a><br />
+                                      </div>
+                                      <input id="arquivoauxiliarsolicitacao2" type="file" value="" name="arquivoauxiliarsolicitacao2" size="25">
+                                    </div>
+                                    
+                                    <tal:rep repeat="item view/list_status|python:[]">
+                                      <input type="radio" name="status" id="status" value=""  
+                                              tal:define="status_item item/id|nothing" 
+                                             tal:attributes="checked python:status_save_value == status_item and 'checked' or '';
+                                                             value status_item"  />
+                                        <label for="status" tal:content="item/valor|nothing">Aprovado</label><br/>
+
+                                    </tal:rep>
+
+                                    <select name="nivel" id="nivel" tal:attributes="disabled python:status_save_value != 'enviar_para' and 'disabled' or ''">
+                                        <option value="" >-----------</option>
+                                        <tal:rep repeat="item view/list_user_nivel|python:[]">
+
+                                            <option value="" tal:attributes="value item;
+                                                                             selected python:item==nivel_save and 'selected' or ''"
+                                                             tal:content="item">administrador</option>
+                                        </tal:rep>
+                                    </select>
+                                    <br /> 
+
+                                    <label for="observacao_responsavel">Observação</label>
+                                    <textarea id='observacao_responsavel' name='observacao_responsavel' rows='5' cols='40' 
+                                                  tal:content="obj_save_value"></textarea>
+                                
+                                </tal:def>
+                              </fieldset>
+
+                              <!-- Botões de ação -->    
+                              <fieldset>
+                                <br/>
+                                <div style="float:left; width:100%">
+                                  <input style="width:100px" class="button-erp" type="button"
+                                         tal:attributes="onClick string: location.href='${context/absolute_url}/list-pedidos'" value="Voltar" name="form.voltar">
+                                  
+                                  <input style="width:100px" class="button-erp" type="submit" value="Salvar" name="form.submited" tal:condition="has_form_edit">
+                                
+                                </div>
+                              </fieldset>
 
                             </tal:def>
 

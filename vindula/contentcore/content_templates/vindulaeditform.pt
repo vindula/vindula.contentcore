@@ -74,7 +74,7 @@
 						                <a title="Mover item para baixo"
 										   tal:condition="not:repeat/item/end" 
 										   tal:attributes="href string:${context/absolute_url|nothing}/edit-form?position=down&id_field=${item/id}">▼</a>
-						              </td>
+						            </td>
 								</tr>
 							</tal:rep>
 						</table>								

@@ -1,9 +1,16 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
+<!-- 		<metal:styleslot fill-slot="style_slot">
+    		<link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/get_static}css/form_style.css">
+		</metal:styleslot> -->
+		
 		<metal:js fill-slot="javascript_head_slot">
-		    
-            <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++resource++vindula.contentcore/js/report_form.js"></script>
+			<script type="text/javascript" tal:attributes="src string:${view/get_static}js/chart/highcharts.js"></script>
+			<script type="text/javascript" tal:attributes="src string:${view/get_static}js/chart/highcharts-config.js"></script>
+			<script type="text/javascript" tal:attributes="src string:${view/get_static}js/chart/modules/exporting.js"></script>
             
+            <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++resource++vindula.contentcore/js/report_form.js"></script>
+
     		<script type="text/javascript" >
     			$j = jQuery.noConflict();
 
@@ -11,22 +18,23 @@
 					/* Aba de edição do conteudo*/
 					$j('#contentview-content').addClass('selected');
 					$j('#contentview-view').removeClass('selected');
+				
 				});
     		</script>
+
 		</metal:js>
         
         <metal:styleslot fill-slot="style_slot">
             <link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${context/portal_url}/++resource++vindula.contentcore/css/style_views.css">
         </metal:styleslot>
 	</head>
-    
-	<body>
+	<body >
 		<div metal:fill-slot="main" >
 		    <meta:macro metal:define-macro="page-view">
 		    	<!--link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css"-->
 				<div id="interna-form" tal:define="form_data view/load_form | python:{};">    		
 			        
-					<h1 > Relat&oacute;rios dos dados do formul&aacute;rio</h1>	
+					<h1> Gráficos dos dados do formul&aacute;rio</h1>
                     
                     <fieldset>
                         <legend>Filtrar</legend>
@@ -55,74 +63,99 @@
                         </form>
                     </fieldset>
                     
+                    <div class="visualClear"></div>	
 					<fieldset>
-		            	<legend>Relat&oacute;rio</legend>
+		            	<legend>Graficos</legend>
 						
 						<tal:rep repeat="item form_data">
 							<table width="100%">
 								<tr><th width="100%" tal:content="string:Nome do Campo: ${item/titulo|nothing}" /></tr>
 								<tr><td width="100%" tal:condition="not: item/flag_multi|nothing" 
-								                     tal:content="string:Quantidade de Respostas Totais: ${item/quant|nothing}"></td></tr>
+								                     tal:content="string:Quantidade de Respostas Totais: ${item/quant|nothing}"></td>
+								</tr>
+								
 								<tr tal:condition="not: item/flag_multi|nothing">
 									<td>
-										<table tal:condition="not: item/text|nothing" width="100%">
-											<tr>
-												<th width="70%" >Resposta</th>
-												<th width="25%" >Quantidade</th>
-											</tr>
-											<tal:rep repeat="rep item/dados|nothing">
-												
-												<tr tal:define="i repeat/rep/even|nothing" 
-													tal:attributes="class python: i and 'even' or 'odd'">
-													
-													<td tal:content="rep/name|nothing"></td>
-													<td tal:content="rep/cont|nothing"></td>
-												</tr>
-											</tal:rep>
-										</table>
-										<table tal:condition="item/text|nothing"
+										<tal:cond condition="not: item/text|nothing">
+
+											<script type="text/javascript" tal:content="python: '''
+
+												var conf_%(cont_for)s = {
+											        xAxis: {
+											            categories: %(categorias)s
+											        },
+											        series: [ %(series)s ]
+											 	}
+
+												$j(function () {
+											        $j('#%(id_name)s').highcharts($j.extend(custom_config, conf_%(cont_for)s));
+											    
+											    });'''%{'categorias':view.get_categorias(item.get('dados')),
+											    		'series':view.get_series(item.get('dados')),
+											    		'id_name':item.get('name'),
+											    		'cont_for':repeat['item'].index,
+											    		}
+
+												">
+											</script>
+
+											<div tal:attributes="id item/name"> <!-- Conteudo do Grafico  --></div>
+
+										</tal:cond>
+	
+										<table tal:condition="item/text|nothing" 
                                                width="100%" >
-											<tr class="accordion" tal:attributes="id item/name;">
-											    <th width="95%">
-											        <div class="arrow close"></div>
-											        Respostas
+                                            <tr class="accordion" tal:attributes="id item/name;">
+                                                <th width="95%">
+                                                    <div class="arrow close"></div>
+                                                    Respostas
                                                 </th>
                                             </tr>
                                             <tbody style="display: none;" tal:attributes="data-id item/name;">
-    											<tal:rep repeat="rep item/dados|nothing">
-    												<tr tal:define="i repeat/rep/even|nothing" 
-    													tal:attributes="class python: i and 'even' or 'odd'">
-    													
-    													<td tal:content="structure rep/text|nothing"></td>
-    												</tr>
-    											</tal:rep>
+                                                <tal:rep repeat="rep item/dados|nothing">
+                                                    <tr tal:define="i repeat/rep/even|nothing" 
+                                                        tal:attributes="class python: i and 'even' or 'odd'">
+                                                        
+                                                        <td tal:content="structure rep/text|nothing"></td>
+                                                    </tr>
+                                                </tal:rep>
                                             </tbody>
 										</table>
+										
 									</td>
 								</tr>
 								<tr tal:condition="item/flag_multi|nothing">
 								    <td>
                                         <tal:rep repeat="ref item/dados|python:[]">
-                                            <tal:cont content="ref/title|nothing"></tal:cont>    
-                                            
-                                            <table tal:condition="not: item/text|nothing" width="100%">
-                                                <tr>
-                                                    <th width="70%" >Resposta</th>
-                                                    <th width="25%" >Quantidade</th>
-                                                </tr>
-                                                <tal:rep repeat="j ref/dados|nothing">
-                                                    
-                                                    <tr tal:define="i repeat/j/even|nothing" 
-                                                        tal:attributes="class python: i and 'even' or 'odd'">
-                                                        
-                                                        <td tal:content="j/name|nothing"></td>
-                                                        <td tal:content="j/cont|nothing"></td>
-                                                        
-                                                    </tr>
-                                                    
-                                                </tal:rep>
+                                            <tal:cont content="ref/title|nothing"></tal:cont>   
 
-                                            </table>
+											<tal:cond condition="not: item/text|nothing">
+
+												<script type="text/javascript" tal:content="python: '''
+
+													var conf_ref_%(cont_for)s = {
+												        xAxis: {
+												            categories: %(categorias)s
+												        },
+												        series: [ %(series)s ]
+												 	}
+
+													$j(function () {
+												        $j('#%(id_name)s').highcharts($j.extend(custom_config, conf_ref_%(cont_for)s));
+												    
+												    });'''%{'categorias':view.get_categorias(ref.get('dados')),
+												    		'series':view.get_series(ref.get('dados')),
+												    		'id_name':ref.get('name'),
+												    		'cont_for':repeat['ref'].index,
+												    		}
+
+													">
+												</script>
+
+												<div tal:attributes="id ref/name"> <!-- Conteudo do Grafico  --></div>
+
+											</tal:cond>                                             
+
                                             <table tal:condition="item/text|nothing" width="100%" >
                                                 <tr><th width="95%">Respostas</th></tr>
                                                 <tal:rep repeat="rep item/dados|nothing">
@@ -133,9 +166,6 @@
                                                     </tr>
                                                 </tal:rep>
                                             </table>
-                                                    
-                                                
-                                            
                                         
                                         </tal:rep>
                                     </td>

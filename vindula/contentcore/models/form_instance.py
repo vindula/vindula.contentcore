@@ -3,10 +3,10 @@
 from storm.locals import *
 from storm.locals import Store
 
-
 from vindula.contentcore.base import BaseStore
+from storm.expr import Desc
 
-
+from datetime import datetime, timedelta
     
 class ModelsFormInstance(Storm, BaseStore):
     __storm_table__ = 'vin_contentcore_form_instance'
@@ -25,10 +25,16 @@ class ModelsFormInstance(Storm, BaseStore):
         self.store.flush()
         return instance.instance_id    
     
-    def get_Instance(self,id_form):
-        data = self.store.find(ModelsFormInstance, ModelsFormInstance.forms_id==id_form)
+    def get_Instance(self,id_form,getall=False):
+        datahora = datetime.now()-timedelta(days=7)
+        data = self.store.find(ModelsFormInstance, ModelsFormInstance.forms_id==id_form,
+                              ).order_by(Desc(ModelsFormInstance.date_creation))
         if data.count()>0:
-            return data
+            if getall:
+                return data
+            
+            return data.find(ModelsFormInstance.date_creation >= datahora)
+           
         else:
             return []
     

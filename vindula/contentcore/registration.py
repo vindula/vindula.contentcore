@@ -12,6 +12,8 @@ from vindula.contentcore.models.form_instance import ModelsFormInstance
 from vindula.contentcore.models.default_value import ModelsDefaultValue
 from vindula.contentcore.models.parameters import ModelsParametersForm
 
+from vindula.myvindula.tools.utils import UtilMyvindula
+
 import pickle
 from copy import copy 
 
@@ -60,11 +62,12 @@ class RegistrationCreateForm(BaseFunc):
                 result.ordenacao = numb
 
                 result_prev = result_form.find(ordenacao=numb,forms_id=id_form).one()
-                result_prev.ordenacao = numb+1
+                if result_prev:
+                    result_prev.ordenacao = numb+1
 
-                self.store.commit()
+                    self.store.commit()
 
-                IStatusMessage(context.request).addStatusMessage(_(u"Campo Movindo para cima"), "info")
+                IStatusMessage(context.request).addStatusMessage(_(u"Campo Movido para cima"), "info")
                 url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id_form)
                 context.request.response.redirect(url)
 
@@ -75,11 +78,12 @@ class RegistrationCreateForm(BaseFunc):
                 result.ordenacao = numb
 
                 result_next = result_form.find(ordenacao=numb,forms_id=id_form).one()
-                result_next.ordenacao = numb-1
+                if result_next:
+                    result_next.ordenacao = numb-1
 
-                self.store.commit()
+                    self.store.commit()
 
-                IStatusMessage(context.request).addStatusMessage(_(u"Campo Movindo para baixo"), "info")
+                IStatusMessage(context.request).addStatusMessage(_(u"Campo Movido para baixo"), "info")
                 url = context.context.absolute_url() +  '/edit-form' #?forms_id='+ str(id_form)
                 context.request.response.redirect(url)
 
@@ -107,15 +111,22 @@ class RegistrationCreateForm(BaseFunc):
 
 class LoadRelatorioForm(BaseFunc):
 
-    def registration_processes(self,ctx):
+    def registration_processes(self,ctx,filtro={}):
         id_form = int(ctx.context.forms_id)
 
         #formulario =  ModelsForm().get_Forns_byId(id_form)
-        valores =  ModelsForm().get_FormValues(id_form)
+#        valores =  ModelsForm().get_FormValues(id_form)
+        
+        if filtro:
+            valores_filtrados = ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(id_form, filtro['field'], filtro['value'])
+            valores_filtrados = [i.instance_id for i in valores_filtrados]
+        
         campos = ModelsFormFields().get_Fields_ByIdForm(id_form)
+        
         L=[]
         for campo in campos:
            D={}
+           D['name'] = campo.name_field
            D['titulo'] = campo.title
 
            if campo.flag_multi:
@@ -127,8 +138,12 @@ class LoadRelatorioForm(BaseFunc):
 
                    E = {}
                    instances = ModelsFormValues().get_FormValues_byForm_and_Field(id_form, item.name_field)
+                   
+                   if filtro:
+                       instances = instances.find(ModelsFormValues.instance_id.is_in(valores_filtrados))
 
                    E['title'] = item.title
+                   E['name'] = item.name_field
 
                    if tipo == 'bool':
                        regs = ModelsFormInstance().get_Instance(id_form)
@@ -216,7 +231,11 @@ class LoadRelatorioForm(BaseFunc):
 
 
            instances = ModelsFormValues().get_FormValues_byForm_and_Field(id_form, campo.name_field)
+           
            if instances:
+               if filtro:
+                   instances = instances.find(ModelsFormValues.instance_id.is_in(valores_filtrados))
+               
                D['quant'] =  instances.count()
 
                tipo = campo.type_fields
@@ -248,7 +267,7 @@ class LoadRelatorioForm(BaseFunc):
 
                    elif tipo == 'list':
                        M = []
-                       tmp = []
+                       respostas = []
                        opcoes = []
                        opcao = campo.list_values.splitlines()
 
@@ -261,18 +280,22 @@ class LoadRelatorioForm(BaseFunc):
 
                        for instance in instances:
                            data = self.decodePickle(instance.value)
-                           tmp.append(data)
+                           for item in data:
+                               respostas.append([item])
 
-                       for i in tmp:
+                       for resposta in respostas:
                            N ={}
                            text = ''
-                           for x in i:
+                           for x in resposta:
                                for opcao in opcoes:
-                                   if unicode(x, 'utf-8') == opcao['id']:
+                                   if isinstance(x, str):
+                                       x = unicode(x, 'utf-8')
+                                       
+                                   if  x == opcao['id']:
                                        text += opcao['val'] + ', '
-
+                            
                            N['name'] = text
-                           N['cont'] = tmp.count(i)
+                           N['cont'] = respostas.count(resposta)
 
                            if not N in M:
                                M.append(N)
@@ -359,7 +382,7 @@ class RegistrationCreateFields(BaseFunc):
                                       ['foreign_key','Campo para referencia com outro formulário'],
                                       ],
 
-                       'mascara':[['Telefone','Telefone'],['Data','Data'],['Integer','Números Inteiros'],
+                       'mascara':[['Telefone','Telefone'],['Celular', 'Celular'],['Data','Data'],['Integer','Números Inteiros'],
                                   ['Cpf','CPF'],['Cep','CEP'],['Cnpj','CNPJ']],
                        }
         #Valores Default
@@ -368,7 +391,17 @@ class RegistrationCreateFields(BaseFunc):
         for i in dados_defaul:
             L.append([i.value,i.lable])
         lista_itens['value_default'] = L
-
+        
+        tool = UtilMyvindula()
+        user_fields = tool.get_Dic_Campos()
+        L = []
+        for field in user_fields:
+            if field != 'photograph':
+                text = 'self.getDataFieldByUser("%s")' % (field)
+                label = '%s do usuário autenticado' % (user_fields[field]['label'])
+                L.append([text,label])
+        lista_itens['value_default'] += L
+        
         #Campos de referencia
         M =[]
         dados_ref = ModelsFormFields().get_Fields_ByIdForm(id_form)
@@ -729,7 +762,6 @@ class RegistrationLoadForm(BaseFunc):
         campos = {}
         lista_itens = {}
         default_value = {}
-
         for field in models_fields:
             if field.flag_ativo:
                 M={}
@@ -775,6 +807,9 @@ class RegistrationLoadForm(BaseFunc):
 
             if field.value_default:
                 default_value[field.name_field] = field.value_default
+
+        #Ordenando os campos pela chave 'ordem'
+        campos = OrderedDict((sorted(campos.items(), key=lambda campo: campo[1]['ordem'])))
 
         return campos, lista_itens, default_value
 
@@ -966,8 +1001,8 @@ class RegistrationLoadForm(BaseFunc):
                             data = self.gera_dict_data(campos, int(id_form),id_instance)
                             data.update(data_old)
 
-                            if 'email' in data_old.keys():
-                                emails.append(data_old.get('email',''))
+                            if 'email' in data.keys():
+                                emails.append(data.get('email',''))
 
                         for campo in campos:
                             x = ''
@@ -1003,11 +1038,12 @@ class RegistrationLoadForm(BaseFunc):
 
                         envio = False
                         for email in emails:
-                            envio = self.envia_email(context,msg, assunto, email,arquivos,to_email)
-                        if envio:
-                            IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
-                        else:
-                            IStatusMessage(context.request).addStatusMessage(_(u"Não foi possivel enviar o e-mail contate o administrados do portal."), "error")
+                            if email:
+                                envio = self.envia_email(context,msg, assunto, email,arquivos,to_email)
+                                if envio:
+                                    IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
+                                else:
+                                    IStatusMessage(context.request).addStatusMessage(_(u"Não foi possivel enviar o e-mail contate o administrados do portal."), "error")
  
                         if models_fields:
                             campos = campos_old
@@ -1017,7 +1053,10 @@ class RegistrationLoadForm(BaseFunc):
                 mensagem = context.context.mensagem
                 if mensagem:
                     IStatusMessage(context.request).addStatusMessage(_(mensagem), "info")
- 
+                
+                mensagem_auxiliar = context.context.mensagem_auxiliar
+                if mensagem_auxiliar:
+                    IStatusMessage(context.request).addStatusMessage(_(mensagem_auxiliar), "info")
 
                 if 'id_instance' in form_keys and isForm and active_workflow:
                     context.request.response.redirect(success_url+'/my-pedidos')
