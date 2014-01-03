@@ -182,7 +182,7 @@ class FormularioPadrao(dexterity.Container):
         if member:
             user_login = member.getUserName()
             if user_login in list_users_nivel2 or\
-            user_login in list_users_nivel2:
+              user_login in list_users_nivel3:
                     return True
 
         return False
