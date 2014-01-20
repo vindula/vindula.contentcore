@@ -53,8 +53,8 @@
                                             <th tal:condition="not: gerenciar">Observação</th>
                                             <th tal:condition="gerenciar">Gerenciar</th>
                                             <th tal:condition="historico">Histórico</th>
-                                            <th tal:condition="my_solicitacao">Nivel</th>
-                                            <th tal:condition="my_solicitacao">Editar Socilitaçao</th>
+                                            <th tal:condition="my_solicitacao">Responsável</th>
+                                            <th tal:condition="my_solicitacao">Editar Socilitação</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -103,7 +103,7 @@
 
                                                 <td tal:condition="my_solicitacao"
                                                     tal:define="field python: view.get_value_field(pedido.instance_id,'nivel')"
-                                                    tal:content="field/value|string: ">
+                                                    tal:content="field/value|string: Não Atribuido ">
                                                     Nivel 2
                                                 </td> 
 
