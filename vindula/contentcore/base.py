@@ -136,6 +136,14 @@ class BaseFunc(BaseStore):
         return obj_user.get('email','none')
 
 
+    #Retorna um numero sequencial para o registro do formulario
+    def get_codigo_registro(self):
+        form_id = self.context.forms_id
+        from vindula.contentcore.models.form_instance import ModelsFormInstance
+        number_itens = ModelsFormInstance().get_Instance(int(form_id),True)
+        return number_itens.count() + 1
+
+
     def getValue(self,campo,request,data,default_value):
         if campo in request.keys():
             if request.get(campo, None):

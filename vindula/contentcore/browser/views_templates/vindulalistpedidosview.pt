@@ -53,6 +53,7 @@
                                             <th tal:condition="not: gerenciar">Observação</th>
                                             <th tal:condition="gerenciar">Gerenciar</th>
                                             <th tal:condition="historico">Histórico</th>
+                                            <th tal:condition="my_solicitacao">Nivel</th>
                                             <th tal:condition="my_solicitacao">Editar Socilitaçao</th>
                                         </tr>
                                     </thead>
@@ -99,6 +100,13 @@
                                                 <td tal:condition="historico">
                                                     <a href="" tal:attributes="href string:${context/absolute_url}/item-pedidos?id_instance=${pedido/instance_id|nothing}">Ver Histórico</a>
                                                 </td>                                                
+
+                                                <td tal:condition="my_solicitacao"
+                                                    tal:define="field python: view.get_value_field(pedido.instance_id,'nivel')"
+                                                    tal:content="field/value|string: ">
+                                                    Nivel 2
+                                                </td> 
+
 
                                                 <td tal:condition="my_solicitacao" 
                                                     tal:define="field_status python: view.get_value_field(pedido.instance_id,'status');
