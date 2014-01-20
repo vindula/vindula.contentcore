@@ -490,7 +490,11 @@ class BaseFunc(BaseStore):
         mensagem.preamble = 'This is a multi-part message in MIME format.'
 
 
-        email_layout_obj = LayoutEmail(msg=msg, ctx=ctx.context)        
+        if hasattr(ctx, 'context'):
+            email_layout_obj = LayoutEmail(msg=msg, ctx=ctx.context)
+        else:
+            email_layout_obj = LayoutEmail(msg=msg, ctx=ctx)
+
         mensagem.attach(MIMEText(email_layout_obj.layout(), 'html', 'utf-8'))
         
         # Atacha os arquivos
