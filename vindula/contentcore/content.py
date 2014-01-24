@@ -509,11 +509,11 @@ class VindulaViewForm(grok.View, BaseFunc):
         return True
 
     def get_data_final(self):
-        date = datetime.now() - timedelta(days=7)
+        date = datetime.now() + timedelta(days=1)
         return date.strftime('%d/%m/%Y')
 
     def get_data_inicial(self):
-        date = datetime.now() + timedelta(days=1)
+        date = datetime.now() - timedelta(days=7)
         return date.strftime('%d/%m/%Y')
 
     def str2datetime(self, str):
