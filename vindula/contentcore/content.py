@@ -423,8 +423,8 @@ class VindulaViewForm(grok.View, BaseFunc):
 
 
         data_instance = ModelsFormInstance().store.find(ModelsFormInstance, ModelsFormInstance.forms_id==id_form,
-                                                            ModelsFormInstance.date_creation<=data_inicial,
-                                                            ModelsFormInstance.date_creation>=data_final,
+                                                            ModelsFormInstance.date_creation>=data_inicial,
+                                                            ModelsFormInstance.date_creation<=data_final,
                                         ).order_by(Desc(ModelsFormInstance.date_creation))
 
         L_value = []
