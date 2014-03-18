@@ -27,6 +27,8 @@ from plone.app.textfield import RichText
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from Products.UserAndGroupSelectionWidget.z3cform import widget
 
+import json
+
 def to_utf8(value):
     return unicode(value, 'utf-8')
 
@@ -230,3 +232,24 @@ class FormularioPadraoView(grok.View, BaseFunc):
     grok.require('zope2.View')
     grok.name('view')
 
+
+
+class FormularioPadraoWSView(grok.View, BaseFunc):
+    grok.context(IFormularioPadrao)
+    grok.require('zope2.View')
+    grok.name('ws')
+
+    retorno = {}
+
+    def render(self):
+        self.request.response.setHeader("Content-type","application/json")
+        self.request.response.setHeader("charset", "UTF-8")
+        return json.dumps(self.retorno,ensure_ascii=False)
+
+    
+    def update(self):
+        context = self.context
+        
+        self.retorno['title'] = context.Title()
+        self.retorno['description'] = context.Description()
+        self.retorno['data'] = context.getDadosContent()

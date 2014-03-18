@@ -606,7 +606,7 @@ class RegistrationParametrosForm(BaseFunc):
 
         # se clicou no botao "Voltar"
         if 'form.voltar' in form_keys:
-            ctx.request.response.redirect(success_url)
+            context.request.response.redirect(success_url)
 
         # se clicou no botao "Salvar"
         elif 'form.submited' in form_keys:
@@ -977,7 +977,9 @@ class RegistrationLoadForm(BaseFunc):
                                 emails.append(data_old.get('email',''))
 
                         for campo in campos:
-                            x = ''
+                            name_field = campos[campo].get('name','')
+                            x = '<div class="field" id= "%s">' %(name_field)
+
                             if campos[campo].get('type','') == 'file' or \
                                 campos[campo].get('type','') == 'img':
 
@@ -987,17 +989,20 @@ class RegistrationLoadForm(BaseFunc):
                                 txt = ''
                                 for i in self.decodePickle(data.get(campo)):
                                     txt += i +', '
-                                x = "%s: %s" % (campos[campo].get('label',''),txt)
+                                x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),txt)
                             
                             elif campos[campo].get('type', '') == 'date':
                                 try:
-                                    x = "%s: %s" % (campos[campo].get('label',''),
+                                    x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),
                                                     pickle.loads(str(data.get(campo,u''))).strftime('%d/%m/%Y'))
                                 except:
-                                    x = "%s: %s" % (campos[campo].get('label',''), '')
+                                    x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''), '')
                             
                             else:
-                                x = "%s: %s" % (campos[campo].get('label',''),data.get(campo,''))
+                                x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),data.get(campo,''))
+                            
+                            x += '</div>'
+
                             msg.append(x)
 
                         if context.context.email_padrao:
