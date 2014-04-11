@@ -66,6 +66,10 @@ class ModelsFormValues(Storm, BaseStore):
             # Get UserName Logado
             D['username'] = get_username_login()
 
+            if type(valor) == int:
+            
+                valor = str(valor)
+
             if type(valor) != bool:
                 if len(valor) < 65000:
                     D['valor_new'] = Convert_utf8(valor.strip())
@@ -91,12 +95,17 @@ class ModelsFormValues(Storm, BaseStore):
             self.set_form_value(id_form, id_instance, valor, campo)
 
 
-    def set_form_value(self,id_form, id_instance, valor,campo):
+    def set_form_value(self, id_form, id_instance, valor, campo):
+
         D = {}
         D['forms_id'] = id_form
         D['instance_id'] = id_instance
         D['fields'] = campo
        
+        if type(valor) == int:
+            
+            valor = str(valor)
+
         if type(valor) != bool:
             if len(valor) < 65000:
                 D['value'] = Convert_utf8(valor.strip())
