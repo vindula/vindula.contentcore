@@ -407,17 +407,19 @@ class VindulaViewForm(grok.View, BaseFunc):
     grok.name('view-form') #Dados
 
     def get_FormValues(self,):
+
+        #import pdb; pdb.set_trace()
         id_form = int(self.context.forms_id)
         form = self.request.form
 
         if 'data_inicial' in form.keys():
-            data_inicial = self.str2datetime(form.get('data_inicial')) + timedelta(days=1)
+            data_inicial = self.str2datetime(form.get('data_inicial')) + timedelta(days=0)
         else:
             data_inicial = self.str2datetime(self.get_data_inicial())
 
 
         if 'data_final' in form.keys():
-            data_final = self.str2datetime(form.get('data_final')) - timedelta(days=1)
+            data_final = self.str2datetime(form.get('data_final')) - timedelta(days=-1)
         else:
             data_final = self.str2datetime(self.get_data_final())
 
