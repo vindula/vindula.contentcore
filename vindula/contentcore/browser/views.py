@@ -271,7 +271,7 @@ class VindulaMyListPedidoView(VindulaListPedidosView):
             if not isinstance(username, unicode):
                 username = unicode(username)  
 
-                pedidos = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'username',username))
+            pedidos = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'username',username))
 
 
         self.meus_pedidos = pedidos
