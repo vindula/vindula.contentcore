@@ -116,6 +116,8 @@ class ModelsFormValues(Storm, BaseStore):
                 D['value_blob'] = valor
         else:
             D['value'] = Convert_utf8(valor)
+            D['value_blob'] = None
+
 
         ModelsFormValues().set_FormValues(**D)
 
