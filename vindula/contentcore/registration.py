@@ -853,7 +853,7 @@ class RegistrationLoadForm(BaseFunc):
                     acao_destino = context.context.acao_destino
                     acoes = context.context.acao_saida
                 else:
-                    aq = context.context.aq_parent
+                    aq = context.context #.aq_parent
                     acao_destino = 'contexto'
                     acoes = aq.acao_saida
 
