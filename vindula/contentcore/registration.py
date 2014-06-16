@@ -1001,6 +1001,15 @@ class RegistrationLoadForm(BaseFunc):
                             data = self.gera_dict_data(campos, int(id_form),id_instance)
                             data.update(data_old)
 
+                            if 'nivel' in data.keys():
+                                nivel_username = data.get('nivel','')
+
+                                tool = UtilMyvindula()
+                                obj_user = tool.get_prefs_user(nivel_username)
+                                if obj_user:
+                                    emails.append(obj_user.get('email',''))
+            
+
                             if 'email' in data.keys():
                                 emails.append(data.get('email',''))
 
