@@ -12,7 +12,8 @@
                         <tal:def define="values view/meus_pedidos;
                                          gerenciar python:False;
                                          my_solicitacao python:True;
-                                         status python:True;">
+                                         status python:True;
+                                         historico python:True;">
                             <div metal:use-macro="here/list-pedidos/macros/table_list" />
                         </tal:def>
 

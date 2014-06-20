@@ -59,7 +59,6 @@ class VindulaLoadRelatorioView(grok.View, BaseFunc):
                         L.append(i.value)
             return L
         
-
 class VindulaGraficosView(VindulaLoadRelatorioView):
     grok.context(IFormularioPadrao)
     grok.require('zope2.View')
@@ -142,6 +141,7 @@ class VindulaListPedidosView(grok.View, BaseFunc):
             username = member.getUserName()
             if not isinstance(username, unicode):
                 username = unicode(username)  
+
             
             pedidos_nivel2 = ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id, u'nivel',username) 
 
@@ -149,6 +149,7 @@ class VindulaListPedidosView(grok.View, BaseFunc):
 
         self.pedidos_aprovado = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'status',u'aprovado'))
         self.pedidos_reprovado = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'status',u'reprovado'))
+
 
 
     def get_value_field(self, instance_id, name_field):
@@ -209,11 +210,10 @@ class VindulaPedidoView(VindulaListPedidosView):
     def get_fields(self):
         return ModelsFormFields().get_Fields_ByIdForm(self.form_id)
 
-
     def update(self):
         #Checagem de permição na view
-        if not self.context.is_active_workflow:
-            self.request.response.redirect('%s/' % self.context.absolute_url())        
+        # if not self.context.is_active_workflow:
+        #     self.request.response.redirect('%s/' % self.context.absolute_url())        
         
         form = self.request.form
         

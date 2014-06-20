@@ -35,7 +35,7 @@
                                               nivel_save python:view.get_value_field(id_instance, u'nivel');
                                               obj_save python:view.get_value_field(id_instance, u'observacao_responsavel');
 
-                                              has_form_edit python:status_save_value != 'aprovado' and status_save_value != 'reprovado' and True or False">
+                                              has_form_edit python:status_save_value != 'aprovado' and status_save_value != 'reprovado' and context.is_active_workflow and True or False">
                             
                             <legend>Pedidos em Solicitações</legend>
                             <tal:def define="fields view/get_fields|python:[]">

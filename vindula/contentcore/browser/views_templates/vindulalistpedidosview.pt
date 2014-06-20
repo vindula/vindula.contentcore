@@ -34,20 +34,18 @@
                                                 status status|python:False;
                                                 historico historico|python:False;
 
-                                                has_field_cliente_forn python:view.get_Field(u'nome-do-cliente-fornecedor');
-
+                                                extra_field context/campo_workflow_table|python:[];
                                                 values values|view/pedidos|python:[];
                                                 batch python:Batch(values, b_size, int(b_start), pagerange=len(values))" >
 
                                 <table id="listing-table" class="listing">
                                     <thead>
                                         <tr>
-                                            <th>Nome</th>
-                                            
-                                            <th tal:condition="not: has_field_cliente_forn">Sobrenome/Username</th>
-                                            
-                                            <th tal:condition="has_field_cliente_forn">Nome do Cliente/Fornecedor</th>
-                                            
+                                            <tal:rep repeat="e_field extra_field">
+                                                <th tal:define="field python: view.get_Field(e_field);"
+                                                    tal:content="field/title|string: ">CAMPO EXTRA</th>
+                                            </tal:rep>
+
                                             <th>Data da Solicitação</th>
                                             <th tal:condition="status">Status da Solicitação</th>
                                             <th tal:condition="not: gerenciar">Observação</th>
@@ -61,25 +59,11 @@
                                         <tal:rep repeat="pedido batch">
                                             <tr tal:define="dados_user_pedido python: view.get_user(pedido.instance_id);">
                                                 
-                                                <td tal:define="field python: view.get_value_field(pedido.instance_id,'nome');
-                                                                field_value field/value|nothing;"
-                                                    tal:content="python: field_value or dados_user_pedido.get('name','')">Nome </td>
-                                                
-                                                <td tal:condition="not: has_field_cliente_forn"
-                                                    tal:define="field_username python: view.get_value_field(pedido.instance_id,'username');
-                                                                field_sobrenome python: view.get_value_field(pedido.instance_id,'sobrenome');
-                                                                
-                                                                field_value_sob field_sobrenome/value|nothing;
-                                                                field_value_user field_username/value|string: ;"
-                                                                
-                                                    tal:content="python: field_value_sob or field_value_user">Sobrenome </td>
+                                                <tal:rep repeat="e_field extra_field">
+                                                    <td tal:define="field python: view.get_value_field(pedido.instance_id,e_field);"
+                                                        tal:content="field/value|string: ">DADO EXTRA</td>
+                                                </tal:rep>
 
-                                                <td tal:condition="has_field_cliente_forn"
-                                                    tal:define="field_nome_cliente python: view.get_value_field(pedido.instance_id,'nome-do-cliente-fornecedor');"
-                                                    tal:content="field_nome_cliente/value|string: ">
-                                                    Nome do Cliente/Fornecedor
-                                                </td>
-                                               
                                                 <td tal:content="python: pedido.date_creation.strftime('%d/%m/%Y')"> Data </td>
                                                 
                                                 <td tal:condition="status"
@@ -98,7 +82,7 @@
                                                 </td>
 
                                                 <td tal:condition="historico">
-                                                    <a href="" tal:attributes="href string:${context/absolute_url}/item-pedidos?id_instance=${pedido/instance_id|nothing}">Ver Histórico</a>
+                                                    <a href="" tal:attributes="href string:${context/absolute_url}/item-pedidos?id_instance=${pedido/instance_id|nothing}">Ver</a>
                                                 </td>                                                
 
                                                 <td tal:condition="my_solicitacao"
@@ -107,12 +91,13 @@
                                                     Nivel 2
                                                 </td> 
 
-
                                                 <td tal:condition="my_solicitacao" 
                                                     tal:define="field_status python: view.get_value_field(pedido.instance_id,'status');
                                                                 value_status field_status/value|string: "  >
+                                                    
                                                     <a href="" tal:attributes="href string:${context/absolute_url}/?id_instance=${pedido/instance_id|nothing}"
                                                                tal:condition="python:value_status=='cliente'" >Editar</a>
+
                                                     <span tal:condition="python:value_status!='cliente'">Não editavel</span>
                                                 </td>
 
