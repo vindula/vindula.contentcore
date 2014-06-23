@@ -1,0 +1,10 @@
+<div>
+	<tal:rep repeat="campo  view/campos">
+
+		<b tal:content="string:${campo/title}:"></b>
+		<span tal:define="valor python: view.valores.find(fields=campo.name_field).one()"
+			  tal:content="string:${valor/value}"></span><br/>
+		
+	</tal:rep>
+
+</div>

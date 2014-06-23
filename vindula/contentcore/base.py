@@ -555,6 +555,7 @@ class BaseFunc(BaseStore):
                 # index = campos[campo].get('ordem',0)
                 tmp = ""
                 valor = ''
+                obj_campo = campos[campo].get('obj','')
                 if not 'outros_hidden' in campo:
                     type_campo = campos[campo].get('type', '')
 
@@ -666,7 +667,9 @@ class BaseFunc(BaseStore):
                         valor += "</div>"
 
                     elif type_campo == 'foreign_key':
-                        valor += "<select name='%s' class='select-filter'>"%(campo)
+                        refform = obj_campo.ref_form
+                        
+                        valor += "<select name='%s' class='select-filter' data-ref_from='%s' data-id_field='%s' >"%(campo,refform.id,refform.campo_chave)
                         valor += "<option value="">-- Selecione --</option>"
                         for item in value_choice[campo]:
                             if item[0] == self.getValue(campo,self.request,data,default_value):
@@ -675,6 +678,8 @@ class BaseFunc(BaseStore):
                                 valor +="<option value='%s'>%s</option>"%(item[0], item[-1])
 
                         valor += "</select>"
+                        valor += '<div id="ajax_content_%s"> </div>' %(campo)
+                        
 
                     elif type_campo == 'richtext':
                         url = self.context.absolute_url()

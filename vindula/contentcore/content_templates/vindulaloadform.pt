@@ -29,7 +29,8 @@
 			                            multiple: false,
 			                            selectedList:5,
 			                            minWidth:150,
-			                            height:100
+			                            height:100,
+			                            click: ajax_foreign_key,
 			                            
 			                            }).multiselectfilter({
 			                            width:120

@@ -772,6 +772,7 @@ class RegistrationLoadForm(BaseFunc):
                 M['ordem'] = field.ordenacao
                 M['flag_multi'] = field.flag_multi
                 M['mascara'] = field.mascara
+                M['obj'] = field
 
                 campos[field.name_field] = M
             # else:
@@ -1033,6 +1034,35 @@ class RegistrationLoadForm(BaseFunc):
                                 except:
                                     x = "%s: %s" % (campos[campo].get('label',''), '')
                             
+                            elif campos[campo].get('type','') == 'foreign_key':
+                                obj_campo = campos[campo].get('obj','')
+
+                                refform = obj_campo.ref_form
+                                data_req = copy(context.request)
+
+                                formulario = refform.id
+                                instance = 0
+                                value = data.get(campo,'')
+                                field = refform.campo_chave
+
+                                v_campos = ModelsFormFields().get_Fields_ByIdForm(formulario)
+
+                                campo_busca = ModelsFormValues().store.find(ModelsFormValues, ModelsFormValues.fields==field,
+                                                                                              ModelsFormValues.forms_id==formulario,
+                                                                                              ModelsFormValues.value==value
+                                                                            )
+                                if campo_busca.count():
+                                    instance = campo_busca[0].instance_id
+
+                                valores = ModelsFormValues().get_FormValues_byForm_and_Instance(formulario,instance)
+
+                                t = ''
+                                for v_campo in v_campos:
+                                    v_valor = valores.find(fields=v_campo.name_field).one()
+                                    t += '<b> %s : </b><span> %s </span><br/>' %(v_campo.title,v_valor.value)
+
+                                x = "%s: %s" % (campos[campo].get('label',''),t)
+
                             else:
                                 x = "%s: %s" % (campos[campo].get('label',''),data.get(campo,''))
                             msg.append(x)
