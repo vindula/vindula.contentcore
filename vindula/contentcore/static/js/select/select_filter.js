@@ -2,23 +2,20 @@
 
 
 function ajax_foreign_key(event, ui){
-    $j('select.select-filter').each(function(){
-        var base_url = $j('base').attr('href'),
-            name_field = $j(this).attr('name'),
-            parametros = {};
+    var base_url = $j('base').attr('href'),
+        name_field = $j(this).attr('name'),
+        parametros = {};
 
-        parametros['form'] = $j(this).attr('data-ref_from');
-        parametros['field'] = $j(this).attr('data-id_field');
-        parametros['value'] = ui.value;
+    parametros['form'] = $j(this).attr('data-ref_from');
+    parametros['field'] = $j(this).attr('data-id_field');
+    parametros['value'] = ui.value;
 
-        $j.ajax({traditional: true,
-            type: "get",url: base_url + 'ajax-reference' ,dataType: "text",
-            data: parametros,
-            success: function(data){
-                $j('#ajax_content_'+name_field).html(data);
-            }
-        });
-
+    $j.ajax({traditional: true,
+        type: "get",url: base_url + 'ajax-reference' ,dataType: "text",
+        data: parametros,
+        success: function(data){
+            $j('#ajax_content_'+name_field).html(data);
+        }
     });
 
 }
