@@ -215,7 +215,7 @@ class VindulaManageContentForm(grok.View, BaseFunc):
                     chave_form = self.context.campo_chave
                     result = ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(id_form,chave_form,dados[chave_form])
 
-                    if result:
+                    if result.count():
                         result = result[0]
                         id_instance = result.instance_id
                         for i in dados:
@@ -229,13 +229,6 @@ class VindulaManageContentForm(grok.View, BaseFunc):
                                 ModelsFormValues().set_form_value(id_form,id_instance,valor,i)
 
                     self.dados.append(dados)
-
-
-
-
-
-
-
 
 
 
