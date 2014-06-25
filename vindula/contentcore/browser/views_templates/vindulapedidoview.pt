@@ -52,7 +52,7 @@
                                                           
                                                           valor python: valor_normal or valor_blob;
                                                           id_campo valor_pedido/id|nothing;"
-                                              tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)" />
+                                              tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor,True)" />
 
                                     </tal:def>
                                 </div>

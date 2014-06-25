@@ -337,7 +337,7 @@ class BaseFunc(BaseStore):
             return ''
 
 
-    def geraHTMLContent(self,id,tipo,valor):
+    def geraHTMLContent(self,id,tipo,valor,full_text=False):
         if tipo == 'list':
             txt = ''
             for i in self.decodePickle(valor):
@@ -396,6 +396,12 @@ class BaseFunc(BaseStore):
                 valor_campo = ModelsFormValues().get_Values_byID(id)
                 id_form = int(self.context.forms_id)
 
+
+
+
+
+
+
                 if valor_campo:
                     campo = ModelsFormFields().get_Fields_ByField(valor_campo.fields,id_form)
 
@@ -406,12 +412,34 @@ class BaseFunc(BaseStore):
                         label = form_ref.campo_label
                         key = form_ref.campo_chave
 
-                        dados = ModelsFormValues().get_FormValues_byForm_and_Field(form_ref_id,key)
-                        for item in dados:
-                            if item.value == valor:
-                                dados_label = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(form_ref_id, item.instance_id, label)
+                        if full_text:
+                            instance = 0
+                            txt = ''
 
-                                return dados_label.value
+                            v_campos = form_ref.fields 
+                            campo_busca = ModelsFormValues().store.find(ModelsFormValues, ModelsFormValues.fields==key,
+                                                                                          ModelsFormValues.forms_id==form_ref_id,
+                                                                                          ModelsFormValues.value==valor
+                                                                        )
+                            if campo_busca.count():
+                                instance = campo_busca[0].instance_id
+
+                                valores = ModelsFormValues().get_FormValues_byForm_and_Instance(form_ref_id,instance)
+
+                                txt = '<br/>'
+                                for v_campo in v_campos:
+                                    v_valor = valores.find(fields=v_campo.name_field).one()
+                                    txt += '<b> %s : </b><span> %s </span><br/>' %(v_campo.title,v_valor.value)
+
+                            return txt
+
+                        else:
+                            dados = ModelsFormValues().get_FormValues_byForm_and_Field(form_ref_id,key)
+                            for item in dados:
+                                if item.value == valor:
+                                    dados_label = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(form_ref_id, item.instance_id, label)
+
+                                    return dados_label.value
 
         return valor
 
