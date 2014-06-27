@@ -143,9 +143,9 @@ class ModelsFormValues(Storm, BaseStore):
     def get_FormValues_byForm_and_Instance_and_Field(self, id_form, id_instance,field):
         data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==id_form,
                                                  ModelsFormValues.instance_id==id_instance,
-                                                 ModelsFormValues.fields==field).one()
-        if data:
-            return data
+                                                 ModelsFormValues.fields==field)
+        if data.count():
+            return data[0]
         else:
             return None
 
