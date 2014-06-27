@@ -211,6 +211,7 @@
                                                                                 valor data/value|nothing;
                                                                                 valor_blob data/value_blob|nothing;
                                                                                 id_campo data/id|nothing;"
+                                                                    tal:on-error="string: Erro ao carregar o campo ${campo/name_field}"                                                                                
                                                                     tal:content="structure python:view.geraHTMLContent(id_campo,tipo,(valor or valor_blob) )"></td>
                                                             </tal:cond>
                                                             <tal:cond condition="campo/flag_multi|nothing">
@@ -224,7 +225,7 @@
                                                                                                     valor data/value|nothing;
                                                                                                     valor_blob data/value_blob|nothing;
                                                                                                     id_campo data/id|nothing;"
-                                                                                                    
+                                                                                        tal:on-error="string: Erro ao carregar o campo ${campo_item/name_field}"            
                                                                                         tal:content="structure python:view.geraHTMLContent(id_campo,tipo,(valor or valor_blob) )"></td>
                                                                                 </tal:def>                                                                              
                                                                             </tal:rep>

@@ -24,8 +24,6 @@ except ImportError:
   #python 2.6
   from vindula.contentcore.ordered_dict import OrderedDict
 
-
-
 class RegistrationCreateForm(BaseFunc):
     def to_utf8(value):
         return unicode(value, 'utf-8')
@@ -282,8 +280,13 @@ class LoadRelatorioForm(BaseFunc):
                            text = ''
                            for x in i:
                                for opcao in opcoes:
-                                   if unicode(x, 'utf-8') == opcao['id']:
-                                       text += opcao['val'] + ', '
+                                  try:
+                                    u_x = unicode(x, 'utf-8')
+                                  except:
+                                    u_x = x
+                                  
+                                  if u_x == opcao['id']:
+                                    text += opcao['val'] + ', '
 
                            N['name'] = text
                            N['cont'] = tmp.count(i)
@@ -327,8 +330,6 @@ class LoadRelatorioForm(BaseFunc):
            L.append(D)
 
         return L
-
-
 
 class RegistrationCreateFields(BaseFunc):
     def to_utf8(value):
@@ -605,7 +606,6 @@ class RegistrationExcluirDefault(BaseFunc):
             IStatusMessage(ctx.request).addStatusMessage(_(u'Valor removido com sucesso.'), 'info')
             ctx.request.response.redirect(success_url)
 
-
 class RegistrationParametrosForm(BaseFunc):
     def to_utf8(self, value):
         return unicode(value, 'utf-8')
@@ -629,7 +629,7 @@ class RegistrationParametrosForm(BaseFunc):
 
         # se clicou no botao "Voltar"
         if 'form.voltar' in form_keys:
-            ctx.request.response.redirect(success_url)
+            context.request.response.redirect(success_url)
 
         # se clicou no botao "Salvar"
         elif 'form.submited' in form_keys:
@@ -699,7 +699,6 @@ class RegistrationParametrosForm(BaseFunc):
         else:
             return form_data
 
-
 class RegistrationEditViewForm(BaseFunc):
     def to_utf8(self, value):
         return unicode(value, 'utf-8')
@@ -744,7 +743,6 @@ class RegistrationEditViewForm(BaseFunc):
         #se formulario de listagem dos campos
         else:
             return form_data
-
 
 class RegistrationLoadForm(BaseFunc):
     def to_utf8(value):
@@ -881,7 +879,7 @@ class RegistrationLoadForm(BaseFunc):
                     acao_destino = context.context.acao_destino
                     acoes = context.context.acao_saida
                 else:
-                    aq = context.context.aq_parent
+                    aq = context.context #.aq_parent
                     acao_destino = 'contexto'
                     acoes = aq.acao_saida
 
@@ -980,6 +978,13 @@ class RegistrationLoadForm(BaseFunc):
                         if context.context.email_remetente:
                             emails.append(data.get(context.context.email_remetente))
 
+                        #Adicionei esse try para não quebrar onde nao foi feito Update Schema
+                        try:
+                            if context.context.email_copia_remetente:
+                                emails.append(context.context.get_email_user_login())
+                        except:
+                            print 'vindula.contentcore: E-mail copia remetente não enviado.'
+
                         assunto = 'E-mail enviado do Formulário - %s'%(context.context.Title())
 
                         msg = []
@@ -998,7 +1003,9 @@ class RegistrationLoadForm(BaseFunc):
                                 emails.append(data.get('email',''))
 
                         for campo in campos:
-                            x = ''
+                            name_field = campos[campo].get('name','')
+                            x = '<div class="field" id= "%s">' %(name_field)
+
                             if campos[campo].get('type','') == 'file' or \
                                 campos[campo].get('type','') == 'img':
 
@@ -1008,17 +1015,20 @@ class RegistrationLoadForm(BaseFunc):
                                 txt = ''
                                 for i in self.decodePickle(data.get(campo)):
                                     txt += i +', '
-                                x = "%s: %s" % (campos[campo].get('label',''),txt)
+                                x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),txt)
                             
                             elif campos[campo].get('type', '') == 'date':
                                 try:
-                                    x = "%s: %s" % (campos[campo].get('label',''),
+                                    x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),
                                                     pickle.loads(str(data.get(campo,u''))).strftime('%d/%m/%Y'))
                                 except:
-                                    x = "%s: %s" % (campos[campo].get('label',''), '')
+                                    x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''), '')
                             
                             else:
-                                x = "%s: %s" % (campos[campo].get('label',''),data.get(campo,''))
+                                x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),data.get(campo,''))
+                            
+                            x += '</div>'
+
                             msg.append(x)
 
                         if context.context.email_padrao:
@@ -1080,7 +1090,6 @@ class RegistrationLoadForm(BaseFunc):
 
         else:
             return form_data
-
 
 class RegistrationExcluirForm(BaseFunc):
 

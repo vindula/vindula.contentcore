@@ -20,7 +20,8 @@
 							
 				            <fieldset>
 				            	<legend>Dados do valor</legend>
-								<tal:def define="html python:view.geraCampos(form_data)">
+								<tal:def define="html python:view.geraCampos(form_data)"
+									     tal:on-error="string: Erro ao carregar o formulario">
 									<tal:rep repeat="x html">
 										<div tal:content="structure x"/>
 									</tal:rep>

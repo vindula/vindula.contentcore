@@ -89,6 +89,7 @@ class ModelsFormValues(Storm, BaseStore):
                 D['value'] = None
                 D['value_blob'] = valor
         else:
+            D['value_blob'] = None            
             D['value'] = self.Convert_utf8(valor)
 
         ModelsFormValues().set_FormValues(**D)
@@ -167,5 +168,7 @@ class ModelsFormValues(Storm, BaseStore):
         except:
             if type(valor) == unicode:
                 return valor
+            if type(valor) == bool:
+                return unicode(str(valor))
             else:
                 return u'erro ao converter os caracteres'

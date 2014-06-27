@@ -16,7 +16,8 @@
 				        <form name="add-form" id="add-form" enctype="multipart/form-data" class="enableAutoFocus" action="add-form" method="POST">
 				            <fieldset>
 				            	<legend>Dados do Formul&aacute;rio</legend>
-								<tal:def define="html python:view.geraCampos(form_data)">
+								<tal:def define="html python:view.geraCampos(form_data)"
+									     tal:on-error="string: Erro ao carregar o formulario">
 									<tal:rep repeat="x html">
 										<div tal:content="structure x"/>
 									</tal:rep>

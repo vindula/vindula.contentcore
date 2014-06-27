@@ -28,7 +28,6 @@ from datetime import date , datetime
 from vindula.contentcore.layoutemail import LayoutEmail
 
 from vindula.myvindula.tools.utils import UtilMyvindula
-from vindula.myvindula.models.instance_funcdetail import ModelsInstanceFuncdetails
 
 try:
     # python 2.7
@@ -96,6 +95,8 @@ class BaseFunc(BaseStore):
         except:
             if type(valor) == unicode:
                 return valor
+            if type(valor) == bool:
+                return unicode(str(valor))
             else:
                 return u'erro ao converter os caracteres'
 
@@ -162,12 +163,9 @@ class BaseFunc(BaseStore):
             
     def getDataFieldByUser(self, field):
         tool = UtilMyvindula()
-        username = self.context.portal_membership.getAuthenticatedMember().getId()
-        username = username.decode('utf-8')
+        username = self.get_username_login().decode('utf-8')
         
-        user_instance = ModelsInstanceFuncdetails().get_InstanceFuncdetails(username)
-        
-        return tool.getDadoUser_byField(user_instance, field)
+        return tool.get_prefs_user(username).get(field,'')
 
     def getValuePickle(self,campo,request,data,default_value):
         if campo in request.keys():
@@ -572,11 +570,11 @@ class BaseFunc(BaseStore):
                     tmp += "<!-- Campo %s -->"%(campo)
                     tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo)+' '+classe,'field-'+campo)
 
-                    if type_campo != 'hidden':
+                    if type_campo != 'hidden' and type_campo !='bool':
                         tmp += "   <label for='%s'>%s</label>"%(campo,campos[campo].get('label', ''))
-                        if campos[campo].get('required', '') == True and type_campo != 'hidden':
-                            tmp += "   <span class='fieldRequired' title='Obrigatório'>(Obrigatório)</span>"
-
+                   
+                    if campos[campo].get('required', '') == True and type_campo != 'hidden':
+                        tmp += "   <span class='fieldRequired' title='Obrigatório'>(Obrigatório)</span>"
                         tmp += "   <div class='formHelp'>%s</div>"%(campos[campo].get('decription', ''))
                         tmp += "   <div >%s</div>"%(errors.get(campo,''))
 
@@ -775,6 +773,8 @@ class BaseFunc(BaseStore):
 
                             elif type_campo == 'bool':
                                 valor += "<input id='%s' type='checkbox' value='%s' name='%s' size='25' %s/>"%(i.name_field,'True',i.name_field,self.checked(i.name_field,self.request,data,default_value))
+                                tmp += "   <label class='label-input' for='%s'>%s</label>"%(campo,campos[campo].get('label', ''))
+                                tmp += "   <div class='formHelp'>%s</div>"%(campos[campo].get('decription', ''))
 
                                 table += '<td>%s</td>'%(valor)
 
@@ -802,8 +802,11 @@ class BaseFunc(BaseStore):
                         tmp += table + "</div>"
                     else:
                         tmp += valor + "</div>"
-                    
-                    
+
+                    if type_campo != 'hidden' and type_campo =='bool':
+                        tmp += "   <label class='label-input' for='%s'>%s</label>"%(campo,campos[campo].get('label', ''))
+                        tmp += "   <div class='formHelp'>%s</div>"%(campos[campo].get('decription', ''))
+                        tmp += "   <div >%s</div>"%(errors.get(campo,''))
 
                 else:
                     tmp += ''

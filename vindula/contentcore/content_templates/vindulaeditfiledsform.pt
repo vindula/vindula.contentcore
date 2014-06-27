@@ -24,7 +24,8 @@
 							<input type="hidden" name="id_fields" id="id_fields" value="" tal:attributes="value context/REQUEST/id_fields|nothing">
 				            <fieldset>
 				            	<legend>Dados do Campo</legend>
-								<tal:def define="html python:view.geraCampos(form_data)">
+								<tal:def define="html python:view.geraCampos(form_data)"
+										 tal:on-error="string: Erro ao carregar o formulario">
 									<tal:rep repeat="x html">
 										<div tal:content="structure x"/>
 									</tal:rep>
