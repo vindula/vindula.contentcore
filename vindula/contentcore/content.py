@@ -568,8 +568,9 @@ class VindulaViewForm(grok.View, BaseFunc):
     def valores_b(self, all_values,campo):
         L = []
         for i in all_values:
-            x = i.find(fields=campo.name_field).one()
-            if x:
+            x = i.find(fields=campo.name_field)
+            if x.count():
+                x = x[0]
                 L.append(x)
 
         return L
