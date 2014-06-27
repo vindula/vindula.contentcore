@@ -60,8 +60,15 @@
                                             <tr tal:define="dados_user_pedido python: view.get_user(pedido.instance_id);">
                                                 
                                                 <tal:rep repeat="e_field extra_field">
-                                                    <td tal:define="field python: view.get_value_field(pedido.instance_id,e_field);"
-                                                        tal:content="field/value|string: ">DADO EXTRA</td>
+
+                                                    <td tal:define="field python: view.get_Field(e_field);
+                                                                    field_data python: view.get_value_field(pedido.instance_id,e_field);
+                                                                    tipo field/type_fields|nothing;
+                                                                    valor field_data/value|nothing;
+                                                                    valor_blob field_data/value_blob|nothing;
+                                                                    id_campo field_data/id|nothing;"
+                                                        tal:content="structure python:view.geraHTMLContent(id_campo,tipo,(valor or valor_blob))">DADO EXTRA</td>
+
                                                 </tal:rep>
 
                                                 <td tal:content="python: pedido.date_creation.strftime('%d/%m/%Y')"> Data </td>

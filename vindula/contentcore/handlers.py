@@ -200,7 +200,7 @@ def EditFormDataBase(context, event):
                 campo_name = campo.get('name_field')
                 result_field = ModelsFormFields().get_Fields_ByField(campo_name, int(forms_id))
                 if not result_field:
-                    campo['ordenacao'] = (result_fields_form.count()+1)
+                    campo['ordenacao'] = (result_fields_form.count())
                     ModelsFormFields().set_FormFields(**campo)
 
 
