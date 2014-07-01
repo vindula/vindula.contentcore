@@ -207,6 +207,7 @@ class VindulaPedidoView(VindulaListPedidosView):
     grok.name('item-pedidos')
 
     back_list = [u'status',u'nivel',u'observacao_responsavel',u'username', u'arquivoauxiliarsolicitacao2']
+    error = ''
 
     def list_user_nivel(self):
         list_users_nivel2 = self.context.list_users_nivel2 or ''
@@ -231,14 +232,17 @@ class VindulaPedidoView(VindulaListPedidosView):
         submited = form.get('submited',False)
 
         if submited:
-            fields = self.get_fields()
-            if fields:
-                models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list)).order_by(ModelsFormFields.ordenacao)
+            if form.get('observacao_responsavel',False):
+                fields = self.get_fields()
+                if fields:
+                    models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list)).order_by(ModelsFormFields.ordenacao)
 
-            RegistrationLoadForm().registration_processes(self, models_fields=models_fields)
+                RegistrationLoadForm().registration_processes(self, models_fields=models_fields)
 
-            IStatusMessage(self.request).addStatusMessage(_(u"Pedido editado com sucesso."), "info")
-            self.request.response.redirect('%s/list-pedidos' % self.context.absolute_url())
+                IStatusMessage(self.request).addStatusMessage(_(u"Pedido editado com sucesso."), "info")
+                self.request.response.redirect('%s/list-pedidos' % self.context.absolute_url())
+            else:
+                self.error = 'Campo de Observação é obrigatorio para o historico da solicitação'
 
 
 class VindulaMyPedidoView(VindulaPedidoView):
