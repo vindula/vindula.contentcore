@@ -73,7 +73,7 @@
 
                                                 </tal:rep>
 
-                                                <td tal:content="python: pedido.date_creation.strftime('%d/%m/%Y')"> Data </td>
+                                                <td tal:content="python: pedido.instancia.date_creation.strftime('%d/%m/%Y')"> Data </td>
                                                 
                                                 <td tal:condition="status"
                                                     tal:define="field python: view.get_value_field(pedido.instance_id,'status');

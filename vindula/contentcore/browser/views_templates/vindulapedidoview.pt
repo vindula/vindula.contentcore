@@ -68,11 +68,11 @@
                                   <th>Data Criação</th>
                                 </tr>
                                 <tal:rep repeat="item obj_save/get_logField|python:[]">
-                                  <tr>
+                                  <tr >
                                     <td tal:content="item/username|string: " >admin</td>
                                     <td tal:define="value_new item/valor_new|string: ;
                                                     value_old item/valor_old|string:  ;"
-                                        tal:content="python: value_old or value_new" >KKKKKKKKK</td>
+                                        tal:content="python: value_new or value_old" >KKKKKKKKK</td>
                                     <td tal:content="python: item.date_creation.strftime('%d/%m/%Y %H:%M')" >10/10/2010</td>
                                   </tr>
                                 </tal:rep>
