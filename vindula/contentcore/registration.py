@@ -990,6 +990,9 @@ class RegistrationLoadForm(BaseFunc):
                         if context.context.email_remetente:
                             emails.append(data.get(context.context.email_remetente))
 
+                        if context.context.active_workflow and 'email' in data.keys():
+                            emails.append(data.get('email'))
+
                         assunto = 'E-mail enviado do Formulário - %s'%(context.context.Title())
 
                         msg = []
@@ -1012,7 +1015,6 @@ class RegistrationLoadForm(BaseFunc):
                                 if obj_user:
                                     emails.append(obj_user.get('email',''))
             
-
                             if 'email' in data.keys():
                                 emails.append(data.get('email',''))
 

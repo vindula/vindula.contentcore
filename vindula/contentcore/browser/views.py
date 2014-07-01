@@ -141,7 +141,6 @@ class VindulaListPedidosView(grok.View, BaseFunc):
             username = member.getUserName()
             if not isinstance(username, unicode):
                 username = unicode(username)  
-
             
             pedidos_nivel2 = ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id, u'nivel',username) 
 
