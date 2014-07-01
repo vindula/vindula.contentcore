@@ -33,6 +33,7 @@
                                                 my_solicitacao my_solicitacao|python:False;
                                                 status status|python:False;
                                                 historico historico|python:False;
+                                                not_apro_reprov not_apro_reprov|python:False;
 
                                                 extra_field context/campo_workflow_table|python:[];
                                                 values values|view/pedidos|python:[];
@@ -57,7 +58,8 @@
                                     </thead>
                                     <tbody>
                                         <tal:rep repeat="pedido batch">
-                                            <tr tal:define="dados_user_pedido python: view.get_user(pedido.instance_id);">
+                                            <tr tal:define="dados_user_pedido python: view.get_user(pedido.instance_id);"
+                                                tal:condition="python:view.check_status_superiro(not_apro_reprov,pedido)" >
                                                 
                                                 <tal:rep repeat="e_field extra_field">
 
@@ -125,7 +127,8 @@
                         <legend>Solicitações aguardando aprovação superior </legend>
                         
                         <tal:def define="values view/pedidos_nivel2|python:[];
-                                         status python:True">
+                                         status python:True;
+                                         not_apro_reprov python:True">
                             <div metal:use-macro="here/list-pedidos/macros/table_list" />
                         </tal:def>
 

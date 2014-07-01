@@ -34,10 +34,11 @@
                                               status_save_value status_save/value|string: ;
                                               nivel_save python:view.get_value_field(id_instance, u'nivel');
                                               obj_save python:view.get_value_field(id_instance, u'observacao_responsavel');
+                                              arquivoauxiliar2_save python:view.get_value_field(id_instance, u'arquivoauxiliarsolicitacao2');
 
                                               has_form_edit python:status_save_value != 'aprovado' and status_save_value != 'reprovado' and context.is_active_workflow and True or False">
                             
-                            <legend>Pedidos em Solicitações</legend>
+                            <legend>Dados da Solicitação</legend>
                             <tal:def define="fields view/get_fields|python:[]">
 
                               <tal:rep repeat="field fields">
@@ -77,6 +78,26 @@
                                 </tal:rep>
                               </table>
 
+
+                              <fieldset>
+                                <legend>Dados do Gestor</legend>
+
+                                <tal:def define="nivel_save nivel_save/value|string: ;">
+                                    <div class="field_value">
+                                        <b>Status:</b> <span tal:content="python:view.get_status(status_save_value)">Status</span><br>
+                                        <b>Arquivo Auxiliar:</b>
+                                        <div tal:condition="arquivoauxiliar2_save">
+                                          <a target="_blank" tal:attributes="href string:${context/absolute_url}/form-file?id=${arquivoauxiliar2_save/id|nothing}">Download arquivo</a>
+                                        </div>
+                                        <br />
+                                        <b>Observação:</b><br>
+                                        <span tal:content="obj_save/value|string: ">TEXTO</span>
+
+                                    </div>
+                                </tal:def>
+
+                              </fieldset>
+
                               <fieldset tal:condition="has_form_edit">
                                 <legend>Gerencia esta solicitação</legend>
                                   
@@ -88,8 +109,7 @@
                                          tal:attributes="value dados_user/email|string: " />
 
                                   <tal:def define="nivel_save nivel_save/value|string: ;
-                                                   obj_save_value obj_save/value|string: ;
-                                                   arquivoauxiliar2_save python:view.get_value_field(id_instance, u'arquivoauxiliarsolicitacao2');">
+                                                   obj_save_value obj_save/value|string: ;">
                                   
 
                                     <div class="field " id="field-arquivoauxiliarsolicitacao2">

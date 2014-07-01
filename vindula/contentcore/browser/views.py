@@ -189,6 +189,17 @@ class VindulaListPedidosView(grok.View, BaseFunc):
         data = ModelsFormFields().get_Fields_ByField(campo,self.form_id)
         return data
 
+    def check_status_superiro(self,enable,pedido):
+        if enable:
+            field_status = self.get_value_field(pedido.instance_id,'status');
+
+            if field_status:
+                if field_status.value == 'aprovado' or\
+                   field_status.value == 'reprovado':
+                   return False
+                
+        return True
+
 
 class VindulaPedidoView(VindulaListPedidosView):
     grok.context(IFormularioPadrao)
