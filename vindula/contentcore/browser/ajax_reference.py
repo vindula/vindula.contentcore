@@ -24,6 +24,7 @@ class VindulaAjaxReferenceView(grok.View):
         self.name_field = field
         value = form.get('value','')
 
+        self.formulario = formulario
         self.campos = ModelsFormFields().get_Fields_ByIdForm(int(formulario))
 
         campo_busca = ModelsFormValues().store.find(ModelsFormValues, ModelsFormValues.fields==unicode(field),

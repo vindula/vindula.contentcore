@@ -39,7 +39,7 @@ class ModelsForm(Storm, BaseStore):
         else:
             return None
 
-    def get_FormValues(self,id_form,getall=False):
+    def get_FormValues(self,id_form,getall=True):
         L=[] 
         inst = ModelsFormInstance().get_Instance(id_form,getall)
         for item in inst: 

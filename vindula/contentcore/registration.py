@@ -987,11 +987,20 @@ class RegistrationLoadForm(BaseFunc):
                         else:
                             emails = []
 
+                        #ENVIAR UM EMAIL AO VALOR DO CAMPO MARCARDO NO 'Email Destinatario'
                         if context.context.email_remetente:
                             emails.append(data.get(context.context.email_remetente))
 
+                        #ENVIA EMAIL AO USUARIO QUE FEZ A SOLICITAÇÃO
                         if context.context.active_workflow and 'email' in data.keys():
                             emails.append(data.get('email'))
+
+                        #EVIAR EMAILS PARA OS CAMPOS DE RELACIONAMENTO DO FORMULARIO
+                        for t_form in form_keys:
+                            if 'email_reference_' in t_form:
+                                t_valor = form.get(t_form)
+                                if not t_valor in emails:
+                                    emails.append(t_valor)
 
                         assunto = 'E-mail enviado do Formulário - %s'%(context.context.Title())
 
@@ -1007,6 +1016,7 @@ class RegistrationLoadForm(BaseFunc):
                             data = self.gera_dict_data(campos, int(id_form),id_instance)
                             data.update(data_old)
 
+                            #ENVIAR UM EMAIL QUANDO UMA SOLICITAÇÃO E SUBMETIDA AO NIVE SUBERIOR
                             if 'nivel' in data.keys():
                                 nivel_username = data.get('nivel','')
 
@@ -1015,8 +1025,12 @@ class RegistrationLoadForm(BaseFunc):
                                 if obj_user:
                                     emails.append(obj_user.get('email',''))
             
+                            #EMAIL AO SOLICITANTE,
+                            #TODO: ACHO QUE PODE SER REMOVIDO, MAS DEIXADO POR COMPATIBILIDADE
                             if 'email' in data.keys():
-                                emails.append(data.get('email',''))
+                                t_email = data.get('email','')
+                                if not t_email in emails:
+                                    emails.append(t_email)
 
                         for campo in campos:
                             x = ''

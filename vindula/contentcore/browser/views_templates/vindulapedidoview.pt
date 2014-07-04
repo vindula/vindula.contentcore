@@ -103,6 +103,7 @@
                                   <input type="hidden" name="id_instance" id="id_instance" value="" tal:attributes="value id_instance"/>
                                   <input type="hidden" name="submited:boolean" id="submited" value="True" />
 
+                                  <!-- EMAIL DO SOLICITANTE OU DO RESPONSAVEL  -->
                                   <input type="hidden" name="email" id="email" value=""
                                          tal:define="dados_user python: view.get_user(id_instance);"
                                          tal:attributes="value dados_user/email|string: " />
