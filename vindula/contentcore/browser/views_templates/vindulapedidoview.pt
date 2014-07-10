@@ -42,7 +42,7 @@
                             <tal:def define="fields view/get_fields|python:[]">
 
                               <tal:rep repeat="field fields">
-                                <div class="field_value" tal:condition="python: not field.name_field in view.back_list">
+                                <div class="field_value" tal:condition="python: not field.name_field in view.back_list and field.flag_ativo">
                                     <b tal:content="field/title|string: ">Title</b>:
 
                                     <tal:def define="valor_pedido python:view.get_value_field(id_instance, field.name_field)">
