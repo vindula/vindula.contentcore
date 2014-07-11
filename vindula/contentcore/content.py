@@ -431,9 +431,6 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
         fields = ModelsFormFields().get_Fields_ByIdForm(int(id_form))
         types = ['img','file']
         form = self.request.form
-        fields = ModelsFormFields().get_Fields_ByIdForm(int(id_form))
-        types = ['img','file']
-        form = self.request.form
         campos_vin = []
 
         values = ModelsForm().get_FormValues(id_form)
@@ -445,6 +442,7 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
         values = L
         
         if fields:
+            fields = fields.find(flag_ativo=True)
             # Create Excel workbook
             wb = xl.Workbook()
             
@@ -459,11 +457,10 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
             header_style = xl.XFStyle(); header_style.font = header_font
             
             for field in fields:
-                if field.flag_ativo:
-                    titulo = field.title.replace(';', ',')
-                    if isinstance(titulo, str):
-                        titulo = titulo.decode('utf-8')
-                    campos_vin.append(titulo.decode('utf-8'))
+                titulo = field.title.replace(';', ',')
+                if isinstance(titulo, str):
+                    titulo = titulo.decode('utf-8')
+                campos_vin.append(titulo.decode('utf-8'))
             
             for col,value in enumerate(campos_vin):
                 mysheet.write(0,col,value,header_style)
@@ -473,28 +470,27 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                     row_num+=1 #start at row 1
 
                     for col, field in enumerate(fields):
-                        if field.flag_ativo:
-                            data = row_value.find(fields=field.name_field).one()
+                        data = row_value.find(fields=field.name_field).one()
 
-                            if not field.type_fields in types and data:
-                                if field.type_fields == 'list':
-                                    valor = ''
-                                    for i in self.decodePickle(data.value):
-                                        valor += i +','
-
-                                elif field.type_fields == 'date':
-                                    campo_data = self.decodePickle(data.value)
-                                    valor = campo_data.strftime('%d/%m/%Y')
-                                else:
-                                    valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', ',')
-
-                            else:
+                        if not field.type_fields in types and data:
+                            if field.type_fields == 'list':
                                 valor = ''
-                                
-                            if isinstance(valor, str):
-                                valor = valor.decode('utf-8')
-                                
-                            mysheet.write(row_num,col,valor)
+                                for i in self.decodePickle(data.value):
+                                    valor += i +','
+
+                            elif field.type_fields == 'date':
+                                campo_data = self.decodePickle(data.value)
+                                valor = campo_data.strftime('%d/%m/%Y')
+                            else:
+                                valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', ',')
+
+                        else:
+                            valor = ''
+                            
+                        if isinstance(valor, str):
+                            valor = valor.decode('utf-8')
+                            
+                        mysheet.write(row_num,col,valor)
         
             # Write out Excel file
             wb.save(filename)
