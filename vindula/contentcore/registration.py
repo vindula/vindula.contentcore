@@ -1141,6 +1141,9 @@ class RegistrationLoadForm(BaseFunc):
         elif 'id_instance' in form_keys:
             id_instance = int(form.get('id_instance','0'))
 
+            if active_workflow and 'my_observacao' in campos.keys():
+                campos['my_observacao']['type'] = 'textarea'
+
             form_data['data'] = self.gera_dict_data(campos, int(id_form),id_instance,False)
             
             return form_data

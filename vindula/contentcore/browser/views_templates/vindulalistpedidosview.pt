@@ -103,10 +103,14 @@
                                                 <td tal:condition="my_solicitacao" 
                                                     tal:define="field_status python: view.get_value_field(pedido.instance_id,'status');
                                                                 value_status field_status/value|string: "  >
-                                                    
+                                                <!--   
+                                                    <a href="" tal:attributes="href string:${context/absolute_url}/my-pedido?id_instance=${pedido/instance_id|nothing}"
+                                                               tal:condition="python:value_status=='cliente'" >Editar</a>
+                                                -->    
+                                                <!---->
                                                     <a href="" tal:attributes="href string:${context/absolute_url}/?id_instance=${pedido/instance_id|nothing}"
                                                                tal:condition="python:value_status=='cliente'" >Editar</a>
-
+                                                
                                                     <span tal:condition="python:value_status!='cliente'">Não editavel</span>
                                                 </td>
 
