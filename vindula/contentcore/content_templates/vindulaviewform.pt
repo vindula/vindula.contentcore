@@ -221,7 +221,7 @@
                                                     </a>
                                                     <a tal:attributes="href python:context.absolute_url()+'/excluir-registro-form'+'?id_instance='+str(item[0].instance_id)"
                                                         alt="Excluir registro" title="Excluir registro" class="excluir-data"
-                                                        tal:condition="python: view.canRequestPermission('cmf.ReviewPortalContent')">
+                                                        tal:condition="python: view.canRequestPermission('zope2.DeleteObjects')">
                                                         
                                                         <img tal:attributes="src string:${view/static}/img/icone-False.png" alt="Excluir registro" title="Excluir registro"/>
                                                     </a>

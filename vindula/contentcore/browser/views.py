@@ -276,8 +276,13 @@ class VindulaMyListPedidoView(VindulaListPedidosView):
     grok.name('my-pedidos')
 
 
-    def update(self):
+    def update(self,form_id=None):
         pedidos = []
+
+        if not form_id:
+            form_id = self.form_id
+        else:
+            setattr(self, 'form_id', form_id)
 
         member =  self.context.restrictedTraverse('@@plone_portal_state').member()
         if member:
@@ -285,7 +290,7 @@ class VindulaMyListPedidoView(VindulaListPedidosView):
             if not isinstance(username, unicode):
                 username = unicode(username)  
 
-            pedidos = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'username',username))
+            pedidos = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(form_id,u'username',username))
 
 
         self.meus_pedidos = pedidos

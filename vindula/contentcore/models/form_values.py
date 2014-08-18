@@ -159,14 +159,16 @@ class ModelsFormValues(Storm, BaseStore):
 
     def  get_FormValues_byForm_and_Field_and_Value(self, id_form,field,value):
         if isinstance(value, list):
-            data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==id_form,
-                                                     ModelsFormValues.fields==field,
+            data = self.store.find(ModelsFormValues, ModelsFormValues.fields==field,
                                                      ModelsFormValues.value.is_in(value)) #.one()
 
         else:
-            data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==id_form,
-                                                     ModelsFormValues.fields==field,
+            data = self.store.find(ModelsFormValues, ModelsFormValues.fields==field,
                                                      ModelsFormValues.value==value) #.one()
+
+        if id_form != 0:
+            data = data.find(forms_id=id_form)
+
         
         return data
 

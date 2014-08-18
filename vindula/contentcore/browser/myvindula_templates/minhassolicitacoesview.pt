@@ -1,0 +1,60 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master">
+
+	<head>
+		<metal:block fill-slot="top_slot">
+            <tal:dummy tal:define="dummy python:request.set('disable_border',1);
+                                   disable_column_one python:request.set('disable_plone.leftcolumn',1);
+                                   disable_column_two python:request.set('disable_plone.rightcolumn',1);" />
+        </metal:block>
+        
+	</head>
+
+	<body>
+	    <div metal:fill-slot="content-core">
+			<metal:page metal:define-macro="page">
+				
+				<tal:def define="view python:context.restrictedTraverse('@@minhas-solicitacoes');
+								 formularios python:view.list_formularios();
+						   	  	 enable_contentcore context/@@myvindula-conf-userpanel/check_contentcore;"
+						 tal:condition="enable_contentcore">
+					
+					<h2>Minhas Solicitações</h2>
+
+
+					<div id="filtro">
+						
+					</div>
+
+
+					<div tal:repeat="item formularios">
+						<tal:def define="obj item/getObject">
+
+	                        <tal:def define="here nocall:obj;
+	                        				 context nocall:obj;
+	                        				 dummy python:view.update(int(obj.forms_id));
+	                        				 values view/meus_pedidos;
+	                                         gerenciar python:False;
+	                                         my_solicitacao python:True;
+	                                         status python:True;
+	                                         historico python:True;"
+	                                  tal:condition="values">
+								
+								<h3 tal:content="obj/Title">TITULO</h3>
+
+                            	<div metal:use-macro="here/list-pedidos/macros/table_list" />
+                            	<hr/>
+
+	                        </tal:def>
+						</tal:def>
+					</div>
+				
+				</tal:def>
+			</metal:page>
+		</div>
+	</body>
+</html>

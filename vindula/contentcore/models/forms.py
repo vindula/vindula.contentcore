@@ -17,6 +17,7 @@ class ModelsForm(Storm, BaseStore):
     id = Int(primary=True)
     name_form = Unicode()
     description_form = Unicode()
+    uid_form = Unicode()
     date_creation = DateTime() 
     campo_label = Unicode()
     campo_chave = Unicode()

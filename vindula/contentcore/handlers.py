@@ -3,6 +3,9 @@ from five import grok
 
 from zope.app.container.interfaces import IObjectRemovedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent, IObjectCreatedEvent
+from Products.CMFCore.utils import getToolByName
+from plone.uuid.interfaces import IUUID 
+from zope.interface import Interface
 
 from vindula.contentcore.formulario import IFormularioPadrao
 from vindula.contentcore.conteudo_basico import IConteudoBasico
@@ -105,6 +108,8 @@ def ExcludFormDataBase(context, event):
 def CreatFormDataBase(context, event):
     title = context.Title()
     description = context.Description()
+    uid_form = IUUID(context)
+
     forms_id = context.forms_id
 
     D={}
@@ -113,6 +118,9 @@ def CreatFormDataBase(context, event):
 
     try:D['description_form'] = to_utf8(description)
     except:D['description_form'] = description
+
+    try:D['uid_form'] = to_utf8(uid_form)
+    except:D['uid_form'] = uid_form
 
     id_form = ModelsForm().set_Form(**D)
     if forms_id != id_form:
@@ -169,6 +177,7 @@ def CreatFormDataBase(context, event):
 def EditFormDataBase(context, event):
         title = context.Title()
         description = context.Description()
+        uid_form = IUUID(context)
 
         campo_chave = context.campo_chave
         campo_label = context.campo_label
@@ -188,6 +197,9 @@ def EditFormDataBase(context, event):
 
             try:result.campo_chave = to_utf8(campo_chave)
             except:result.campo_chave = campo_chave
+
+            try:result.uid_form = to_utf8(uid_form)
+            except:result.uid_form = uid_form
 
             BaseStore().store.flush()
 
@@ -217,3 +229,32 @@ def ExcludConteudoDataBase(context, event):
             basestore.store.flush()
 
     ModelsFormInstance().del_Instance(id_form,id_instance)
+
+
+
+class VindulaUpdateFormView(grok.View):
+    grok.context(Interface)
+    grok.require('zope2.View')
+    grok.name('contentcore_update_form')
+
+
+    def render(self):
+        return "OK"
+
+    def update(self):
+        portal_catalog = getToolByName(self.context, 'portal_catalog')
+        portal = self.context.portal_url.getPortalObject()
+        itens =portal_catalog(**{'portal_type':['vindula.contentcore.formulariobasico'],
+                                 'path':{'query':'/'.join(portal.getPhysicalPath()), 'depth': 99}
+                             })
+
+        for item in itens:
+            obj = item.getObject()
+            print '******', obj.Title(), '******'
+            EditFormDataBase(obj,self.context)
+
+
+
+
+      
+
