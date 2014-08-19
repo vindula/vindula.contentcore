@@ -34,6 +34,7 @@
                                                 status status|python:False;
                                                 historico historico|python:False;
                                                 not_apro_reprov not_apro_reprov|python:False;
+                                                filter_data filter_data|python:False;
 
                                                 extra_field context/campo_workflow_table|python:[];
                                                 values values|view/pedidos|python:[];
@@ -58,8 +59,10 @@
                                     </thead>
                                     <tbody>
                                         <tal:rep repeat="pedido batch">
-                                            <tr tal:define="dados_user_pedido python: view.get_user(pedido.instance_id);"
-                                                tal:condition="python:view.check_status_superiro(not_apro_reprov,pedido)" >
+                                            <tr tal:define="dados_user_pedido python: view.get_user(pedido.instance_id);
+                                                            check_status_superiro python:view.check_status_superiro(not_apro_reprov,pedido);
+                                                            check_filter_data python:view.check_filter_data(filter_data,pedido);"
+                                                tal:condition="python: check_status_superiro and check_filter_data" >
                                                 
                                                 <tal:rep repeat="e_field extra_field">
 

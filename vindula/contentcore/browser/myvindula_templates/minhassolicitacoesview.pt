@@ -27,6 +27,8 @@
 
 
 					<div id="filtro">
+
+						<div metal:use-macro="here/macro_filter_date/macros/filter" />
 						
 					</div>
 
@@ -41,7 +43,8 @@
 	                                         gerenciar python:False;
 	                                         my_solicitacao python:True;
 	                                         status python:True;
-	                                         historico python:True;"
+	                                         historico python:True;
+	                                         filter_data python:True;"
 	                                  tal:condition="values">
 								
 								<h3 tal:content="obj/Title">TITULO</h3>

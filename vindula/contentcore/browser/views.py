@@ -20,6 +20,7 @@ from vindula.myvindula.tools.utils import UtilMyvindula
 
 import simplejson as json
 from random import choice
+from datetime import datetime
 
 list_colors = ['#00FF40', '#FFE51E', '#0040FF', '#FF4B4B', '#FF00BF',
                '#000000', '#006600', '#00FFFF', '#FF6600', '#CC00FF' ]
@@ -198,6 +199,42 @@ class VindulaListPedidosView(grok.View, BaseFunc):
                    return False
                 
         return True
+
+    def str2datetime(self, str):
+        split_date = str.split('/')
+        try:
+            return datetime(int(split_date[2]),
+                            int(split_date[1]),
+                            int(split_date[0]))
+        except ValueError:
+            return datetime.now()
+
+    def get_data_final(self):
+        date = datetime.now() + timedelta(days=1)
+        return date.strftime('%d/%m/%Y')
+
+    def get_data_inicial(self):
+        date = datetime.now() - relativedelta(months=1)
+        return date.strftime('%d/%m/%Y') 
+
+
+    def check_filter_data(self,enable,pedido):
+        if enable:
+            data_inicial = self.request.form.get('data_inicial',self.get_data_inicial())
+            data_final = self.request.form.get('data_final',self.get_data_final())
+            if data_inicial and data_final:
+                data_inicial = self.str2datetime(data_inicial)
+                data_final = self.str2datetime(data_final)
+
+                if pedido.date_creation>=data_inicial and\
+                   pedido.date_creation<=data_final:
+                    return True
+                else:
+                    return False
+
+        return True
+
+
 
 
 class VindulaPedidoView(VindulaListPedidosView):
