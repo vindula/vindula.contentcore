@@ -19,17 +19,7 @@ class BuscaFormulario(object):
                                  'path':{'query':'/'.join(portal.getPhysicalPath()), 'depth': 99}
                                 })
         return itens
-    
-
-    def get_data_final(self):
-        date = datetime.now() + timedelta(days=1)
-        return date.strftime('%d/%m/%Y')
-
-    def get_data_inicial(self):
-        date = datetime.now() - relativedelta(months=1)
-        return date.strftime('%d/%m/%Y') 
-
-
+ 
 
 class MinhasSolicitacoesView(VindulaMyListPedidoView,BuscaFormulario):
     grok.context(Interface)
