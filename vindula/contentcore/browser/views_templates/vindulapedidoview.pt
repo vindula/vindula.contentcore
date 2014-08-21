@@ -35,6 +35,8 @@
                                               nivel_save python:view.get_value_field(id_instance, u'nivel');
                                               obj_save python:view.get_value_field(id_instance, u'observacao_responsavel');
                                               arquivoauxiliar2_save python:view.get_value_field(id_instance, u'arquivoauxiliarsolicitacao2');
+                                              email_copia_solicitacao_save  python:view.get_value_field(id_instance, u'email_copia_solicitacao');
+                                              email_copia_solicitacao_value email_copia_solicitacao_save/value|string: ;
 
                                               has_form_edit python:status_save_value != 'aprovado' and status_save_value != 'reprovado' and context.is_active_workflow and True or False">
                             
@@ -91,6 +93,9 @@
                                         <br />
                                         <b>Observação:</b><br>
                                         <span tal:content="obj_save/value|string: ">TEXTO</span>
+                                        <br/>
+                                        <b>Copia da solicitação:</b><br>
+                                        <span tal:content="email_copia_solicitacao_value">TEXTO</span>
 
                                     </div>
                                 </tal:def>
@@ -145,6 +150,12 @@
                                     <span class="fieldRequired" title="Obrigatório">(Obrigatório)</span>
                                     <div class="field error" tal:content="view/error" tal:condition="view/error"></div>
                                     <textarea id='observacao_responsavel' name='observacao_responsavel' rows='5' cols='40'></textarea>
+
+                                    <br /> 
+                                    <label for="email_copia_solicitacao">Copia da solicitação</label>
+                                    <input type="text" name="email_copia_solicitacao"
+                                                        id="email_copia_solicitacao" value=""
+                                            tal:attributes="value  email_copia_solicitacao_value|string: ;"  />
                                 
                                 </tal:def>
                               </fieldset>

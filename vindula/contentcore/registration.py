@@ -995,6 +995,12 @@ class RegistrationLoadForm(BaseFunc):
                         if context.context.active_workflow and 'email' in data.keys():
                             emails.append(data.get('email'))
 
+                        #EMAIL PARA COPIAR A SOLICITAÇÂO NO GERENCIAMENTO DA SOLICITAÇÂO
+                        email_copia_solicitacao_valor = form.get('email_copia_solicitacao',
+                                                        data.get('email_copia_solicitacao'))
+                        if email_copia_solicitacao_valor:
+                            emails.append(email_copia_solicitacao_valor)
+
                         #EVIAR EMAILS PARA OS CAMPOS DE RELACIONAMENTO DO FORMULARIO
                         for t_form in form_keys:
                             if 'email_reference_' in t_form:

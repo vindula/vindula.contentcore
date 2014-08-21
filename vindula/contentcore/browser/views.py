@@ -242,7 +242,8 @@ class VindulaPedidoView(VindulaListPedidosView):
     grok.require('zope2.View')
     grok.name('item-pedidos')
 
-    back_list = [u'status',u'nivel',u'observacao_responsavel',u'username', u'arquivoauxiliarsolicitacao2']
+    back_list = [u'status',u'nivel',u'observacao_responsavel',u'username',\
+                 u'arquivoauxiliarsolicitacao2', u'email_copia_solicitacao']
     error = ''
 
     def list_user_nivel(self):

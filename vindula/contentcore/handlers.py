@@ -65,7 +65,16 @@ campos_controle = [{'name_field':u'status',
                    'value_default':u'',
                    'ordenacao':5,
                    'required':False,
+                   'flag_ativo':True},
+                   {'name_field':u'email_copia_solicitacao',
+                   'type_fields':u'hidden',
+                   'title': u'Email para copia da Solicitação',
+                   'description_fields':u'Guarda os email para copiar o pedido, não editar este campo',
+                   'value_default':u'',
+                   'ordenacao':6,
+                   'required':False,
                    'flag_ativo':True}
+                   
                    ]
 
 
