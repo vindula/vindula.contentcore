@@ -20,7 +20,8 @@ from vindula.myvindula.tools.utils import UtilMyvindula
 
 import simplejson as json
 from random import choice
-from datetime import datetime
+from datetime import datetime , timedelta
+from dateutil.relativedelta import relativedelta
 
 list_colors = ['#00FF40', '#FFE51E', '#0040FF', '#FF4B4B', '#FF00BF',
                '#000000', '#006600', '#00FFFF', '#FF6600', '#CC00FF' ]
