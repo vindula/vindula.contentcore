@@ -6,7 +6,9 @@ from vindula.contentcore.base import BaseFunc
 
 from vindula.contentcore.browser.views import VindulaMyListPedidoView, VindulaListPedidosView
 
-
+from Products.CMFCore.interfaces import ISiteRoot
+from datetime import datetime , timedelta
+from dateutil.relativedelta import relativedelta
 
 # Views
 class BuscaFormulario(object):
@@ -18,21 +20,29 @@ class BuscaFormulario(object):
                                  'path':{'query':'/'.join(portal.getPhysicalPath()), 'depth': 99}
                                 })
         return itens
+
+    def get_data_final(self):
+        date = datetime.now() + timedelta(days=1)
+        return date.strftime('%d/%m/%Y')
+
+    def get_data_inicial(self):
+        date = datetime.now() - relativedelta(months=1)
+        return date.strftime('%d/%m/%Y') 
      
-class MinhasSolicitacoesView(VindulaMyListPedidoView,BuscaFormulario):
-    grok.context(Interface)
+class MinhasSolicitacoesView(grok.View,BuscaFormulario):
+    grok.context(ISiteRoot)
     grok.require('zope2.View')
     grok.name('minhas-solicitacoes')
     
     # def update(self,form_id=None):
-    #     setattr(self, 'form_id', form_id)
-    #     super(MinhasSolicitacoesView,self).update()
+    #      setattr(self, 'form_id', form_id)
+    #      super(MinhasSolicitacoesView,self).update()
 
-class GerenciarSolicitacoesView(VindulaListPedidosView,BuscaFormulario):
-    grok.context(Interface)
+class GerenciarSolicitacoesView(grok.View,BuscaFormulario):
+    grok.context(ISiteRoot)
     grok.require('zope2.View')
     grok.name('gerenciar-solicitacoes')
 
     # def update(self,form_id=None):
-    #     setattr(self, 'form_id', form_id)
-    #     super(GerenciarSolicitacoesView,self).update()
+    #      setattr(self, 'form_id', form_id)
+    #      super(GerenciarSolicitacoesView,self).update()

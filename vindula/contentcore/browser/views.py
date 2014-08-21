@@ -121,7 +121,7 @@ class VindulaListPedidosView(grok.View, BaseFunc):
                             {'id':'enviar_para', 'valor': 'Enviar Para'}
                             ]
                             
-        self.form_id = int(self.context.forms_id)
+        self.form_id = int(context.forms_id)
 
     def rs_to_list(self, rs):
         if rs:

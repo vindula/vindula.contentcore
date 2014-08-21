@@ -18,15 +18,15 @@
 	    <div metal:fill-slot="content-core">
 			<metal:page metal:define-macro="page">
 				
-				<tal:def define="view python:context.restrictedTraverse('@@minhas-solicitacoes');
-								 formularios python:view.list_formularios();
+				<tal:def define="view_ms python:context.restrictedTraverse('@@minhas-solicitacoes');
+								 formularios python:view_ms.list_formularios();
 						   	  	 enable_contentcore context/@@myvindula-conf-userpanel/check_contentcore;"
 						 tal:condition="enable_contentcore">
 					
 					<h2>Minhas Solicitações</h2>
 
 
-					<div id="filtro">
+					<div id="filtro" tal:define="view nocall:view_ms;">
 
 						<div metal:use-macro="here/macro_filter_date/macros/filter" />
 						
@@ -39,9 +39,9 @@
 
 	                        <tal:def define="here nocall:obj;
 	                        				 context nocall:obj;
-	                        				 view_so python:context.restrictedTraverse('@@my-pedidos');
-	                        				 dummy python:view_so.update();
-	                        				 values view_so/meus_pedidos;
+	                        				 view python:context.restrictedTraverse('@@my-pedidos');
+	                        				 dummy python:view.update();
+	                        				 values view/meus_pedidos;
 	                                         gerenciar python:False;
 	                                         my_solicitacao python:True;
 	                                         status python:True;
