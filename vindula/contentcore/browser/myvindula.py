@@ -24,15 +24,15 @@ class MinhasSolicitacoesView(VindulaMyListPedidoView,BuscaFormulario):
     grok.require('zope2.View')
     grok.name('minhas-solicitacoes')
     
-    def update(self,form_id=None):
-        setattr(self, 'form_id', form_id)
-        super(MinhasSolicitacoesView,self).update()
+    # def update(self,form_id=None):
+    #     setattr(self, 'form_id', form_id)
+    #     super(MinhasSolicitacoesView,self).update()
 
 class GerenciarSolicitacoesView(VindulaListPedidosView,BuscaFormulario):
     grok.context(Interface)
     grok.require('zope2.View')
     grok.name('gerenciar-solicitacoes')
 
-    def update(self,form_id=None):
-        setattr(self, 'form_id', form_id)
-        super(GerenciarSolicitacoesView,self).update()
+    # def update(self,form_id=None):
+    #     setattr(self, 'form_id', form_id)
+    #     super(GerenciarSolicitacoesView,self).update()

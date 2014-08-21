@@ -34,12 +34,14 @@
 
 
 					<div tal:repeat="item formularios">
-						<tal:def define="obj item/getObject">
+						<tal:def define="obj item/getObject"
+								 tal:condition="obj/is_active_workflow|python:False">
 
 	                        <tal:def define="here nocall:obj;
 	                        				 context nocall:obj;
-	                        				 dummy python:view.update(int(obj.forms_id));
-	                        				 values view/meus_pedidos;
+	                        				 view_so python:context.restrictedTraverse('@@my-pedidos');
+	                        				 dummy python:view_so.update();
+	                        				 values view_so/meus_pedidos;
 	                                         gerenciar python:False;
 	                                         my_solicitacao python:True;
 	                                         status python:True;

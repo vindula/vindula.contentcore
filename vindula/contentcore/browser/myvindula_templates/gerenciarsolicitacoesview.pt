@@ -32,13 +32,15 @@
 					</div>
 
 					<div tal:repeat="item formularios">
-						<tal:def define="obj item/getObject">
+						<tal:def define="obj item/getObject"
+								 tal:condition="obj/is_active_workflow|python:False">
 
 	                        <tal:def define="here nocall:obj;
 	                        				 context nocall:obj;
-	                        				 dummy python:view.update(int(obj.forms_id));
-	                        				 pedidos view/pedidos;
-	                        				 pedidos_nivel2 view/pedidos_nivel2"
+	                        				 view_so python:context.restrictedTraverse('@@list-pedidos');
+	                        				 dummy python:view_so.update();
+	                        				 pedidos view_so/pedidos;
+	                        				 pedidos_nivel2 view_so/pedidos_nivel2"
 	                        				 
 	                                  tal:condition="python: pedidos or pedidos_nivel2">
 								
