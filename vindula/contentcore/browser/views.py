@@ -221,20 +221,33 @@ class VindulaListPedidosView(grok.View, BaseFunc):
 
     def check_filter_data(self,enable,pedido):
         if enable:
-            data_inicial = self.request.form.get('data_inicial',self.get_data_inicial())
-            data_final = self.request.form.get('data_final',self.get_data_final())
-            if data_inicial and data_final:
-                data_inicial = self.str2datetime(data_inicial)
-                data_final = self.str2datetime(data_final)
+            if self.request.form.get('filter_codigo'):
+                codigo = self.request.form.get('codigo')
+                if codigo:
+                    obj_field = self.get_value_field(pedido.instance_id,u'codigo')
+                    if obj_field:
+                        if codigo in obj_field.value:
+                            return True
+                        else:
+                            return False
+                    else:
+                        return False
 
-                if pedido.date_creation>=data_inicial and\
-                   pedido.date_creation<=data_final:
-                    return True
-                else:
-                    return False
+            if self.request.form.get('filter_data'):
+                data_inicial = self.request.form.get('data_inicial',self.get_data_inicial())
+                data_final = self.request.form.get('data_final',self.get_data_final())
+
+                if data_inicial and data_final:
+                    data_inicial = self.str2datetime(data_inicial)
+                    data_final = self.str2datetime(data_final)
+
+                    if pedido.date_creation>=data_inicial and\
+                       pedido.date_creation<=data_final:
+                        return True
+                    else:
+                        return False
 
         return True
-
 
 
 

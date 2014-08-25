@@ -26,8 +26,17 @@
             <input type="text" value="" name="data_final" id="data_final"
                    tal:attributes="value request/data_final|view/get_data_final" />
 
-            <input type="submit" id="filter_data" value="Filtrar"/>
+            <input type="submit" id="filter_data" name="filter_data" value="Filtrar"/>
         </form>
+        <br/>
+        <form action="" method="POST">
+            <label for="codigo">Código Solicitação</label>
+            <input type="text" value="" name="codigo" id="codigo"
+                   tal:attributes="value request/codigo|string:" />
+
+            <input type="submit" id="filter_codigo" name="filter_codigo" value="Filtrar"/>
+        </form>
+
     </div>
     <br/>
 
