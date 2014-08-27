@@ -60,6 +60,7 @@
 			                        <legend>Solicitações aguardando aprovação superior </legend>
 			                        
 			                        <tal:def define="values pedidos_nivel2|python:[];
+			                        				 filter_data python:True;
 			                                         status python:True;
 			                                         not_apro_reprov python:True">
 			                            <div metal:use-macro="here/list-pedidos/macros/table_list" />
