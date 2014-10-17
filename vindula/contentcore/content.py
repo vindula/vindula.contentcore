@@ -473,12 +473,9 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                                 data = data[0]
                                 log_data = data.get_logField()
                                 if log_data and log_data.count():
-                                    count_log = 1
                                     for log in log_data:
                                         valor += str(log.valor_new).replace('\n', '').replace('\r', '').replace(';', ',')
-                                        if count_log < log_data.count():
-                                            valor += ' \\ '
-                                            count_log += 1
+                                        valor += ' \\ '
 
                         else:
                             data = row_value.find(fields=field.name_field).one()
