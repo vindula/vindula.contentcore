@@ -1,28 +1,23 @@
 # -*- coding: utf-8 -*-
-from five import grok
-from zope.interface import Interface
+from copy import copy
+
+import pyExcelerator as xl
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from five import grok
 from plone.app.layout.navigation.interfaces import INavigationRoot
+from vindula.contentcore.base import BaseFunc
+from vindula.contentcore.conteudo_basico import IConteudoBasico
+from vindula.contentcore.formulario import IFormularioPadrao
+from vindula.contentcore.models.configImport import ModelsConfigImport
+from vindula.contentcore.models.default_value import ModelsDefaultValue
+from vindula.contentcore.models.fields import ModelsFormFields
+from vindula.contentcore.models.form_instance import ModelsFormInstance
+from vindula.contentcore.models.form_values import ModelsFormValues
+from vindula.contentcore.models.forms import ModelsForm
+from vindula.contentcore.registration import RegistrationCreateForm, RegistrationCreateFields, RegistrationLoadForm, RegistrationExcluirForm, RegistrationAddDefaultValue, RegistrationExcluirDefault, RegistrationParametrosForm
+from zope.interface import Interface
 from zope.security import checkPermission
 
-from vindula.contentcore.formulario import IFormularioPadrao
-from vindula.contentcore.conteudo_basico import IConteudoBasico
-from vindula.contentcore.base import BaseFunc
-
-from vindula.contentcore.models.forms import ModelsForm
-from vindula.contentcore.models.fields import ModelsFormFields
-from vindula.contentcore.models.form_values import ModelsFormValues
-from vindula.contentcore.models.form_instance import ModelsFormInstance
-from vindula.contentcore.models.default_value import ModelsDefaultValue
-from vindula.contentcore.models.configImport import ModelsConfigImport
-
-
-from vindula.contentcore.registration import RegistrationCreateForm, RegistrationCreateFields,RegistrationLoadForm, RegistrationExcluirForm ,\
-                                             RegistrationAddDefaultValue, RegistrationExcluirDefault, RegistrationParametrosForm, LoadRelatorioForm
-
-import datetime
-from copy import copy
-import pyExcelerator as xl
 
 #Views Manage Form--------------------------------------------------
 class VindulaManageForm(grok.View, BaseFunc):
@@ -470,26 +465,42 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                     row_num+=1 #start at row 1
 
                     for col, field in enumerate(fields):
-                        data = row_value.find(fields=field.name_field).one()
-
-                        if not field.type_fields in types and data:
-                            if field.type_fields == 'list':
-                                valor = ''
-                                for i in self.decodePickle(data.value):
-                                    valor += i +','
-
-                            elif field.type_fields == 'date':
-                                campo_data = self.decodePickle(data.value)
-                                valor = campo_data.strftime('%d/%m/%Y')
-                            else:
-                                valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', ',')
+                        #Campos de histórico
+                        if field.name_field in ['observacao_responsavel', 'my_observacao']:
+                            data = row_value.find(fields=field.name_field)
+                            valor = ''
+                            if data and data.count():
+                                data = data[0]
+                                log_data = data.get_logField()
+                                if log_data and log_data.count():
+                                    count_log = 1
+                                    for log in log_data:
+                                        valor += str(log.valor_new).replace('\n', '').replace('\r', '').replace(';', ',')
+                                        if count_log < log_data.count():
+                                            valor += ' \\ '
+                                            count_log += 1
 
                         else:
-                            valor = ''
+                            data = row_value.find(fields=field.name_field).one()
+
+                            if not field.type_fields in types and data:
+                                if field.type_fields == 'list':
+                                    valor = ''
+                                    for i in self.decodePickle(data.value):
+                                        valor += i +','
+
+                                elif field.type_fields == 'date':
+                                    campo_data = self.decodePickle(data.value)
+                                    valor = campo_data.strftime('%d/%m/%Y')
+                                else:
+                                    valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', ',')
+
+                            else:
+                                valor = ''
                             
                         if isinstance(valor, str):
                             valor = valor.decode('utf-8')
-                            
+                        
                         mysheet.write(row_num,col,valor)
         
             # Write out Excel file

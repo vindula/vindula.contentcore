@@ -44,13 +44,12 @@ class ModelsForm(Storm, BaseStore):
         L=[] 
         inst = ModelsFormInstance().get_Instance(id_form,getall)
         for item in inst: 
-            data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==int(item.forms_id),
-                                                     ModelsFormValues.instance_id==int(item.instance_id)
-                                   ).order_by(ModelsFormValues.date_creation)
+            data = self.store.find(ModelsFormValues, 
+                                   ModelsFormValues.forms_id==int(item.forms_id),
+                                   ModelsFormValues.instance_id==int(item.instance_id)).order_by(ModelsFormValues.date_creation)
         
             if data.count()>0:
                 L.append(data)
-        
         return L
         
     def get_FormValues_filtro(self,id_form):
