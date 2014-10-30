@@ -141,7 +141,11 @@ class BaseFunc(BaseStore):
         form_id = self.context.forms_id
         from vindula.contentcore.models.form_instance import ModelsFormInstance
         number_itens = ModelsFormInstance().get_Instance(int(form_id),True)
-        return number_itens.count() + 1
+        if number_itens:
+            number_itens = number_itens.count()
+            if number_itens:
+                return number_itens + 1
+        return 1
 
 
     def getValue(self,campo,request,data,default_value):
