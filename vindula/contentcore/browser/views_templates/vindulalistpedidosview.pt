@@ -2,7 +2,7 @@
     <head>
 
         <metal:js fill-slot="javascript_head_slot">
-            
+
             <script type="text/javascript">
 
                 $j(document).ready(function(){
@@ -13,7 +13,7 @@
                 });
 
             </script>
-        
+
         </metal:js>
 
     </head>
@@ -23,7 +23,7 @@
                 <div >
                     <fieldset tal:define="status python:True">
                         <legend>Solicitações em Aberto</legend>
-                        
+
                         <meta:macro metal:define-macro="table_list">
                             <tal:define define="Batch python:modules['Products.CMFPlone'].Batch;
                                                 b_size python:20;
@@ -63,7 +63,7 @@
                                                             check_status_superiro python:view.check_status_superiro(not_apro_reprov,pedido);
                                                             check_filter_data python:view.check_filter_data(filter_data,pedido);"
                                                 tal:condition="python: check_status_superiro and check_filter_data" >
-                                                
+
                                                 <tal:rep repeat="e_field extra_field">
 
                                                     <td tal:define="field python: view.get_Field(e_field);
@@ -77,7 +77,7 @@
                                                 </tal:rep>
 
                                                 <td tal:content="python: pedido.date_creation.strftime('%d/%m/%Y')"> Data </td>
-                                                
+
                                                 <td tal:condition="status"
                                                     tal:define="field python: view.get_value_field(pedido.instance_id,'status');
                                                                 value field/value|string: "
@@ -95,30 +95,30 @@
 
                                                 <td tal:condition="historico">
                                                     <a href="" tal:attributes="href string:${context/absolute_url}/item-pedidos?id_instance=${pedido/instance_id|nothing}">Ver</a>
-                                                </td>                                                
+                                                </td>
 
                                                 <td tal:condition="my_solicitacao"
                                                     tal:define="field python: view.get_value_field(pedido.instance_id,'nivel')"
                                                     tal:content="field/value|string: Não Atribuido ">
                                                     Nivel 2
-                                                </td> 
+                                                </td>
 
-                                                <td tal:condition="my_solicitacao" 
+                                                <td tal:condition="my_solicitacao"
                                                     tal:define="field_status python: view.get_value_field(pedido.instance_id,'status');
                                                                 value_status field_status/value|string: "  >
-                                                <!--   
+                                                <!--
                                                     <a href="" tal:attributes="href string:${context/absolute_url}/my-pedido?id_instance=${pedido/instance_id|nothing}"
                                                                tal:condition="python:value_status=='cliente'" >Editar</a>
-                                                -->    
+                                                -->
                                                 <!---->
                                                     <a href="" tal:attributes="href string:${context/absolute_url}/?id_instance=${pedido/instance_id|nothing}"
                                                                tal:condition="python:value_status=='cliente'" >Editar</a>
-                                                
+
                                                     <span tal:condition="python:value_status!='cliente'">Não editavel</span>
                                                 </td>
 
                                             </tr>
-                                        </tal:rep>    
+                                        </tal:rep>
                                     </tbody>
                                 </table>
 
@@ -128,11 +128,11 @@
 
                             </tal:define>
                         </meta:macro>
-    
+
                     </fieldset>
                     <fieldset>
                         <legend>Solicitações aguardando aprovação superior </legend>
-                        
+
                         <tal:def define="values view/pedidos_nivel2|python:[];
                                          status python:True;
                                          not_apro_reprov python:True">
@@ -142,29 +142,29 @@
                     </fieldset>
                     <fieldset>
                         <legend>Solicitações concluidas (Aprovados)</legend>
-                        
+
                         <tal:def define="values view/pedidos_aprovado|python:[];
                                          gerenciar python:False;
                                          historico python:True;">
                             <div metal:use-macro="here/list-pedidos/macros/table_list" />
                         </tal:def>
 
-                    </fieldset>                    
+                    </fieldset>
                     <fieldset>
                         <legend>Solicitações concluidas (Reprovados)</legend>
-                        
+
                         <tal:def define="values view/pedidos_reprovado|python:[];
                                          gerenciar python:False;
                                          historico python:True;">
                             <div metal:use-macro="here/list-pedidos/macros/table_list" />
                         </tal:def>
 
-                    </fieldset>                    
+                    </fieldset>
 
 
 
                 </div>
-            
+
             </meta:macro>
         </div>
     </body>

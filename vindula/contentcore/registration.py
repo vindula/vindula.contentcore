@@ -5,8 +5,8 @@ from zope.app.component.hooks import getSite
 from vindula.contentcore.base import BaseFunc
 from datetime import date , datetime
 from vindula.contentcore.validation import valida_form
-from vindula.contentcore.models.forms import ModelsForm 
-from vindula.contentcore.models.fields import ModelsFormFields 
+from vindula.contentcore.models.forms import ModelsForm
+from vindula.contentcore.models.fields import ModelsFormFields
 from vindula.contentcore.models.form_values import ModelsFormValues
 from vindula.contentcore.models.form_instance import ModelsFormInstance
 from vindula.contentcore.models.default_value import ModelsDefaultValue
@@ -15,7 +15,7 @@ from vindula.contentcore.models.parameters import ModelsParametersForm
 from vindula.myvindula.tools.utils import UtilMyvindula
 
 import pickle
-from copy import copy 
+from copy import copy
 
 try:
   #python 2.7
@@ -118,13 +118,13 @@ class LoadRelatorioForm(BaseFunc):
 
         #formulario =  ModelsForm().get_Forns_byId(id_form)
 #        valores =  ModelsForm().get_FormValues(id_form)
-        
+
         if filtro:
             valores_filtrados = ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(id_form, filtro['field'], filtro['value'])
             valores_filtrados = [i.instance_id for i in valores_filtrados]
-        
+
         campos = ModelsFormFields().get_Fields_ByIdForm(id_form)
-        
+
         L=[]
         for campo in campos:
            D={}
@@ -140,7 +140,7 @@ class LoadRelatorioForm(BaseFunc):
 
                    E = {}
                    instances = ModelsFormValues().get_FormValues_byForm_and_Field(id_form, item.name_field)
-                   
+
                    if filtro:
                        instances = instances.find(ModelsFormValues.instance_id.is_in(valores_filtrados))
 
@@ -233,11 +233,11 @@ class LoadRelatorioForm(BaseFunc):
 
 
            instances = ModelsFormValues().get_FormValues_byForm_and_Field(id_form, campo.name_field)
-           
+
            if instances:
                if filtro:
                    instances = instances.find(ModelsFormValues.instance_id.is_in(valores_filtrados))
-               
+
                D['quant'] =  instances.count()
 
                tipo = campo.type_fields
@@ -292,10 +292,10 @@ class LoadRelatorioForm(BaseFunc):
                                for opcao in opcoes:
                                    if isinstance(x, str):
                                        x = unicode(x, 'utf-8')
-                                       
+
                                    if  x == opcao['id']:
                                        text += opcao['val'] + ', '
-                            
+
                            N['name'] = text
                            N['cont'] = respostas.count(resposta)
 
@@ -393,7 +393,7 @@ class RegistrationCreateFields(BaseFunc):
         for i in dados_defaul:
             L.append([i.value,i.lable])
         lista_itens['value_default'] = L
-        
+
         tool = UtilMyvindula()
         user_fields = tool.get_Dic_Campos()
         L = []
@@ -403,7 +403,7 @@ class RegistrationCreateFields(BaseFunc):
                 label = '%s do usuário autenticado' % (user_fields[field]['label'])
                 L.append([text,label])
         lista_itens['value_default'] += L
-        
+
         #Campos de referencia
         M =[]
         dados_ref = ModelsFormFields().get_Fields_ByIdForm(id_form)
@@ -856,7 +856,7 @@ class RegistrationLoadForm(BaseFunc):
         if fields:
             if models_fields:
                 campos,lista_itens,default_value = self.gera_dict_campos(models_fields)
-               
+
             else:
                 campos,lista_itens,default_value = self.gera_dict_campos(fields.fields)
 
@@ -996,8 +996,9 @@ class RegistrationLoadForm(BaseFunc):
                             emails.append(data.get('email'))
 
                         #EMAIL PARA COPIAR A SOLICITAÇÂO NO GERENCIAMENTO DA SOLICITAÇÂO
-                        email_copia_solicitacao_valor = form.get('email_copia_solicitacao',
-                                                        data.get('email_copia_solicitacao'))
+                        email_copia_solicitacao_valor = form.get('email_copia_solicitacao','')
+                        email_copia_solicitacao_valor = email_copia_solicitacao_valor.strip()
+
                         if email_copia_solicitacao_valor:
                             emails.append(email_copia_solicitacao_valor)
 
@@ -1009,14 +1010,13 @@ class RegistrationLoadForm(BaseFunc):
                                     emails.append(t_valor)
 
                         assunto = 'E-mail enviado do Formulário - %s'%(context.context.Title())
-
                         msg = []
                         arquivos = []
 
                         if models_fields:
                             campos_old = copy(campos)
                             data_old = copy(data)
-                            
+
                             campos = self.gera_dict_campos(fields.fields)[0]
                             id_instance = int(form.get('id_instance','0'))
                             data = self.gera_dict_data(campos, int(id_form),id_instance)
@@ -1028,9 +1028,9 @@ class RegistrationLoadForm(BaseFunc):
 
                                 tool = UtilMyvindula()
                                 obj_user = tool.get_prefs_user(nivel_username)
-                                if obj_user:
+                                if obj_user and obj_user.get('email'):
                                     emails.append(obj_user.get('email',''))
-            
+
                             #EMAIL AO SOLICITANTE,
                             #TODO: ACHO QUE PODE SER REMOVIDO, MAS DEIXADO POR COMPATIBILIDADE
                             if 'email' in data.keys():
@@ -1050,14 +1050,14 @@ class RegistrationLoadForm(BaseFunc):
                                 for i in self.decodePickle(data.get(campo)):
                                     txt += i +', '
                                 x = "%s: %s" % (campos[campo].get('label',''),txt)
-                            
+
                             elif campos[campo].get('type', '') == 'date':
                                 try:
                                     x = "%s: %s" % (campos[campo].get('label',''),
                                                     pickle.loads(str(data.get(campo,u''))).strftime('%d/%m/%Y'))
                                 except:
                                     x = "%s: %s" % (campos[campo].get('label',''), '')
-                            
+
                             elif campos[campo].get('type','') == 'foreign_key':
                                 obj_campo = campos[campo].get('obj','')
 
@@ -1107,7 +1107,7 @@ class RegistrationLoadForm(BaseFunc):
                                     IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
                                 else:
                                     IStatusMessage(context.request).addStatusMessage(_(u"Não foi possivel enviar o e-mail contate o administrados do portal."), "error")
- 
+
                         if models_fields:
                             campos = campos_old
                             data = data_old
@@ -1116,7 +1116,7 @@ class RegistrationLoadForm(BaseFunc):
                 mensagem = context.context.mensagem
                 if mensagem:
                     IStatusMessage(context.request).addStatusMessage(_(mensagem), "info")
-                
+
                 mensagem_auxiliar = context.context.mensagem_auxiliar
                 if mensagem_auxiliar:
                     IStatusMessage(context.request).addStatusMessage(_(mensagem_auxiliar), "info")
@@ -1151,7 +1151,7 @@ class RegistrationLoadForm(BaseFunc):
                 campos['my_observacao']['type'] = 'textarea'
 
             form_data['data'] = self.gera_dict_data(campos, int(id_form),id_instance,False)
-            
+
             return form_data
 
         else:
