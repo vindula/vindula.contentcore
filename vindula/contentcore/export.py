@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- encoding: utf-8 -*-
 from five import grok
 from zope.interface import Interface
 

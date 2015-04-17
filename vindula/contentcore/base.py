@@ -1,33 +1,22 @@
 # -*- coding: utf-8 -*-
-#from vindula.myvindula.user import BaseStore
-
 import pickle
-import datetime
-import sys
-from zope.component import getUtility
-
-# Import para envio de E-mail
-from Products.CMFCore.utils import getToolByName
-from zope.app.component.hooks import getSite
 import smtplib
+import sys
+from datetime import date, datetime
+from email import Encoders
+from email.MIMEBase import MIMEBase
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
-from email.MIMEBase import MIMEBase
-from email.MIMEImage import MIMEImage
-from email import Encoders
 
-#Imports regarding the connection of the database 'strom'
+from Products.CMFCore.utils import getToolByName
 from storm.locals import *
-from storm.expr import Desc
-from zope.component import getUtility
 from storm.zope.interfaces import IZStorm
-from storm.locals import Store
-from plone.i18n.normalizer.interfaces import IIDNormalizer
-from Products.statusmessages.interfaces import IStatusMessage
-from datetime import date , datetime
-from vindula.contentcore.layoutemail import LayoutEmail
-
 from vindula.myvindula.tools.utils import UtilMyvindula
+from zope.app.component.hooks import getSite
+from zope.component import getUtility
+
+from vindula.contentcore.layoutemail import LayoutEmail
+from vindula.myvindula.models.funcdetails import FuncDetails
 
 try:
     # python 2.7
@@ -61,7 +50,6 @@ from vindula.contentcore.models.form_values import ModelsFormValues
 from vindula.contentcore.models.fields import ModelsFormFields
 
 class BaseFunc(BaseStore):
-    #default class for standard functions
 
     # define se aparece ou nao as mensagens e marcacoes de erros
     def field_class(self, errors, field_name):
@@ -160,6 +148,14 @@ class BaseFunc(BaseStore):
                 e = sys.exc_info()[0]
                 print 'Error: %s - %s' %(e, default_value.get(campo,'None'))
                 return ''
+
+    def getDataFieldByUser(self, field):
+        username = self.context.portal_membership.getAuthenticatedMember().getId()
+        username = username.decode('utf-8')
+        
+        user_instance = FuncDetails(username)
+        
+        return user_instance.get(field, '')
 
     def getValuePickle(self,campo,request,data,default_value):
         if campo in request.keys():

@@ -1,33 +1,24 @@
 # -*- coding: utf-8 -*-
+import json
+
 from five import grok
-from zope import schema
-from vindula.controlpanel.vocabularies import ListExitForm, ListDestinoForm
-
-from Products.CMFCore.permissions import View
-from zope.app.component.hooks import getSite
-
+from plone.app.textfield import RichText
 from plone.directives import form, dexterity
-from vindula.contentcore import MessageFactory as _
-
 from plone.formwidget.contenttree import ObjPathSourceBinder
+from vindula.controlpanel.vocabularies import ListExitForm, ListDestinoForm
+from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.relationfield.schema import RelationChoice
-from plone.z3cform.textlines import TextLinesFieldWidget
-
-from vindula.contentcore.base import BaseFunc
-from vindula.contentcore.models.forms import ModelsForm
-from vindula.contentcore.models.fields import ModelsFormFields
-
-# import fo SimpleVocabulary
+from zope import schema
+from zope.app.component.hooks import getSite
 from zope.interface import implements
 from zope.schema.interfaces import IContextSourceBinder
-from zope.schema.vocabulary import SimpleVocabulary
-from zope.schema.vocabulary import SimpleTerm
-from plone.app.textfield import RichText
+from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
-from z3c.form.browser.checkbox import CheckBoxFieldWidget
-from Products.UserAndGroupSelectionWidget.z3cform import widget
+from vindula.contentcore import MessageFactory as _
+from vindula.contentcore.base import BaseFunc
+from vindula.contentcore.models.fields import ModelsFormFields
+from vindula.contentcore.models.forms import ModelsForm
 
-import json
 
 def to_utf8(value):
     return unicode(value, 'utf-8')

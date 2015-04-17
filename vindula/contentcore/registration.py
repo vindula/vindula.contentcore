@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
-from Products.statusmessages.interfaces import IStatusMessage
-from vindula.contentcore import MessageFactory as _
-from zope.app.component.hooks import getSite
-from vindula.contentcore.base import BaseFunc
-from datetime import date , datetime
-from vindula.contentcore.validation import valida_form
-from vindula.contentcore.models.forms import ModelsForm 
-from vindula.contentcore.models.fields import ModelsFormFields 
-from vindula.contentcore.models.form_values import ModelsFormValues
-from vindula.contentcore.models.form_instance import ModelsFormInstance
-from vindula.contentcore.models.default_value import ModelsDefaultValue
-from vindula.contentcore.models.parameters import ModelsParametersForm
-
 import pickle
 from copy import copy 
+
+from Products.statusmessages.interfaces import IStatusMessage
+from zope.app.component.hooks import getSite
+
+from vindula.contentcore import MessageFactory as _
+from vindula.contentcore.base import BaseFunc
+from vindula.contentcore.models.default_value import ModelsDefaultValue
+from vindula.contentcore.models.fields import ModelsFormFields 
+from vindula.contentcore.models.form_instance import ModelsFormInstance
+from vindula.contentcore.models.form_values import ModelsFormValues
+from vindula.contentcore.models.forms import ModelsForm 
+from vindula.contentcore.models.parameters import ModelsParametersForm
+from vindula.contentcore.validation import valida_form
+from vindula.myvindula.tools.utils import UtilMyvindula
+
 
 try:
   #python 2.7
@@ -371,6 +373,16 @@ class RegistrationCreateFields(BaseFunc):
         for i in dados_defaul:
             L.append([i.value,i.lable])
         lista_itens['value_default'] = L
+
+        tool = UtilMyvindula()
+        user_fields = tool.get_Dic_Campos()
+        L = []
+        for field in user_fields:
+            if field != 'photograph':
+                text = 'self.getDataFieldByUser("%s")' % (field)
+                label = '%s do usuário autenticado' % (user_fields[field]['label'])
+                L.append([text,label])
+        lista_itens['value_default'] += L
 
         #Campos de referencia
         M =[]

@@ -1,27 +1,25 @@
 # -*- coding: utf-8 -*-
-from five import grok
-from zope.interface import Interface
+from copy import copy
+
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from five import grok
 from plone.app.layout.navigation.interfaces import INavigationRoot
+from zope.interface import Interface
 from zope.security import checkPermission
 
-from vindula.contentcore.formulario import IFormularioPadrao
-from vindula.contentcore.conteudo_basico import IConteudoBasico
 from vindula.contentcore.base import BaseFunc
-
-from vindula.contentcore.models.forms import ModelsForm
-from vindula.contentcore.models.fields import ModelsFormFields
-from vindula.contentcore.models.form_values import ModelsFormValues
-from vindula.contentcore.models.form_instance import ModelsFormInstance
-from vindula.contentcore.models.default_value import ModelsDefaultValue
+from vindula.contentcore.conteudo_basico import IConteudoBasico
+from vindula.contentcore.formulario import IFormularioPadrao
 from vindula.contentcore.models.configImport import ModelsConfigImport
+from vindula.contentcore.models.default_value import ModelsDefaultValue
+from vindula.contentcore.models.fields import ModelsFormFields
+from vindula.contentcore.models.form_instance import ModelsFormInstance
+from vindula.contentcore.models.form_values import ModelsFormValues
+from vindula.contentcore.models.forms import ModelsForm
+from vindula.contentcore.registration import RegistrationCreateForm, RegistrationCreateFields,\
+    RegistrationLoadForm, RegistrationExcluirForm, RegistrationAddDefaultValue,\
+    RegistrationExcluirDefault, RegistrationParametrosForm
 
-
-from vindula.contentcore.registration import RegistrationCreateForm, RegistrationCreateFields,RegistrationLoadForm, RegistrationExcluirForm ,\
-                                             RegistrationAddDefaultValue, RegistrationExcluirDefault, RegistrationParametrosForm, LoadRelatorioForm
-
-import datetime
-from copy import copy
 
 #Views Manage Form--------------------------------------------------
 class VindulaManageForm(grok.View, BaseFunc):
@@ -198,7 +196,6 @@ class VindulaManageContentForm(grok.View, BaseFunc):
                         form.pop('form.config.save')
 
         elif importacao:
-#            import pdb;pdb.set_trace()
             if 'arquivo' in form.keys():
                 file = form.get('arquivo').read().splitlines()
 

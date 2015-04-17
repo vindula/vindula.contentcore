@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
-
 from storm.locals import *
-from storm.locals import Store
-
 
 from vindula.contentcore.base import BaseStore
-
 
 
 class ModelsFormFields(Storm, BaseStore):
