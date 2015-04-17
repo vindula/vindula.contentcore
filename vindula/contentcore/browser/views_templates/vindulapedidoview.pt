@@ -16,6 +16,7 @@
                         $j('#nivel').removeAttr('disabled');
                       }else{
                         $j('#nivel').attr('disabled',true);
+                        $j('#nivel').val('--')
                       }
 
                     });
@@ -23,16 +24,86 @@
                 });
 
             </script>
-        
+            
+            <script language="javascript">
+            //-----------------------------------------------------
+            //Funcao: MascaraMoeda
+            //Sinopse: Mascara de preenchimento de moeda
+            //Parametro:
+            //   objTextBox : Objeto (TextBox)
+            //   SeparadorMilesimo : Caracter separador de milésimos
+            //   SeparadorDecimal : Caracter separador de decimais
+            //   e : Evento
+            //Retorno: Booleano
+            //Autor: Gabriel Fróes - www.codigofonte.com.br
+            //-----------------------------------------------------
+            function MascaraMoeda(objTextBox, SeparadorMilesimo, SeparadorDecimal, e){
+                var sep = 0;
+                var key = '';
+                var i = j = 0;
+                var len = len2 = 0;
+                var strCheck = '0123456789';
+                var aux = aux2 = '';
+                var whichCode = (window.Event) ? e.which : e.keyCode;
+                if (whichCode == 13) return true;
+                key = String.fromCharCode(whichCode); // Valor para o código da Chave
+                if (strCheck.indexOf(key) == -1) return false; // Chave inválida
+                len = objTextBox.value.length;
+                for(i = 0; i < len; i++)
+                    if ((objTextBox.value.charAt(i) != '0') && (objTextBox.value.charAt(i) != SeparadorDecimal)) break;
+                aux = '';
+                for(; i < len; i++)
+                    if (strCheck.indexOf(objTextBox.value.charAt(i))!=-1) aux += objTextBox.value.charAt(i);
+                aux += key;
+                len = aux.length;
+                if (len == 0) objTextBox.value = '';
+                if (len == 1) objTextBox.value = '0'+ SeparadorDecimal + '0' + aux;
+                if (len == 2) objTextBox.value = '0'+ SeparadorDecimal + aux;
+                if (len > 2) {
+                    aux2 = '';
+                    for (j = 0, i = len - 3; i >= 0; i--) {
+                        if (j == 3) {
+                            aux2 += SeparadorMilesimo;
+                            j = 0;
+                        }
+                        aux2 += aux.charAt(i);
+                        j++;
+                    }
+                    objTextBox.value = '';
+                    len2 = aux2.length;
+                    for (i = len2 - 1; i >= 0; i--)
+                    objTextBox.value += aux2.charAt(i);
+                    objTextBox.value += SeparadorDecimal + aux.substr(len - 2, len);
+                }
+                return false;
+            }
+            </script>
+
         </metal:js>
+        <metal:styleslot fill-slot="style_slot">
+            <style type="text/css">
+                #load-form div.field{
+                  float: left;
+                }
+                #load-form div.hidden_field{
+                  float: none;
+                }
+                #load-form div.float_left{
+                  clear: none;
+                  margin-left: 20px;
+                }
+                
+            </style>
+        </metal:styleslot>
+
 
     </head>
     <body>
         <div metal:fill-slot="main">
             <meta:macro metal:define-macro="page-view">
                 <div>
-                    <form action="" name="" enctype="multipart/form-data" method="POST"
-                          tal:attributes="action string:${context/absolute_url}/item-pedidos">
+                    <form action="" name="managepedido" enctype="multipart/form-data" method="POST"
+                          tal:attributes="action string:${context/absolute_url}/item-pedidos" id="load-form">
                         <fieldset tal:define="id_instance request/form/id_instance|string:0">
                             <legend>Pedidos em Solicitações</legend>
                         
@@ -43,15 +114,16 @@
                                     <b tal:content="field/title|string: ">Title</b>:
 
                                     <tal:def define="valor_pedido python:view.get_value_field(id_instance, field.name_field)">
-                                        
-                                        <span tal:define="tipo field/type_fields|nothing;
-                                                          valor_blob valor_pedido/value_blob|nothing;
-                                                          valor_normal valor_pedido/value|nothing;
-                                                          
-                                                          valor python: valor_normal or valor_blob;
-                                                          id_campo valor_pedido/id|nothing;"
-                                              tal:on-error="string: Erro ao carregar o campo ${field/name_field}"
-                                              tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)" />
+
+                                        <tal:error tal:on-error="string: Erro ao carregar campo ${field/title|nothing}">
+                                          <span tal:define="tipo field/type_fields|nothing;
+                                                            valor_blob valor_pedido/value_blob|nothing;
+                                                            valor_normal valor_pedido/value|nothing;
+                                                            
+                                                            valor python: valor_normal or valor_blob;
+                                                            id_campo valor_pedido/id|nothing;"
+                                                tal:content="structure python:view.geraHTMLContent(id_campo,tipo,valor)" />
+                                        </tal:error>
 
                                     </tal:def>
                                 </div>
@@ -66,14 +138,95 @@
                                     <input type="hidden" name="email" id="email" value=""
                                            tal:define="dados_user python: view.get_user(id_instance);"
                                            tal:attributes="value dados_user/email|string: " />
-
+                  
                                     <tal:def define="status_save python:view.get_value_field(id_instance, u'status');
                                                      status_save status_save/value|string: ;
                                                      nivel_save python:view.get_value_field(id_instance, u'nivel');
                                                      nivel_save nivel_save/value|string: ;
                                                      obj_save python:view.get_value_field(id_instance, u'observacao_responsavel');
-                                                     obj_save obj_save/value|string: ;">
-                                      
+                                                     obj_save obj_save/value|string: ;
+
+                                                     cotacao01_save python:view.get_value_field(id_instance, u'cotacao01');
+                                                     cotacao01_save cotacao01_save/value|string: ;
+
+                                                     cotacao02_save python:view.get_value_field(id_instance, u'cotacao02');
+                                                     cotacao02_save cotacao02_save/value|string: ; 
+
+                                                     cotacao03_save python:view.get_value_field(id_instance, u'cotacao03');
+                                                     cotacao03_save cotacao03_save/value|string: ;
+
+                                                     fontecotacao01_save python:view.get_value_field(id_instance, u'fontecotacao01');
+                                                     fontecotacao01_save fontecotacao01_save/value|string: ; 
+                                                     
+                                                     fontecotacao02_save python:view.get_value_field(id_instance, u'fontecotacao02');
+                                                     fontecotacao02_save fontecotacao02_save/value|string: ; 
+
+                                                     fontecotacao03_save python:view.get_value_field(id_instance, u'fontecotacao03');
+                                                     fontecotacao03_save fontecotacao03_save/value|string: ; 
+
+                                                     arquivoauxiliar2_save python:view.get_value_field(id_instance, u'arquivoauxiliarsolicitacao2');">
+                                     
+
+                                      <div class="field " id="field-cotacao01">
+                                        <label for="cotacao01">Cotação 01</label>
+                                        <div class="formHelp">Informe o valor em Reais</div>
+                                        <div></div>
+                                        <input id="cotacao01" type="text" value="" name="cotacao01" onKeyPress="return(MascaraMoeda(this,'.',',',event))" size="25"
+                                               tal:attributes="value cotacao01_save" />  
+                                      </div>
+
+                                      <div class="field float_left" id="field-fontecotacao01">
+                                        <label for="fontecotacao01">Companhia Aérea 01</label>
+                                        <div class="formHelp">Informe o nome da empresa</div>
+                                        <div></div>
+                                        <input id="fontecotacao01" type="text" value="" name="fontecotacao01" size="25"
+                                               tal:attributes="value fontecotacao01_save" />  
+                                      </div>
+
+                                      <div class="field " id="field-cotacao02">
+                                        <label for="cotacao02">Cotação 02</label>
+                                        <div class="formHelp">Informe o valor em Reais</div>
+                                        <div></div>
+                                        <input id="cotacao02" type="text" value="" name="cotacao02" onKeyPress="return(MascaraMoeda(this,'.',',',event))" size="25"
+                                               tal:attributes="value cotacao02_save" />
+                                      </div>
+
+                                      <div class="field float_left" id="field-fontecotacao02">
+                                        <label for="fontecotacao02">Companhia Aérea 02</label>
+                                        <div class="formHelp">Informe o nome da empresa</div>
+                                        <div></div>
+                                        <input id="fontecotacao02" type="text" value="" name="fontecotacao02" size="25"
+                                               tal:attributes="value fontecotacao02_save" />  
+                                      </div>
+
+
+                                      <div class="field " id="field-cotacao03">
+                                        <label for="cotacao03">Cotação 03</label>
+                                        <div class="formHelp">Informe o valor em Reais</div>
+                                        <div></div>
+                                        <input id="cotacao03" type="text" value="" name="cotacao03" onKeyPress="return(MascaraMoeda(this,'.',',',event))" size="25"
+                                               tal:attributes="value cotacao03_save" />
+                                      </div>
+
+                                      <div class="field float_left" id="field-fontecotacao03">
+                                        <label for="fontecotacao03">Companhia Aérea 03</label>
+                                        <div class="formHelp">Informe o nome da empresa</div>
+                                        <div></div>
+                                        <input id="fontecotacao03" type="text" value="" name="fontecotacao03" size="25"
+                                               tal:attributes="value fontecotacao03_save" />  
+                                      </div>
+
+                                      <div class="field " id="field-arquivoauxiliarsolicitacao2">
+                                          <label for="arquivoauxiliarsolicitacao2">Arquivo Auxiliar</label>
+                                          <div class="formHelp">Faça upload de um arquivo auxiliar a esta solicitação.</div>
+                                          <div tal:condition="arquivoauxiliar2_save">
+                                              <a target="_blank" tal:attributes="href string:${context/absolute_url}/form-file?id=${arquivoauxiliar2_save/id|nothing}">Download arquivo</a><br />
+                                          </div>
+                                          <input id="arquivoauxiliarsolicitacao2" type="file" value="" name="arquivoauxiliarsolicitacao2" size="25">
+                                      </div>
+
+				     <div class="visualClear"></div>
+
                                       <tal:rep repeat="item view/list_status|python:[]">
                                         <input type="radio" name="status" id="status" value=""  
                                                 tal:define="status_item item/id|nothing" 

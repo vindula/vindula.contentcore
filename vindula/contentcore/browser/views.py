@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from five import grok
+from storm.locals import Select
 from zope.interface import Interface
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.layout.navigation.interfaces import INavigationRoot
@@ -30,6 +31,12 @@ class VindulaLoadRelatorioView(grok.View, BaseFunc):
     grok.name('relatorio-form')
 
     def load_form(self):
+        if self.request.form.get('submit_filter'):
+            if self.request.form.get('value_filter'):
+                value = self.request.form.get('value_filter').decode('utf-8')
+                if value.strip():
+                    return LoadRelatorioForm().registration_processes(self, filtro={'field': self.context.campo_filtro, 'value': value}) 
+        
         return LoadRelatorioForm().registration_processes(self) 
 
     def get_static(self):
@@ -37,8 +44,21 @@ class VindulaLoadRelatorioView(grok.View, BaseFunc):
         portal = getToolByName(ctx, 'portal_url').getPortalObject()
         url_portal = portal.absolute_url()
         return url_portal +'/++resource++vindula.contentcore/'
+    
 
-
+    def get_values_filter(self):
+        filter = ModelsFormFields().get_Fields_ByField(self.context.campo_filtro, int(self.context.forms_id))
+        self.filter = [filter.title, filter.name_field]
+        
+        if self.filter:
+            result = ModelsFormValues().get_FormValues_byForm_and_Field(int(self.context.forms_id),self.filter[1])
+            if result.count() > 0:
+                L = []
+                for i in result:
+                    if i.value not in L:
+                        L.append(i.value)
+            return L
+        
 
 class VindulaGraficosView(VindulaLoadRelatorioView):
     grok.context(IFormularioPadrao)
@@ -170,7 +190,9 @@ class VindulaPedidoView(VindulaListPedidosView):
     grok.require('zope2.View')
     grok.name('item-pedidos')
 
-    back_list = [u'status',u'nivel',u'observacao_responsavel',u'username']
+    back_list = [u'status',u'nivel',u'observacao_responsavel',u'username',\
+                 u'cotacao01',u'cotacao02',u'cotacao03', u'fontecotacao01' ,\
+                 u'fontecotacao02', u'fontecotacao03', u'arquivoauxiliarsolicitacao2']
 
     def list_user_nivel(self):
         list_users_nivel2 = self.context.list_users_nivel2 or ''
@@ -196,9 +218,12 @@ class VindulaPedidoView(VindulaListPedidosView):
         submited = form.get('submited',False)
 
         if submited:
+            if not 'nivel' in form.keys():
+                self.request.form['nivel'] = '--'
+
             fields = self.get_fields()
             if fields:
-                models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list))
+                models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list)).order_by(ModelsFormFields.ordenacao)
 
             RegistrationLoadForm().registration_processes(self, models_fields=models_fields)
 

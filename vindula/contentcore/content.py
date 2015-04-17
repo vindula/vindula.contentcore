@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from copy import copy
+from datetime import datetime, timedelta
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from five import grok
+from storm.expr import Desc
 from plone.app.layout.navigation.interfaces import INavigationRoot
 from zope.interface import Interface
 from zope.security import checkPermission
@@ -146,15 +148,17 @@ class VindulaEditFieldsForm(grok.View, BaseFunc):
         id_fields = int(self.request.form.get('id_fields','0'))
 
         field = ModelsFormFields().get_Fields_byIdField(id_fields)
-        check = ModelsFormValues().get_FormValues_byForm_and_Field(id_form,field.name_field)
+        if field:
+            check = ModelsFormValues().get_FormValues_byForm_and_Field(id_form,field.name_field)
 
-        if check:
-            return False
-        else:
-            if field.ref_mult.count():
+            if check:
                 return False
             else:
-                return True
+                if field.ref_mult.count():
+                    return False
+                else:
+                    return True
+        return True
 
     def render(self):
         return self.index()
@@ -290,6 +294,39 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
 
     def render(self):
         pass
+    
+    def checkItem(self, item, form):
+        for campo in form.keys():
+            if campo not in ['b_start','date_creation']:
+
+                valor = form.get(campo,'')
+                field = item.find(fields=self.Convert_utf8(campo)).one()
+
+                if not valor :
+                    continue
+                if not field:
+                    return False
+
+                elif type(valor) == list:
+                    existe = False
+                    for val in valor:
+                        if field:
+                            if field.value == self.Convert_utf8(val):
+                                existe = True
+                                break
+
+                    if not existe:
+                        return False
+                elif field:
+                    if not field.value == self.Convert_utf8(valor):
+                        return False
+
+            elif campo == 'date_creation':
+                valor = form.get(campo,'')
+                if valor and item[0].instancia.date_creation.strftime('%d/%m/%Y %H:%M:%S') != valor:
+                    return False
+
+        return True
 
     def update(self):
         self.request.response.setHeader("Content-Type", "text/csv", 0)
@@ -299,9 +336,18 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
         id_form = int(self.context.forms_id)
         fields = ModelsFormFields().get_Fields_ByIdForm(int(id_form))
         types = ['img','file']
+        form = self.request.form
 
         campos_vin = []
         text = ''
+
+        values = ModelsForm().get_FormValues(id_form)
+        L = []
+        for item in values:
+            if self.checkItem(item, form):
+                L.append(item)
+        values = L
+
         if fields:
             for field in fields:
                 if field.flag_ativo:
@@ -310,7 +356,6 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                     text += titulo + ';'
             text = text[:-1] + '\n'
 
-            values = ModelsForm().get_FormValues(id_form)
             if values:
                 for item in values:
                     for field in fields:
@@ -357,13 +402,38 @@ class VindulaViewForm(grok.View, BaseFunc):
     grok.require('cmf.ListFolderContents')
     grok.name('view-form') #Dados
 
-    def get_FormValues(self):
+    def get_FormValues(self,):
+
+        #import pdb; pdb.set_trace()
         id_form = int(self.context.forms_id)
         form = self.request.form
 
-        data = ModelsForm().get_FormValues(id_form)
+        if 'data_inicial' in form.keys():
+            data_inicial = self.str2datetime(form.get('data_inicial')) + timedelta(days=0)
+        else:
+            data_inicial = self.str2datetime(self.get_data_inicial())
+
+
+        if 'data_final' in form.keys():
+            data_final = self.str2datetime(form.get('data_final')) - timedelta(days=-1)
+        else:
+            data_final = self.str2datetime(self.get_data_final())
+
+
+        data_instance = ModelsFormInstance().store.find(ModelsFormInstance, ModelsFormInstance.forms_id==id_form,
+                                                            ModelsFormInstance.date_creation>=data_inicial,
+                                                            ModelsFormInstance.date_creation<=data_final,
+                                        ).order_by(Desc(ModelsFormInstance.date_creation))
+
+        L_value = []
+        for item in data_instance: 
+            data = ModelsFormValues().store.find(ModelsFormValues, ModelsFormValues.forms_id==int(item.forms_id),
+                                                     ModelsFormValues.instance_id==int(item.instance_id))
+            if data.count()>0:
+                L_value.append(data)
+
         L = []
-        for item in data:
+        for item in L_value:
             if self.checkItem(item, form):
                 L.append(item)
 
@@ -393,7 +463,7 @@ class VindulaViewForm(grok.View, BaseFunc):
     def find_group_by_data(self, valores):
         L = []
         for valor in valores:
-            V = valor.date_creation.strftime('%d/%m/%Y')
+            V = valor.date_creation.strftime('%d/%m/%Y %H:%M:%S')
             if not V in L:
                 L.append(V)
 
@@ -405,7 +475,7 @@ class VindulaViewForm(grok.View, BaseFunc):
 
     def checkItem(self, item, form):
         for campo in form.keys():
-            if campo not in ['b_start','date_creation']:
+            if campo not in ['b_start','date_creation','data_final','data_inicial']:
 
                 valor = form.get(campo,'')
                 field = item.find(fields=self.Convert_utf8(campo)).one()
@@ -431,10 +501,29 @@ class VindulaViewForm(grok.View, BaseFunc):
 
             elif campo == 'date_creation':
                 valor = form.get(campo,'')
-                if valor and item[0].instancia.date_creation.strftime('%d/%m/%Y') != valor:
+                if valor and item[0].instancia.date_creation.strftime('%d/%m/%Y %H:%M:%S') != valor:
                     return False
 
         return True
+
+    def get_data_final(self):
+        date = datetime.now() + timedelta(days=1)
+        return date.strftime('%d/%m/%Y')
+
+    def get_data_inicial(self):
+        date = datetime.now() - timedelta(days=7)
+        return date.strftime('%d/%m/%Y')
+
+    def str2datetime(self, str):
+        split_date = str.split('/')
+        try:
+            return datetime(int(split_date[2]),
+                            int(split_date[1]),
+                            int(split_date[0]))
+        except ValueError:
+            return datetime.now()
+
+
 
 
 class VindulaDadosNewWindows(grok.View, BaseFunc):

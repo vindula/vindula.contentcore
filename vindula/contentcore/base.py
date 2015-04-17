@@ -148,6 +148,12 @@ class BaseFunc(BaseStore):
                 e = sys.exc_info()[0]
                 print 'Error: %s - %s' %(e, default_value.get(campo,'None'))
                 return ''
+            
+    def getDataFieldByUser(self, field):
+        tool = UtilMyvindula()
+        username = self.get_username_login().decode('utf-8')
+        
+        return tool.get_prefs_user(username).get(field,'')
 
     def getDataFieldByUser(self, field):
         username = self.context.portal_membership.getAuthenticatedMember().getId()
@@ -350,20 +356,21 @@ class BaseFunc(BaseStore):
 
 
         elif tipo == 'choice':
-            valor_campo = ModelsFormValues().get_Values_byID(id)
-            id_form = int(self.context.forms_id)
+            if id:
+                valor_campo = ModelsFormValues().get_Values_byID(id)
+                id_form = int(self.context.forms_id)
 
-            if valor_campo:
-                campo = ModelsFormFields().get_Fields_ByField(valor_campo.fields,id_form)
-
-                items = campo.list_values.splitlines()
-                D=[]
-                for i in items:
-                    L = i.split(' | ')
-
-                    if len(L) >= 2:
-                        if L[0] == valor:
-                            return L[1]
+                if valor_campo:
+                    campo = ModelsFormFields().get_Fields_ByField(valor_campo.fields,id_form)
+    
+                    items = campo.list_values.splitlines()
+                    D=[]
+                    for i in items:
+                        L = i.split(' | ')
+    
+                        if len(L) >= 2:
+                            if L[0] == valor:
+                                return L[1]
 
             return valor
 
@@ -547,6 +554,14 @@ class BaseFunc(BaseStore):
                         mascara="onKeyDown='Mascara(this,{0});' onKeyPress='Mascara(this,{0});' onKeyUp='Mascara(this,{0});'".format(mascara_campo)
                     else:
                         mascara = ''
+
+                    #Classe para campo oculto
+                    if type_campo == 'hidden':                        
+                        classe += ' hidden_field'
+
+                    #Campo Com Float Left
+                    if campos[campo].get('flag_float_left', False):
+                        classe += ' float_left'
 
                     tmp += "<!-- Campo %s -->"%(campo)
                     tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo)+' '+classe,'field-'+campo)
@@ -783,6 +798,7 @@ class BaseFunc(BaseStore):
                         tmp += table + "</div>"
                     else:
                         tmp += valor + "</div>"
+
                     if type_campo != 'hidden' and type_campo =='bool':
                         tmp += "   <label class='label-input' for='%s'>%s</label>"%(campo,campos[campo].get('label', ''))
                         tmp += "   <div class='formHelp'>%s</div>"%(campos[campo].get('decription', ''))

@@ -3,6 +3,7 @@ import pickle
 from copy import copy 
 
 from Products.statusmessages.interfaces import IStatusMessage
+from vindula.myvindula.tools.utils import UtilMyvindula
 from zope.app.component.hooks import getSite
 
 from vindula.contentcore import MessageFactory as _
@@ -11,11 +12,9 @@ from vindula.contentcore.models.default_value import ModelsDefaultValue
 from vindula.contentcore.models.fields import ModelsFormFields 
 from vindula.contentcore.models.form_instance import ModelsFormInstance
 from vindula.contentcore.models.form_values import ModelsFormValues
-from vindula.contentcore.models.forms import ModelsForm 
+from vindula.contentcore.models.forms import ModelsForm
 from vindula.contentcore.models.parameters import ModelsParametersForm
 from vindula.contentcore.validation import valida_form
-from vindula.myvindula.tools.utils import UtilMyvindula
-
 
 try:
   #python 2.7
@@ -23,6 +22,7 @@ try:
 except ImportError:
   #python 2.6
   from vindula.contentcore.ordered_dict import OrderedDict
+
 
 class RegistrationCreateForm(BaseFunc):
     def to_utf8(value):
@@ -59,8 +59,10 @@ class RegistrationCreateForm(BaseFunc):
                 numb = int(result.ordenacao)-1
                 result.ordenacao = numb
 
-                result_prev = result_form.find(ordenacao=numb,forms_id=id_form).one()
-                result_prev.ordenacao = numb+1
+                result_prev = result_form.find(ordenacao=numb,forms_id=id_form)
+                if result_prev.count():
+                    result_prev = result_prev[0]
+                    result_prev.ordenacao = numb+1
 
                 self.store.commit()
 
@@ -74,8 +76,10 @@ class RegistrationCreateForm(BaseFunc):
                 numb = int(result.ordenacao)+1
                 result.ordenacao = numb
 
-                result_next = result_form.find(ordenacao=numb,forms_id=id_form).one()
-                result_next.ordenacao = numb-1
+                result_next = result_form.find(ordenacao=numb,forms_id=id_form)
+                if result_next.count():
+                    result_next = result_next[0]
+                    result_next.ordenacao = numb-1
 
                 self.store.commit()
 
@@ -107,12 +111,18 @@ class RegistrationCreateForm(BaseFunc):
 
 class LoadRelatorioForm(BaseFunc):
 
-    def registration_processes(self,ctx):
+    def registration_processes(self,ctx,filtro={}):
         id_form = int(ctx.context.forms_id)
 
         #formulario =  ModelsForm().get_Forns_byId(id_form)
-        valores =  ModelsForm().get_FormValues(id_form)
+#        valores =  ModelsForm().get_FormValues(id_form)
+
+        if filtro:
+            valores_filtrados = ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(id_form, filtro['field'], filtro['value'])
+            valores_filtrados = [i.instance_id for i in valores_filtrados]
+
         campos = ModelsFormFields().get_Fields_ByIdForm(id_form)
+
         L=[]
         for campo in campos:
            D={}
@@ -218,7 +228,11 @@ class LoadRelatorioForm(BaseFunc):
 
 
            instances = ModelsFormValues().get_FormValues_byForm_and_Field(id_form, campo.name_field)
+
            if instances:
+               if filtro:
+                   instances = instances.find(ModelsFormValues.instance_id.is_in(valores_filtrados))
+
                D['quant'] =  instances.count()
 
                tipo = campo.type_fields
@@ -274,7 +288,7 @@ class LoadRelatorioForm(BaseFunc):
                                     u_x = unicode(x, 'utf-8')
                                   except:
                                     u_x = x
-                                  
+
                                   if u_x == opcao['id']:
                                     text += opcao['val'] + ', '
 
@@ -352,6 +366,7 @@ class RegistrationCreateFields(BaseFunc):
                   'ordenacao'             : {'required': False, 'type':'hidden',    'label':'Ordenação',                    'decription':u'',                                                                 'ordem':11},
 
                   'flag_ativo'            : {'required': False, 'type':'bool',      'label':'Campo ativo',                  'decription':u'Marque esta opção se o campo estará ativo para o usuário',         'ordem':12},
+                  'flag_float_left'       : {'required': False, 'type':'bool',      'label':'Campo Lateral',                'decription':u'Marque esta opção para que o campo fique direita de outro campo','ordem':14},
                   'forms_id'              : {'required': False, 'type':'hidden',    'label':'Id form',                      'decription':u'',                                                                 'ordem':13}}
 
 
@@ -741,7 +756,6 @@ class RegistrationLoadForm(BaseFunc):
         campos = {}
         lista_itens = {}
         default_value = {}
-
         for field in models_fields:
             if field.flag_ativo:
                 M={}
@@ -752,6 +766,7 @@ class RegistrationLoadForm(BaseFunc):
                 M['ordem'] = field.ordenacao
                 M['flag_multi'] = field.flag_multi
                 M['mascara'] = field.mascara
+                M['flag_float_left'] = field.flag_float_left
 
                 campos[field.name_field] = M
             # else:
@@ -787,6 +802,9 @@ class RegistrationLoadForm(BaseFunc):
 
             if field.value_default:
                 default_value[field.name_field] = field.value_default
+
+        #Ordenando os campos pela chave 'ordem'
+        campos = OrderedDict((sorted(campos.items(), key=lambda campo: campo[1]['ordem'])))
 
         return campos, lista_itens, default_value
 
@@ -830,7 +848,7 @@ class RegistrationLoadForm(BaseFunc):
         if fields:
             if models_fields:
                 campos,lista_itens,default_value = self.gera_dict_campos(models_fields)
-               
+
             else:
                 campos,lista_itens,default_value = self.gera_dict_campos(fields.fields)
 
@@ -979,14 +997,14 @@ class RegistrationLoadForm(BaseFunc):
                         if models_fields:
                             campos_old = copy(campos)
                             data_old = copy(data)
-                            
+
                             campos = self.gera_dict_campos(fields.fields)[0]
                             id_instance = int(form.get('id_instance','0'))
                             data = self.gera_dict_data(campos, int(id_form),id_instance)
                             data.update(data_old)
 
-                            if 'email' in data_old.keys():
-                                emails.append(data_old.get('email',''))
+                            if 'email' in data.keys():
+                                emails.append(data.get('email',''))
 
                         for campo in campos:
                             name_field = campos[campo].get('name','')
@@ -1002,17 +1020,17 @@ class RegistrationLoadForm(BaseFunc):
                                 for i in self.decodePickle(data.get(campo)):
                                     txt += i +', '
                                 x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),txt)
-                            
+
                             elif campos[campo].get('type', '') == 'date':
                                 try:
                                     x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),
                                                     pickle.loads(str(data.get(campo,u''))).strftime('%d/%m/%Y'))
                                 except:
                                     x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''), '')
-                            
+
                             else:
                                 x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),data.get(campo,''))
-                            
+
                             x += '</div>'
 
                             msg.append(x)
@@ -1027,12 +1045,13 @@ class RegistrationLoadForm(BaseFunc):
 
                         envio = False
                         for email in emails:
-                            envio = self.envia_email(context,msg, assunto, email,arquivos,to_email)
-                        if envio:
-                            IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
-                        else:
-                            IStatusMessage(context.request).addStatusMessage(_(u"Não foi possivel enviar o e-mail contate o administrados do portal."), "error")
- 
+                            if email:
+                                envio = self.envia_email(context,msg, assunto, email,arquivos,to_email)
+                                if envio:
+                                    IStatusMessage(context.request).addStatusMessage(_(u"E-mail foi enviado com sucesso."), "info")
+                                else:
+                                    IStatusMessage(context.request).addStatusMessage(_(u"Não foi possivel enviar o e-mail contate o administrados do portal."), "error")
+
                         if models_fields:
                             campos = campos_old
                             data = data_old
@@ -1041,7 +1060,7 @@ class RegistrationLoadForm(BaseFunc):
                 mensagem = context.context.mensagem
                 if mensagem:
                     IStatusMessage(context.request).addStatusMessage(_(mensagem), "info")
- 
+
 
                 if 'id_instance' in form_keys and isForm and active_workflow:
                     context.request.response.redirect(success_url+'/my-pedidos')
@@ -1070,7 +1089,7 @@ class RegistrationLoadForm(BaseFunc):
             id_instance = int(form.get('id_instance','0'))
 
             form_data['data'] = self.gera_dict_data(campos, int(id_form),id_instance,False)
-            
+
             return form_data
 
         else:
