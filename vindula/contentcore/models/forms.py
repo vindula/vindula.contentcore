@@ -9,7 +9,7 @@ from vindula.contentcore.base import BaseStore
 from vindula.contentcore.models.form_values import ModelsFormValues
 from vindula.contentcore.models.form_instance import ModelsFormInstance
 
-
+from storm.expr import Desc
 
 class ModelsForm(Storm, BaseStore):
     __storm_table__ = 'vin_contentcore_forms'
@@ -17,6 +17,7 @@ class ModelsForm(Storm, BaseStore):
     id = Int(primary=True)
     name_form = Unicode()
     description_form = Unicode()
+    uid_form = Unicode()
     date_creation = DateTime() 
     campo_label = Unicode()
     campo_chave = Unicode()
@@ -39,15 +40,16 @@ class ModelsForm(Storm, BaseStore):
         else:
             return None
 
-    def get_FormValues(self,id_form):
+    def get_FormValues(self,id_form,getall=True):
         L=[] 
-        inst = ModelsFormInstance().get_Instance(id_form)
+        inst = ModelsFormInstance().get_Instance(id_form,getall)
         for item in inst: 
-            data = self.store.find(ModelsFormValues, ModelsFormValues.forms_id==int(item.forms_id),
-                                                     ModelsFormValues.instance_id==int(item.instance_id))
+            data = self.store.find(ModelsFormValues, 
+                                   ModelsFormValues.forms_id==int(item.forms_id),
+                                   ModelsFormValues.instance_id==int(item.instance_id)).order_by(ModelsFormValues.date_creation)
+        
             if data.count()>0:
                 L.append(data)
-        
         return L
         
     def get_FormValues_filtro(self,id_form):

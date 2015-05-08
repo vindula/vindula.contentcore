@@ -1,0 +1,45 @@
+<metal:page metal:define-macro="filter">
+    <script type="text/javascript">
+
+        $j(document).ready(function(){
+        $j.datepicker.setDefaults($j.datepicker.regional["pt-BR"]);
+        var D = {showAnim:'blind',
+                 dateFormat: "dd/mm/yy",
+                 numberOfMonths: 1,
+                 minDate: "-5Y"
+                };
+
+        $j("#data_inicial").datepicker(D);
+        $j("#data_final").datepicker(D);
+        });
+
+    </script>
+
+
+   <div >
+        <form action="" method="POST">
+            <label for="data_inicial">Data Inicial</label>
+            <input type="text" value="" name="data_inicial" id="data_inicial"
+                   tal:attributes="value request/data_inicial|view/get_data_inicial" />
+
+            <label for="data_final">Data Final</label>
+            <input type="text" value="" name="data_final" id="data_final"
+                   tal:attributes="value request/data_final|view/get_data_final" />
+
+            <input type="submit" id="filter_data" name="filter_data" value="Filtrar"/>
+        </form>
+        <br/>
+        <form action="" method="POST">
+            <label for="codigo">Código Solicitação</label>
+            <input type="text" value="" name="codigo" id="codigo"
+                   tal:attributes="value request/codigo|string:" />
+
+            <input type="submit" id="filter_codigo" name="filter_codigo" value="Filtrar"/>
+        </form>
+
+    </div>
+    <br/>
+
+
+
+</metal:page>

@@ -20,6 +20,8 @@ from vindula.myvindula.tools.utils import UtilMyvindula
 
 import simplejson as json
 from random import choice
+from datetime import datetime , timedelta
+from dateutil.relativedelta import relativedelta
 
 list_colors = ['#00FF40', '#FFE51E', '#0040FF', '#FF4B4B', '#FF00BF',
                '#000000', '#006600', '#00FFFF', '#FF6600', '#CC00FF' ]
@@ -59,7 +61,6 @@ class VindulaLoadRelatorioView(grok.View, BaseFunc):
                         L.append(i.value)
             return L
         
-
 class VindulaGraficosView(VindulaLoadRelatorioView):
     grok.context(IFormularioPadrao)
     grok.require('zope2.View')
@@ -119,8 +120,8 @@ class VindulaListPedidosView(grok.View, BaseFunc):
                             {'id':'reprovado',   'valor': 'Reprovado'},
                             {'id':'enviar_para', 'valor': 'Enviar Para'}
                             ]
-
-        self.form_id = int(self.context.forms_id)
+                            
+        self.form_id = int(context.forms_id)
 
     def rs_to_list(self, rs):
         if rs:
@@ -149,6 +150,7 @@ class VindulaListPedidosView(grok.View, BaseFunc):
 
         self.pedidos_aprovado = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'status',u'aprovado'))
         self.pedidos_reprovado = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'status',u'reprovado'))
+
 
 
     def get_value_field(self, instance_id, name_field):
@@ -184,6 +186,70 @@ class VindulaListPedidosView(grok.View, BaseFunc):
                 return i.get('valor')
         return valor
 
+    def get_Field(self, campo):
+        data = ModelsFormFields().get_Fields_ByField(campo,self.form_id)
+        return data
+
+    def check_status_superiro(self,enable,pedido):
+        if enable:
+            field_status = self.get_value_field(pedido.instance_id,'status');
+
+            if field_status:
+                if field_status.value == 'aprovado' or\
+                   field_status.value == 'reprovado':
+                   return False
+                
+        return True
+
+    def str2datetime(self, str):
+        split_date = str.split('/')
+        try:
+            return datetime(int(split_date[2]),
+                            int(split_date[1]),
+                            int(split_date[0]))
+        except ValueError:
+            return datetime.now()
+
+    def get_data_final(self):
+        date = datetime.now() + timedelta(days=1)
+        return date.strftime('%d/%m/%Y')
+
+    def get_data_inicial(self):
+        date = datetime.now() - relativedelta(months=1)
+        return date.strftime('%d/%m/%Y') 
+
+
+    def check_filter_data(self,enable,pedido):
+        if enable:
+            if self.request.form.get('filter_codigo'):
+                codigo = self.request.form.get('codigo')
+                if codigo:
+                    obj_field = self.get_value_field(pedido.instance_id,u'codigo')
+                    if obj_field:
+                        if codigo in obj_field.value:
+                            return True
+                        else:
+                            return False
+                    else:
+                        return False
+
+            if self.request.form.get('filter_data'):
+                data_inicial = self.request.form.get('data_inicial',self.get_data_inicial())
+                data_final = self.request.form.get('data_final',self.get_data_final())
+
+                if data_inicial and data_final:
+                    data_inicial = self.str2datetime(data_inicial)
+                    data_final = self.str2datetime(data_final)
+
+                    if pedido.date_creation>=data_inicial and\
+                       pedido.date_creation<=data_final:
+                        return True
+                    else:
+                        return False
+
+        return True
+
+
 
 class VindulaPedidoView(VindulaListPedidosView):
     grok.context(IFormularioPadrao)
@@ -191,8 +257,8 @@ class VindulaPedidoView(VindulaListPedidosView):
     grok.name('item-pedidos')
 
     back_list = [u'status',u'nivel',u'observacao_responsavel',u'username',\
-                 u'cotacao01',u'cotacao02',u'cotacao03', u'fontecotacao01' ,\
-                 u'fontecotacao02', u'fontecotacao03', u'arquivoauxiliarsolicitacao2']
+                 u'arquivoauxiliarsolicitacao2', u'email_copia_solicitacao']
+    error = ''
 
     def list_user_nivel(self):
         list_users_nivel2 = self.context.list_users_nivel2 or ''
@@ -207,28 +273,28 @@ class VindulaPedidoView(VindulaListPedidosView):
     def get_fields(self):
         return ModelsFormFields().get_Fields_ByIdForm(self.form_id)
 
-
     def update(self):
         #Checagem de permição na view
-        if not self.context.is_active_workflow:
-            self.request.response.redirect('%s/' % self.context.absolute_url())        
+        # if not self.context.is_active_workflow:
+        #     self.request.response.redirect('%s/' % self.context.absolute_url())        
         
         form = self.request.form
         
         submited = form.get('submited',False)
 
         if submited:
-            if not 'nivel' in form.keys():
-                self.request.form['nivel'] = '--'
 
-            fields = self.get_fields()
-            if fields:
-                models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list)).order_by(ModelsFormFields.ordenacao)
+            if form.get('observacao_responsavel',False):
+                fields = self.get_fields()
+                if fields:
+                    models_fields = fields.find(ModelsFormFields.name_field.is_in(self.back_list)).order_by(ModelsFormFields.ordenacao)
 
-            RegistrationLoadForm().registration_processes(self, models_fields=models_fields)
+                RegistrationLoadForm().registration_processes(self, models_fields=models_fields)
 
-            IStatusMessage(self.request).addStatusMessage(_(u"Pedido editado com sucesso."), "info")
-            self.request.response.redirect('%s/list-pedidos' % self.context.absolute_url())
+                IStatusMessage(self.request).addStatusMessage(_(u"Pedido editado com sucesso."), "info")
+                self.request.response.redirect('%s/list-pedidos' % self.context.absolute_url())
+            else:
+                self.error = 'Campo de Observação é obrigatorio para o historico da solicitação'
 
 
 class VindulaMyPedidoView(VindulaPedidoView):
@@ -263,8 +329,13 @@ class VindulaMyListPedidoView(VindulaListPedidosView):
     grok.name('my-pedidos')
 
 
-    def update(self):
+    def update(self,form_id=None):
         pedidos = []
+
+        if not form_id:
+            form_id = self.form_id
+        else:
+            setattr(self, 'form_id', form_id)
 
         member =  self.context.restrictedTraverse('@@plone_portal_state').member()
         if member:
@@ -272,7 +343,7 @@ class VindulaMyListPedidoView(VindulaListPedidosView):
             if not isinstance(username, unicode):
                 username = unicode(username)  
 
-                pedidos = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(self.form_id,u'username',username))
+            pedidos = self.rs_to_list(ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(form_id,u'username',username))
 
 
         self.meus_pedidos = pedidos

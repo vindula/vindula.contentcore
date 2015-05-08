@@ -26,14 +26,12 @@
 							</tal:def>
 
 						</fieldset>	
+						
 						<!-- Botões de ação -->	 	
-					   	<fieldset>
-					   		<br/>
-							<div style="float:left; width:100%">
-								<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
-								<input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited">
-							</div>
-						</fieldset>
+						<div style="float:left; width:100%">
+							<input style="width:100px" class="button-erp" type="submit" value="Voltar" name="form.voltar">
+							<input style="width:100px;" class="button-erp" type="submit" value="Salvar" name="form.submited">
+						</div>
 					</form>
 				</div>
 			</meta:macro>

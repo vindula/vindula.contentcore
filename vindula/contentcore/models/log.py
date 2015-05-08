@@ -12,6 +12,7 @@ class ModelsLog(Storm, BaseStore):
     id = Int(primary=True)
     valor_old = Unicode()
     valor_new = Unicode()
+    username = Unicode()
     date_creation = DateTime()
     instance_id = Int()
     forms_id = Int() 

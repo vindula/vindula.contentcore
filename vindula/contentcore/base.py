@@ -125,6 +125,18 @@ class BaseFunc(BaseStore):
         return obj_user.get('email','none')
 
 
+    #Retorna um numero sequencial para o registro do formulario
+    def get_codigo_registro(self):
+        form_id = self.context.forms_id
+        from vindula.contentcore.models.form_instance import ModelsFormInstance
+        number_itens = ModelsFormInstance().get_Instance(int(form_id),True)
+        if number_itens:
+            number_itens = number_itens.count()
+            if number_itens:
+                return number_itens + 1
+        return 1
+
+
     def getValue(self,campo,request,data,default_value):
         if campo in request.keys():
             if request.get(campo, None):
@@ -315,12 +327,15 @@ class BaseFunc(BaseStore):
 
     def decodePickle(self,valor):
         if valor:
-            return pickle.loads(str(valor))
+            try:
+                return pickle.loads(str(valor))
+            except (IndexError, KeyError):
+                return [valor]
         else:
             return ''
 
 
-    def geraHTMLContent(self,id,tipo,valor):
+    def geraHTMLContent(self,id,tipo,valor,full_text=False):
         if tipo == 'list':
             txt = ''
             for i in self.decodePickle(valor):
@@ -379,6 +394,12 @@ class BaseFunc(BaseStore):
                 valor_campo = ModelsFormValues().get_Values_byID(id)
                 id_form = int(self.context.forms_id)
 
+
+
+
+
+
+
                 if valor_campo:
                     campo = ModelsFormFields().get_Fields_ByField(valor_campo.fields,id_form)
 
@@ -389,26 +410,48 @@ class BaseFunc(BaseStore):
                         label = form_ref.campo_label
                         key = form_ref.campo_chave
 
-                        dados = ModelsFormValues().get_FormValues_byForm_and_Field(form_ref_id,key)
-                        for item in dados:
-                            if item.value == valor:
-                                dados_label = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(form_ref_id, item.instance_id, label)
+                        if full_text:
+                            instance = 0
+                            txt = ''
 
-                                return dados_label.value
+                            v_campos = form_ref.fields 
+                            campo_busca = ModelsFormValues().store.find(ModelsFormValues, ModelsFormValues.fields==key,
+                                                                                          ModelsFormValues.forms_id==form_ref_id,
+                                                                                          ModelsFormValues.value==valor
+                                                                        )
+                            if campo_busca.count():
+                                instance = campo_busca[0].instance_id
+
+                                valores = ModelsFormValues().get_FormValues_byForm_and_Instance(form_ref_id,instance)
+
+                                txt = '<br/>'
+                                for v_campo in v_campos:
+                                    v_valor = valores.find(fields=v_campo.name_field).one()
+                                    txt += '<b> %s : </b><span> %s </span><br/>' %(v_campo.title,v_valor.value)
+
+                            return txt
+
+                        else:
+                            dados = ModelsFormValues().get_FormValues_byForm_and_Field(form_ref_id,key)
+                            for item in dados:
+                                if item.value == valor:
+                                    dados_label = ModelsFormValues().get_FormValues_byForm_and_Instance_and_Field(form_ref_id, item.instance_id, label)
+
+                                    return dados_label.value
 
         return valor
 
     def convertSelect(self,valor, tipo, id):
         if tipo == 'list':
+            txt = ''
+            for i in self.decodePickle(valor):
+                if txt:
+                    txt += ', ' + i
+                else:
+                    txt += i
 
-           txt = ''
-           for i in self.decodePickle(valor):
-               txt += i +', '
-
-           return txt
-
+            return txt
         elif tipo == 'choice':
-
             campo = ModelsFormFields().get_Fields_byIdField(id)
             if campo:
                 items = campo.list_values.splitlines()
@@ -421,7 +464,6 @@ class BaseFunc(BaseStore):
                             return L[1]
 
             return valor
-
         elif tipo == 'date':
             data = self.decodePickle(valor)
             try:
@@ -474,7 +516,11 @@ class BaseFunc(BaseStore):
         mensagem.preamble = 'This is a multi-part message in MIME format.'
 
 
-        email_layout_obj = LayoutEmail(msg=msg, ctx=ctx.context)        
+        if hasattr(ctx, 'context'):
+            email_layout_obj = LayoutEmail(msg=msg, ctx=ctx.context)
+        else:
+            email_layout_obj = LayoutEmail(msg=msg, ctx=ctx)
+
         mensagem.attach(MIMEText(email_layout_obj.layout(), 'html', 'utf-8'))
         
         # Atacha os arquivos
@@ -535,6 +581,7 @@ class BaseFunc(BaseStore):
                 # index = campos[campo].get('ordem',0)
                 tmp = ""
                 valor = ''
+                obj_campo = campos[campo].get('obj','')
                 if not 'outros_hidden' in campo:
                     type_campo = campos[campo].get('type', '')
 
@@ -654,7 +701,9 @@ class BaseFunc(BaseStore):
                         valor += "</div>"
 
                     elif type_campo == 'foreign_key':
-                        valor += "<select name='%s' class='select-filter'>"%(campo)
+                        refform = obj_campo.ref_form
+                        
+                        valor += "<select name='%s' class='select-filter' data-ref_from='%s' data-id_field='%s' >"%(campo,refform.id,refform.campo_chave)
                         valor += "<option value="">-- Selecione --</option>"
                         for item in value_choice[campo]:
                             if item[0] == self.getValue(campo,self.request,data,default_value):
@@ -663,6 +712,8 @@ class BaseFunc(BaseStore):
                                 valor +="<option value='%s'>%s</option>"%(item[0], item[-1])
 
                         valor += "</select>"
+                        valor += '<div id="ajax_content_%s"> </div>' %(campo)
+                        
 
                     elif type_campo == 'richtext':
                         url = self.context.absolute_url()

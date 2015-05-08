@@ -1,0 +1,17 @@
+<div>
+	<tal:rep repeat="campo  view/campos">
+
+		<b tal:content="string:${campo/title}:"></b>
+	 	<tal:def define="valor python: view.valores.find(fields=campo.name_field).one()">
+			<span tal:content="valor/value|string: "></span><br/>	
+			
+			<tal:cond condition="python:campo.name_field=='email'">
+				<input type="hidden" name="email" value=""
+	                   tal:attributes="value valor/value|string: ;
+	                   				   name string:email_reference_${view/formulario}" />
+			</tal:cond>
+		</tal:def>
+
+	</tal:rep>
+
+</div>

@@ -1,7 +1,9 @@
 <html metal:use-macro="here/main_template/macros/master">
 	<head>
-		
 		<metal:js fill-slot="javascript_head_slot">
+		    
+            <script type="text/javascript" tal:attributes="src string:${context/absolute_url}/++resource++vindula.contentcore/js/report_form.js"></script>
+            
     		<script type="text/javascript" >
     			$j = jQuery.noConflict();
 
@@ -9,9 +11,7 @@
 					/* Aba de edição do conteudo*/
 					$j('#contentview-content').addClass('selected');
 					$j('#contentview-view').removeClass('selected');
-				
 				});
-			
     		</script>
 		</metal:js>
         
@@ -19,7 +19,8 @@
             <link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${context/portal_url}/++resource++vindula.contentcore/css/style_views.css">
         </metal:styleslot>
 	</head>
-	<body >
+    
+	<body>
 		<div metal:fill-slot="main" >
 		    <meta:macro metal:define-macro="page-view">
 		    	<!--link rel="stylesheet" href="" type="text/css" tal:attributes="href string:${view/static}/css/form_style.css"-->
@@ -79,15 +80,23 @@
 												</tr>
 											</tal:rep>
 										</table>
-										<table tal:condition="item/text|nothing" width="100%" >
-											<tr><th width="95%">Respostas</th></tr>
-											<tal:rep repeat="rep item/dados|nothing">
-												<tr tal:define="i repeat/rep/even|nothing" 
-													tal:attributes="class python: i and 'even' or 'odd'">
-													
-													<td tal:content="structure rep/text|nothing"></td>
-												</tr>
-											</tal:rep>
+										<table tal:condition="item/text|nothing"
+                                               width="100%" >
+											<tr class="accordion" tal:attributes="id item/name;">
+											    <th width="95%">
+											        <div class="arrow close"></div>
+											        Respostas
+                                                </th>
+                                            </tr>
+                                            <tbody style="display: none;" tal:attributes="data-id item/name;">
+    											<tal:rep repeat="rep item/dados|nothing">
+    												<tr tal:define="i repeat/rep/even|nothing" 
+    													tal:attributes="class python: i and 'even' or 'odd'">
+    													
+    													<td tal:content="structure rep/text|nothing"></td>
+    												</tr>
+    											</tal:rep>
+                                            </tbody>
 										</table>
 									</td>
 								</tr>
