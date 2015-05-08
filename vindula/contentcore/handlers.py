@@ -3,6 +3,9 @@ from five import grok
 
 from zope.app.container.interfaces import IObjectRemovedEvent
 from zope.lifecycleevent.interfaces import IObjectModifiedEvent, IObjectCreatedEvent
+from Products.CMFCore.utils import getToolByName
+from plone.uuid.interfaces import IUUID 
+from zope.interface import Interface
 
 from vindula.contentcore.formulario import IFormularioPadrao
 from vindula.contentcore.conteudo_basico import IConteudoBasico
@@ -54,67 +57,28 @@ campos_controle = [{'name_field':u'status',
                    'required':False,
                    'flag_ativo':True},
 
-                   #Campos extra da solicitação
-                   {'name_field':u'cotacao01',
-                   'type_fields':u'hidden',
-                   'title': u'Cotação 01',
-                   'description_fields':u'Guarda a primeira cotação, não editar este campo',
-                   'value_default':u'',
-                   'ordenacao':5,
-                   'required':False,
-                   'flag_ativo':True},
-                   {'name_field':u'fontecotacao01',
-                   'type_fields':u'hidden',
-                   'title': u'Fonte da Cotação 01',
-                   'description_fields':u'Guarda a fonte da primeira cotação, não editar este campo',
-                   'value_default':u'',
-                   'ordenacao':6,
-                   'required':False,
-                   'flag_ativo':True},
-
-                   {'name_field':u'cotacao02',
-                   'type_fields':u'hidden',
-                   'title': u'Cotação 02',
-                   'description_fields':u'Guarda a segunda cotação, não editar este campo',
-                   'value_default':u'',
-                   'ordenacao':7,
-                   'required':False,
-                   'flag_ativo':True},
-                   {'name_field':u'fontecotacao02',
-                   'type_fields':u'hidden',
-                   'title': u'Fonte da Cotação 02',
-                   'description_fields':u'Guarda a fonte da segunda cotação, não editar este campo',
-                   'value_default':u'',
-                   'ordenacao':8,
-                   'required':False,
-                   'flag_ativo':True},
-                  
-                  {'name_field':u'cotacao03',
-                   'type_fields':u'hidden',
-                   'title': u'Cotação 03',
-                   'description_fields':u'Guarda a primeira cotação, não editar este campo',
-                   'value_default':u'',
-                   'ordenacao':9,
-                   'required':False,
-                   'flag_ativo':True},
-                  {'name_field':u'fontecotacao03',
-                   'type_fields':u'hidden',
-                   'title': u'Fonte Cotação 03',
-                   'description_fields':u'Guarda a fonte da terceira cotação, não editar este campo',
-                   'value_default':u'',
-                   'ordenacao':10,
-                   'required':False,
-                   'flag_ativo':True},                  
-
-                  {'name_field':u'arquivoauxiliarsolicitacao2',
+                   #Campos Extra da Solicitação
+                   {'name_field':u'arquivoauxiliarsolicitacao2',
                    'type_fields':u'file',
                    'title': u'Arquivo auxiliar de gerenciamento',
                    'description_fields':u'Guarda os Arquivo auxiliar de gerenciamento do pedido, não editar este campo',
                    'value_default':u'',
-                   'ordenacao':11,
+                   'ordenacao':5,
                    'required':False,
                    'flag_ativo':True},
+
+                   {'name_field':u'email_copia_solicitacao',
+                   'type_fields':u'hidden',
+                   'title': u'Email para copia da Solicitação',
+                   'description_fields':u'Guarda os email para copiar o pedido, não editar este campo',
+                   'value_default':u'',
+                   'ordenacao':6,
+                   'required':False,
+                   'flag_ativo':True}
+                   
                    ]
+
+
 
 
 @grok.subscribe(IFormularioPadrao, IObjectRemovedEvent)
@@ -155,6 +119,8 @@ def ExcludFormDataBase(context, event):
 def CreatFormDataBase(context, event):
     title = context.Title()
     description = context.Description()
+    uid_form = IUUID(context)
+
     forms_id = context.forms_id
 
     D={}
@@ -163,6 +129,9 @@ def CreatFormDataBase(context, event):
 
     try:D['description_form'] = to_utf8(description)
     except:D['description_form'] = description
+
+    try:D['uid_form'] = to_utf8(uid_form)
+    except:D['uid_form'] = uid_form
 
     id_form = ModelsForm().set_Form(**D)
     if forms_id != id_form:
@@ -219,6 +188,7 @@ def CreatFormDataBase(context, event):
 def EditFormDataBase(context, event):
         title = context.Title()
         description = context.Description()
+        uid_form = IUUID(context)
 
         campo_chave = context.campo_chave
         campo_label = context.campo_label
@@ -239,6 +209,9 @@ def EditFormDataBase(context, event):
             try:result.campo_chave = to_utf8(campo_chave)
             except:result.campo_chave = campo_chave
 
+            try:result.uid_form = to_utf8(uid_form)
+            except:result.uid_form = uid_form
+
             BaseStore().store.flush()
 
 
@@ -250,7 +223,7 @@ def EditFormDataBase(context, event):
                 campo_name = campo.get('name_field')
                 result_field = ModelsFormFields().get_Fields_ByField(campo_name, int(forms_id))
                 if not result_field:
-                    campo['ordenacao'] = (result_fields_form.count()+1)
+                    campo['ordenacao'] = (result_fields_form.count())
                     ModelsFormFields().set_FormFields(**campo)
 
 
@@ -267,3 +240,32 @@ def ExcludConteudoDataBase(context, event):
             basestore.store.flush()
 
     ModelsFormInstance().del_Instance(id_form,id_instance)
+
+
+
+class VindulaUpdateFormView(grok.View):
+    grok.context(Interface)
+    grok.require('zope2.View')
+    grok.name('contentcore_update_form')
+
+
+    def render(self):
+        return "OK"
+
+    def update(self):
+        portal_catalog = getToolByName(self.context, 'portal_catalog')
+        portal = self.context.portal_url.getPortalObject()
+        itens =portal_catalog(**{'portal_type':['vindula.contentcore.formulariobasico'],
+                                 'path':{'query':'/'.join(portal.getPhysicalPath()), 'depth': 99}
+                             })
+
+        for item in itens:
+            obj = item.getObject()
+            print '******', obj.Title(), '******'
+            EditFormDataBase(obj,self.context)
+
+
+
+
+      
+

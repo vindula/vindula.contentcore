@@ -2,13 +2,10 @@
 from copy import copy
 from datetime import datetime, timedelta
 
+import pyExcelerator as xl
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from five import grok
-from storm.expr import Desc
 from plone.app.layout.navigation.interfaces import INavigationRoot
-from zope.interface import Interface
-from zope.security import checkPermission
-
 from vindula.contentcore.base import BaseFunc
 from vindula.contentcore.conteudo_basico import IConteudoBasico
 from vindula.contentcore.formulario import IFormularioPadrao
@@ -21,6 +18,8 @@ from vindula.contentcore.models.forms import ModelsForm
 from vindula.contentcore.registration import RegistrationCreateForm, RegistrationCreateFields,\
     RegistrationLoadForm, RegistrationExcluirForm, RegistrationAddDefaultValue,\
     RegistrationExcluirDefault, RegistrationParametrosForm
+from zope.interface import Interface
+from zope.security import checkPermission
 
 
 #Views Manage Form--------------------------------------------------
@@ -213,7 +212,7 @@ class VindulaManageContentForm(grok.View, BaseFunc):
                     chave_form = self.context.campo_chave
                     result = ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(id_form,chave_form,dados[chave_form])
 
-                    if result:
+                    if result.count():
                         result = result[0]
                         id_instance = result.instance_id
                         for i in dados:
@@ -227,13 +226,6 @@ class VindulaManageContentForm(grok.View, BaseFunc):
                                 ModelsFormValues().set_form_value(id_form,id_instance,valor,i)
 
                     self.dados.append(dados)
-
-
-
-
-
-
-
 
 
 
@@ -287,6 +279,108 @@ class VindulaEditParametrosForm(grok.View, BaseFunc):
         return RegistrationParametrosForm().registration_processes(self)
 
 
+#class VindulaExportRegisterView(grok.View, BaseFunc):
+#    grok.context(IFormularioPadrao)
+#    grok.require('cmf.ListFolderContents')
+#    grok.name('export-form')
+#
+#    def render(self):
+#        pass
+#    
+#    def checkItem(self, item, form):
+#        for campo in form.keys():
+#            if campo not in ['b_start','date_creation']:
+#
+#                valor = form.get(campo,'')
+#                field = item.find(fields=self.Convert_utf8(campo)).one()
+#
+#                if not valor :
+#                    continue
+#                if not field:
+#                    return False
+#
+#                elif type(valor) == list:
+#                    existe = False
+#                    for val in valor:
+#                        if field:
+#                            if field.value == self.Convert_utf8(val):
+#                                existe = True
+#                                break
+#
+#                    if not existe:
+#                        return False
+#                elif field:
+#                    if not field.value == self.Convert_utf8(valor):
+#                        return False
+#
+#            elif campo == 'date_creation':
+#                valor = form.get(campo,'')
+#                if valor and item[0].instancia.date_creation.strftime('%d/%m/%Y %H:%M:%S') != valor:
+#                    return False
+#
+#        return True
+#
+#    def update(self):
+#        self.request.response.setHeader("Content-Type", "text/csv; charset=utf-8")
+#        self.request.response.setHeader("Content-Transfer-Encoding", "utf-8")
+#        self.request.response.setHeader("Transfer-Encoding", "utf-8")
+#        self.request.response.setHeader("Content-Encoding", "utf-8")
+#        filename = str(self.context.id)+'-export-register.csv'
+#        self.request.response.setHeader('Content-Disposition','attachment; filename=%s'%(filename))
+#        id_form = int(self.context.forms_id)
+#        fields = ModelsFormFields().get_Fields_ByIdForm(int(id_form))
+#        types = ['img','file']
+#        form = self.request.form
+#
+#        campos_vin = []
+#        text = ''
+#
+#        values = ModelsForm().get_FormValues(id_form)
+#        L = []
+#        for item in values:
+#            if self.checkItem(item, form):
+#                L.append(item)
+#        values = L
+#
+#        if fields:
+#            for field in fields:
+#                if field.flag_ativo:
+#                    titulo = field.title.replace(';', ',')
+#                    if isinstance(titulo, str):
+#                        titulo = titulo.decode('utf-8')
+#                    campos_vin.append(titulo.decode('utf-8'))
+#                    text += titulo + ';'
+#            text = text[:-1] + '\n'
+#            
+#            if values:
+#                for item in values:
+#                    for field in fields:
+#                        if field.flag_ativo:
+#                            data = item.find(fields=field.name_field).one()
+#
+#                            if not field.type_fields in types and data:
+#                                if field.type_fields == 'list':
+#                                    valor = ''
+#                                    for i in self.decodePickle(data.value):
+#                                        valor += i +','
+#
+#                                elif field.type_fields == 'date':
+#                                    campo_data = self.decodePickle(data.value)
+#                                    valor = campo_data.strftime('%d/%m/%Y')
+#
+#                                else:
+#                                    valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', ',')
+#
+#                            else:
+#                                valor = ''
+#                                
+#                            
+#                            text += '%s;' % (valor)
+#
+#                    text += '\n'
+#                    
+#        self.request.response.write(str(text))
+        
 class VindulaExportRegisterView(grok.View, BaseFunc):
     grok.context(IFormularioPadrao)
     grok.require('cmf.ListFolderContents')
@@ -327,40 +421,66 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                     return False
 
         return True
-
+    
     def update(self):
-        self.request.response.setHeader("Content-Type", "text/csv", 0)
-        filename = str(self.context.id)+'-export-register.csv'
-        self.request.response.setHeader('Content-Disposition','attachment; filename=%s'%(filename))
-
+        filename = str(self.context.id)+'-export-register.xls'
         id_form = int(self.context.forms_id)
         fields = ModelsFormFields().get_Fields_ByIdForm(int(id_form))
         types = ['img','file']
         form = self.request.form
-
         campos_vin = []
-        text = ''
 
         values = ModelsForm().get_FormValues(id_form)
         L = []
         for item in values:
             if self.checkItem(item, form):
                 L.append(item)
+
         values = L
-
+        
         if fields:
+            fields = fields.find(flag_ativo=True)
+            # Create Excel workbook
+            wb = xl.Workbook()
+            
+            # Create Excel sheet and header
+            mysheet = wb.add_sheet(self.context.Title() or self.context.id) #Nome do sheet
+            
+            #write headers
+            header_font=xl.Font() #make a font object
+            header_font.bold=True
+            header_font.underline=True
+            #font needs to be style actually
+            header_style = xl.XFStyle(); header_style.font = header_font
+            
             for field in fields:
-                if field.flag_ativo:
-                    titulo = field.title.replace(';', ',')
-                    campos_vin.append(titulo)
-                    text += titulo + ';'
-            text = text[:-1] + '\n'
-
+                titulo = field.title.replace(';', ',')
+                if isinstance(titulo, str):
+                    titulo = titulo.decode('utf-8')
+                campos_vin.append(titulo.decode('utf-8'))
+            
+            for col,value in enumerate(campos_vin):
+                mysheet.write(0,col,value,header_style)
+            
             if values:
-                for item in values:
-                    for field in fields:
-                        if field.flag_ativo:
-                            data = item.find(fields=field.name_field).one()
+                for row_num,row_value in enumerate(values):
+                    row_num+=1 #start at row 1
+
+                    for col, field in enumerate(fields):
+                        #Campos de histórico
+                        if field.name_field in ['observacao_responsavel', 'my_observacao']:
+                            data = row_value.find(fields=field.name_field)
+                            valor = ''
+                            if data and data.count():
+                                data = data[0]
+                                log_data = data.get_logField()
+                                if log_data and log_data.count():
+                                    for log in log_data:
+                                        valor += str(log.valor_new).replace('\n', '').replace('\r', '').replace(';', ',')
+                                        valor += ' \\ '
+
+                        else:
+                            data = row_value.find(fields=field.name_field).one()
 
                             if not field.type_fields in types and data:
                                 if field.type_fields == 'list':
@@ -371,17 +491,24 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                                 elif field.type_fields == 'date':
                                     campo_data = self.decodePickle(data.value)
                                     valor = campo_data.strftime('%d/%m/%Y')
-
                                 else:
                                     valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', ',')
 
                             else:
                                 valor = ''
-                            text += '%s;' % (valor)
-
-                    text += '\n'
-
-        self.request.response.write(str(text))
+                            
+                        if isinstance(valor, str):
+                            valor = valor.decode('utf-8')
+                        
+                        mysheet.write(row_num,col,valor)
+        
+            # Write out Excel file
+            wb.save(filename)
+        
+            self.request.response.setHeader('Content-Type', 'application/x-excel; charset=utf-8')
+            self.request.response.setHeader('Content-Disposition','attachment; filename=%s'%(filename))
+            
+            self.request.response.write(file(filename,"r").read())
 
 class VindulaEditViewForm(grok.View, BaseFunc):
     grok.context(IFormularioPadrao)
@@ -402,38 +529,14 @@ class VindulaViewForm(grok.View, BaseFunc):
     grok.require('cmf.ListFolderContents')
     grok.name('view-form') #Dados
 
-    def get_FormValues(self,):
 
-        #import pdb; pdb.set_trace()
+    def get_FormValues(self,getall=True):
         id_form = int(self.context.forms_id)
         form = self.request.form
 
-        if 'data_inicial' in form.keys():
-            data_inicial = self.str2datetime(form.get('data_inicial')) + timedelta(days=0)
-        else:
-            data_inicial = self.str2datetime(self.get_data_inicial())
-
-
-        if 'data_final' in form.keys():
-            data_final = self.str2datetime(form.get('data_final')) - timedelta(days=-1)
-        else:
-            data_final = self.str2datetime(self.get_data_final())
-
-
-        data_instance = ModelsFormInstance().store.find(ModelsFormInstance, ModelsFormInstance.forms_id==id_form,
-                                                            ModelsFormInstance.date_creation>=data_inicial,
-                                                            ModelsFormInstance.date_creation<=data_final,
-                                        ).order_by(Desc(ModelsFormInstance.date_creation))
-
-        L_value = []
-        for item in data_instance: 
-            data = ModelsFormValues().store.find(ModelsFormValues, ModelsFormValues.forms_id==int(item.forms_id),
-                                                     ModelsFormValues.instance_id==int(item.instance_id))
-            if data.count()>0:
-                L_value.append(data)
-
+        data = ModelsForm().get_FormValues(id_form,getall)
         L = []
-        for item in L_value:
+        for item in data:
             if self.checkItem(item, form):
                 L.append(item)
 
@@ -466,6 +569,16 @@ class VindulaViewForm(grok.View, BaseFunc):
             V = valor.date_creation.strftime('%d/%m/%Y %H:%M:%S')
             if not V in L:
                 L.append(V)
+
+        return L
+
+    def valores_b(self, all_values,campo):
+        L = []
+        for i in all_values:
+            x = i.find(fields=campo.name_field)
+            if x.count():
+                x = x[0]
+                L.append(x)
 
         return L
 
@@ -523,7 +636,8 @@ class VindulaViewForm(grok.View, BaseFunc):
         except ValueError:
             return datetime.now()
 
-
+    def get_data(self, item, campo):
+        return item.find(fields=campo.name_field).one()
 
 
 class VindulaDadosNewWindows(grok.View, BaseFunc):

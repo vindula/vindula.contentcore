@@ -66,3 +66,6 @@ table a.marginRight{
  background: none;   
     
 }        
+.not_show{
+    display: none;
+}

@@ -54,6 +54,7 @@
 											<a tal:attributes="href string:${context/absolute_url|nothing|nothing}/edit-fields-form?id_fields=${item/id|nothing}"
 												title="Alterar campo" alt="Alterar campo" tal:content="item/name_field|nothing" />
 										</strong>
+										<span class="not_show" tal:content="item/ordenacao"></span>
 									</td>
 									<td tal:define="type item/type_fields|nothing" tal:content="python: view.TypesFields(type)" />
 									<td tal:content="item/title|nothing" />
@@ -74,7 +75,7 @@
 						                <a title="Mover item para baixo"
 										   tal:condition="not:repeat/item/end" 
 										   tal:attributes="href string:${context/absolute_url|nothing}/edit-form?position=down&id_field=${item/id}">▼</a>
-						              </td>
+						            </td>
 								</tr>
 							</tal:rep>
 						</table>								

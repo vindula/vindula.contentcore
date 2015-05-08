@@ -123,6 +123,11 @@ class IFormularioPadrao(form.Schema):
                                description=_(u"Digite a mensagem que será mostrada ao usuário quando o formulário for salvo"),
                                required=False)
 
+    mensagem_auxiliar = schema.TextLine(title=_(u"Mensagem Auxiliar"),
+                               description=_(u"Digite a mensagem que será mostrada ao usuário quando o formulário for salvo"),
+                               required=False)
+
+
 
     active_workflow = schema.Bool(title=_(u"Ativar sistema de controle do formulario"),
                                   description=_(u"Marque esta opção para controlar o fluxo das informações."),
@@ -139,21 +144,33 @@ class IFormularioPadrao(form.Schema):
                                     description=_(u"Indique os usuario que poderão ver e editar os dados do formulario."),
                                     required=False,)
     
+    campo_workflow_table = schema.List(title=_(u"Campo para tabela de Solicitações"),
+                                 description=_(u"Selecione os campos para ser utilizado na visualização da tabela de solicitações"),
+                                 value_type=schema.Choice(source=ListCamposForm()),
+                                 required=False)
+
+    
     campo_filtro = schema.Choice(title=_(u"Campo para filtro"),
                                  description=_(u"Selecione um campo para filtrar os resultados do relatório"),
                                  source=ListCamposForm(),
                                  required=False)
-    # Fieldset News
+
     form.fieldset('advanced',
                   label=_(u"Configuração avançada"),
                   fields=['email_copia_remetente',
                           'email_remetente',
                           'email_padrao',
                           'campo_label',
-                          'campo_chave',
-                          'active_workflow',
+                          'campo_chave']
+                  )
+
+    form.fieldset('solicitation',
+                  label=_(u"Configuração Solicitação"),
+                  fields=['active_workflow',
+                          'campo_workflow_table',
                           'list_users_nivel2',
-                          'list_users_nivel3'])
+                          'list_users_nivel3']
+                  )
 
 
 

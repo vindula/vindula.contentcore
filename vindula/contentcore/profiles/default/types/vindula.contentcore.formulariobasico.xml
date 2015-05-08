@@ -80,7 +80,7 @@
 
   <action title="Dados" action_id="content" category="object" condition_expr=""
     url_expr="string:${object_url}/view-form" visible="True">
- 	 <permission value="Modify portal content"/>
+ 	 <permission value="List folder contents"/>
   </action>
 
   <action title="Importação" action_id="import" category="object" condition_expr=""
