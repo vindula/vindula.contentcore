@@ -50,16 +50,17 @@ class VindulaLoadRelatorioView(grok.View, BaseFunc):
 
     def get_values_filter(self):
         filter = ModelsFormFields().get_Fields_ByField(self.context.campo_filtro, int(self.context.forms_id))
-        self.filter = [filter.title, filter.name_field]
-        
-        if self.filter:
-            result = ModelsFormValues().get_FormValues_byForm_and_Field(int(self.context.forms_id),self.filter[1])
-            if result.count() > 0:
-                L = []
-                for i in result:
-                    if i.value not in L:
-                        L.append(i.value)
-            return L
+        if filter:
+            self.filter = [filter.title, filter.name_field]
+            
+            if self.filter:
+                result = ModelsFormValues().get_FormValues_byForm_and_Field(int(self.context.forms_id),self.filter[1])
+                if result.count() > 0:
+                    L = []
+                    for i in result:
+                        if i.value not in L:
+                            L.append(i.value)
+                return L
         
 class VindulaGraficosView(VindulaLoadRelatorioView):
     grok.context(IFormularioPadrao)

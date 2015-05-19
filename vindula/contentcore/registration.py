@@ -255,13 +255,11 @@ class LoadRelatorioForm(BaseFunc):
                        opcao = campo.list_values.splitlines()
                        for i in opcao:
                            N = {}
-                           j = i.split('|')
-                           N['name'] = j[1]
+                           N['name'] = i
                            N['cont'] = 0
                            for instance in instances:
-                               if instance.value == j[0].strip():
+                               if instance.value == i.strip():
                                     N['cont'] +=1
-
                            M.append(N)
                        D['dados'] = M
 
@@ -270,12 +268,10 @@ class LoadRelatorioForm(BaseFunc):
                        respostas = []
                        opcoes = []
                        opcao = campo.list_values.splitlines()
-
                        for i in opcao:
-                           i = i.split('|')
                            C ={}
-                           C['id'] = i[0].strip() #.replace(' ','')
-                           C['val'] = i[1]
+                           C['id'] = i.strip() #.replace(' ','')
+                           C['val'] = i
                            opcoes.append(C)
 
                        for instance in instances:

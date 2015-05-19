@@ -85,7 +85,7 @@
     			            <fieldset tal:condition="python:form_data!={}">
     			            	<legend>Adicionar Novo Registro</legend>
 
-    							<div tal:on-error="string: Erro ao carregar o formulario " class="clear"
+    							<div class="clear"
     							     tal:define="html python:view.geraCampos(form_data)">
     								<tal:rep repeat="x html">
     									<div tal:replace="structure x"/>
