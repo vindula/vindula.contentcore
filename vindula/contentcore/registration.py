@@ -1030,7 +1030,6 @@ class RegistrationLoadForm(BaseFunc):
 
                         for campo in campos:
                             name_field = campos[campo].get('name','')
-                            x = '<div class="field" id= "%s">' %(name_field)
 
                             if campos[campo].get('type','') == 'file' or \
                                 campos[campo].get('type','') == 'img':
@@ -1046,7 +1045,7 @@ class RegistrationLoadForm(BaseFunc):
 
                             elif campos[campo].get('type', '') == 'date':
                                 try:
-                                    x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),
+                                    x = "<b><label for='%s' >%s</label>:</b> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),
                                                     pickle.loads(str(data.get(campo,u''))).strftime('%d/%m/%Y'))
                                 except:
                                     x = "%s: %s" % (campos[campo].get('label',''), '')
@@ -1081,9 +1080,7 @@ class RegistrationLoadForm(BaseFunc):
                                 x = "%s: %s" % (campos[campo].get('label',''),t)
 
                             else:
-                                x = "<label for='%s' > %s </label> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),data.get(campo,''))
-
-                            x += '</div>'
+                                x = "<b><label for='%s' > %s </label>:</b> <span class='postfix'> %s</span>" % (name_field,campos[campo].get('label',''),data.get(campo,''))
 
                             msg.append(x)
 
