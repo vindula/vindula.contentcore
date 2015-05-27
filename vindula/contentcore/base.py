@@ -608,17 +608,17 @@ class BaseFunc(BaseStore):
 
                     #Campo Com Float Left
                     if campos[campo].get('flag_float_left', False):
-                        classe += ' float_left'
+                        classe += ' left'
 
                     tmp += "<!-- Campo %s -->"%(campo)
                     tmp += "<div class='%s' id='%s'>"%(self.field_class(errors, campo)+' '+classe,'field-'+campo)
 
                     if type_campo != 'hidden' and type_campo !='bool':
                         tmp += "   <label for='%s'>%s</label>"%(campo,campos[campo].get('label', ''))
+                        tmp += "   <div class='formHelp'>%s</div>"%(campos[campo].get('decription', ''))
                    
                     if campos[campo].get('required', '') == True and type_campo != 'hidden':
-                        tmp += "   <span class='fieldRequired' title='Obrigatório'>(Obrigatório)</span>"
-                        tmp += "   <div class='formHelp'>%s</div>"%(campos[campo].get('decription', ''))
+                        tmp += "   <span class='fieldRequired' title='Obrigatório'>&nbsp;&nbsp;</span>"
                         tmp += "   <div >%s</div>"%(errors.get(campo,''))
 
                     if type_campo == 'hidden':
