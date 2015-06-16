@@ -96,9 +96,7 @@
   	
                     	<div class="overFlowHor" id="content-tabela">
                             <tal:define define="values view/get_FormValues;
-                                                values_filter  view/get_FormValues_filtro;
-                                                instances_form view/get_Form_instance;
-                                                
+                                
                                                 fields view/get_Form_fields;
                                                 
                                                 Batch python:modules['Products.CMFPlone'].Batch;
