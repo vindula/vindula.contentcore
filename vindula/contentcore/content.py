@@ -20,6 +20,7 @@ from vindula.contentcore.registration import RegistrationCreateForm, Registratio
     RegistrationExcluirDefault, RegistrationParametrosForm
 from zope.interface import Interface
 from zope.security import checkPermission
+from storm.expr import Desc
 
 
 #Views Manage Form--------------------------------------------------
@@ -531,12 +532,37 @@ class VindulaViewForm(grok.View, BaseFunc):
 
 
     def get_FormValues(self,getall=True):
+
+        #import pdb; pdb.set_trace()
         id_form = int(self.context.forms_id)
         form = self.request.form
 
-        data = ModelsForm().get_FormValues(id_form,getall)
+        if 'data_inicial' in form.keys():
+            data_inicial = self.str2datetime(form.get('data_inicial')) + timedelta(days=0)
+        else:
+            data_inicial = self.str2datetime(self.get_data_inicial())
+
+
+        if 'data_final' in form.keys():
+            data_final = self.str2datetime(form.get('data_final')) - timedelta(days=-1)
+        else:
+            data_final = self.str2datetime(self.get_data_final())
+
+
+        data_instance = ModelsFormInstance().store.find(ModelsFormInstance, ModelsFormInstance.forms_id==id_form,
+                                                            ModelsFormInstance.date_creation>=data_inicial,
+                                                            ModelsFormInstance.date_creation<=data_final,
+                                        ).order_by(Desc(ModelsFormInstance.date_creation))
+
+        L_value = []
+        for item in data_instance: 
+            data = ModelsFormValues().store.find(ModelsFormValues, ModelsFormValues.forms_id==int(item.forms_id),
+                                                     ModelsFormValues.instance_id==int(item.instance_id))
+            if data.count()>0:
+                L_value.append(data)
+
         L = []
-        for item in data:
+        for item in L_value:
             if self.checkItem(item, form):
                 L.append(item)
 
