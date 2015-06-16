@@ -549,23 +549,28 @@ class VindulaViewForm(grok.View, BaseFunc):
             data_final = self.str2datetime(self.get_data_final())
 
 
-        data_instance = ModelsFormInstance().store.find(ModelsFormInstance, ModelsFormInstance.forms_id==id_form,
-                                                            ModelsFormInstance.date_creation>=data_inicial,
-                                                            ModelsFormInstance.date_creation<=data_final,
-                                        ).order_by(Desc(ModelsFormInstance.date_creation))
+        data_instance = ModelsFormInstance().store.find(
+            ModelsFormInstance, ModelsFormInstance.forms_id==id_form,
+            ModelsFormInstance.date_creation>=data_inicial,
+            ModelsFormInstance.date_creation<=data_final,
+        ).order_by(Desc(ModelsFormInstance.date_creation))
 
         L_value = []
         for item in data_instance: 
-            data = ModelsFormValues().store.find(ModelsFormValues, ModelsFormValues.forms_id==int(item.forms_id),
-                                                     ModelsFormValues.instance_id==int(item.instance_id))
-            if data.count()>0:
+            data = ModelsFormValues().store.find(
+                ModelsFormValues, 
+                ModelsFormValues.forms_id == int(item.forms_id),
+                ModelsFormValues.date_creation >= data_inicial,
+                ModelsFormValues.date_creation <= data_final,
+                ModelsFormValues.instance_id == int(item.instance_id))
+
+            if data.count() > 0:
                 L_value.append(data)
 
         L = []
         for item in L_value:
             if self.checkItem(item, form):
                 L.append(item)
-
         return L
 
     def get_FormValues_filtro(self):
