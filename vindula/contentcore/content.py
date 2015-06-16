@@ -555,15 +555,24 @@ class VindulaViewForm(grok.View, BaseFunc):
             ModelsFormInstance.date_creation<=data_final,
         ).order_by(Desc(ModelsFormInstance.date_creation))
 
-        L_value = []
-        for item in data_instance: 
-            data = ModelsFormValues().store.find(
-                ModelsFormValues, 
-                ModelsFormValues.forms_id == int(item.forms_id),
-                ModelsFormValues.date_creation >= data_inicial,
-                ModelsFormValues.date_creation <= data_final,
-                ModelsFormValues.instance_id == int(item.instance_id))
+        ids_instances = [int(i.instance_id) for i in data_instance]
 
+        L_value = []
+        data_values = data = ModelsFormValues().store.find(
+            ModelsFormValues, 
+            ModelsFormValues.forms_id == id_form,
+            ModelsFormValues.date_creation >= data_inicial,
+            ModelsFormValues.date_creation <= data_final,
+            ModelsFormValues.instance_id.is_in(ids_instances))
+        for item in data_instance: 
+            # data = ModelsFormValues().store.find(
+            #     ModelsFormValues, 
+            #     ModelsFormValues.forms_id == int(item.forms_id),
+            #     ModelsFormValues.date_creation >= data_inicial,
+            #     ModelsFormValues.date_creation <= data_final,
+            #     ModelsFormValues.instance_id == int(item.instance_id))
+
+            data = data_values.find(ModelsFormValues.instance_id == int(item.instance_id))
             if data.count() > 0:
                 L_value.append(data)
 
