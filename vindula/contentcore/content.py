@@ -531,9 +531,11 @@ class VindulaViewForm(grok.View, BaseFunc):
     grok.name('view-form') #Dados
 
 
-    def get_FormValues(self,getall=True):
+    data_instance = []
+    data_values = []
+    ids_instances = []
 
-        #import pdb; pdb.set_trace()
+    def get_FormValues(self,getall=True):
         id_form = int(self.context.forms_id)
         form = self.request.form
 
@@ -548,26 +550,27 @@ class VindulaViewForm(grok.View, BaseFunc):
         else:
             data_final = self.str2datetime(self.get_data_final())
 
-
-        data_instance = ModelsFormInstance().store.find(
+        self.data_instance = ModelsFormInstance().store.find(
             ModelsFormInstance, ModelsFormInstance.forms_id==id_form,
             ModelsFormInstance.date_creation>=data_inicial,
             ModelsFormInstance.date_creation<=data_final,
         ).order_by(Desc(ModelsFormInstance.date_creation))
 
-        ids_instances = [int(i.instance_id) for i in data_instance]
+        self.ids_instances = [int(i.instance_id) for i in self.data_instance]
 
         L_value = []
-        data_values = data = ModelsFormValues().store.find(
+        self.data_values = ModelsFormValues().store.find(
             ModelsFormValues, 
             ModelsFormValues.forms_id == id_form,
             ModelsFormValues.date_creation >= data_inicial,
             ModelsFormValues.date_creation <= data_final,
-            ModelsFormValues.instance_id.is_in(ids_instances))
-        for item in data_instance: 
-            data = data_values.find(ModelsFormValues.instance_id == int(item.instance_id))
+            ModelsFormValues.instance_id.is_in(self.ids_instances))
+
+        for item in self.data_instance: 
+            data = self.data_values.find(ModelsFormValues.instance_id == int(item.instance_id))
             if data.count() > 0:
                 L_value.append(data)
+
         L = []
         for item in L_value:
             if self.checkItem(item, form):
@@ -581,6 +584,26 @@ class VindulaViewForm(grok.View, BaseFunc):
     def get_Form_fields(self):
         id_form = int(self.context.forms_id)
         return ModelsFormFields().get_Fields_ByIdForm(id_form)
+
+    def get_values_filter(self, fields=[]):
+        fields_value = {}
+
+        for field in fields:
+            if field.type_fields in ['text', 'bool', 'choice', 'list', 'hidden', 'radio', 'foreign_key', 'date']:
+                fields_value[field.name_field] = []
+                values = self.data_values.find(ModelsFormValues.fields==field.name_field)  
+                for value in values:
+                    if value.value not in fields_value[field.name_field]:
+                        fields_value[field.name_field].append(value.value)
+
+        #Filtro de data de criação
+        fields_value['creation'] = []
+        for instance in self.data_instance:
+            date = instance.date_creation.strftime('%d/%m/%Y')
+            if date not in fields_value['creation']:
+                fields_value['creation'].append(date)
+        return fields_value
+
 
     def get_Form_instance(self):
         id_form = int(self.context.forms_id)
@@ -601,7 +624,6 @@ class VindulaViewForm(grok.View, BaseFunc):
             V = valor.date_creation.strftime('%d/%m/%Y %H:%M:%S')
             if not V in L:
                 L.append(V)
-
         return L
 
     def valores_b(self, all_values,campo):
@@ -652,11 +674,11 @@ class VindulaViewForm(grok.View, BaseFunc):
         return True
 
     def get_data_final(self):
-        date = datetime.now() + timedelta(days=1)
+        date = datetime.now()
         return date.strftime('%d/%m/%Y')
 
     def get_data_inicial(self):
-        date = datetime.now() - timedelta(days=7)
+        date = datetime.now() - timedelta(days=5)
         return date.strftime('%d/%m/%Y')
 
     def str2datetime(self, str):

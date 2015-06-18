@@ -96,15 +96,14 @@
   	
                     	<div class="overFlowHor" id="content-tabela">
                             <tal:define define="values view/get_FormValues;
-
                                                 fields view/get_Form_fields;
-                                                
+
+                                                values_to_filter python: view.get_values_filter(fields);
+
                                                 Batch python:modules['Products.CMFPlone'].Batch;
-                                                
                                                 b_size python:10;
                                                 b_start python:0;
                                                 b_start request/b_start | b_start;
-                                                
                                                 batch python:Batch(values, b_size, int(b_start))" >
                             
                                 <table id="listing-table" class="listing" width="100%">
@@ -115,15 +114,13 @@
                                                     <tal:cont content="campo/title|nothing" />
                                                     <br />
                                                     <tal:cond tal:define="tipo campo/type_fields|nothing;" 
-                                                              condition="python: tipo in ['bool','choice','list','hidden','radio','foreign_key','date'] and not campo.flag_multi">
+                                                              condition="python: tipo in ['text','bool','choice','list','hidden','radio','foreign_key','date'] and not campo.flag_multi">
                                                         
                                                         <select multiple="multiple" class="select-filter"
                                                                 tal:attributes="id campo/name_field|nothing">
                                                             
                                                             <tal:error tal:on-error="string: Erro ao carregar campo ${campo/name_field}">
-                                                                <tal:def define="valores_b python:[ i.find(fields=campo.name_field).one() for i in values if i.find(fields=campo.name_field).one()];
-                                                                                 valores python:view.find_group_by(valores_b)">
-                                                                        
+                                                                <tal:def define="valores python:values_to_filter[campo.name_field]">
                                                                         <option tal:repeat="valor valores" 
                                                                                 tal:define="tipo campo/type_fields|nothing;
     																			            id_campo campo/id|nothing;
@@ -144,26 +141,24 @@
                                                             <tr>
                                                                 <tal:rep repeat="item campo/ref_mult"> 
                                                                     <td> <tal:cont content="item/title|nothing" />
-                                                                       <br /> 
-                                                                      <tal:cond tal:define="tipo campo/type_fields|nothing;" 
-                                                                                condition="python: tipo in ['bool','choice','list','hidden','radio','date']">
-                                                                            <select multiple="multiple" class="select-filter"
-                                                                                    tal:attributes="id item/name_field|nothing">
-                                                                                <tal:def define="valores_b python:[ i.find(fields=item.name_field).one() for i in values if i.find(fields=item.name_field).one()];
-                                                                                                 valores python:view.find_group_by(valores_b)">
-                                                                                        
-                                                                                        <option tal:repeat="valor valores" 
-                                                                                                tal:define="tipo item/type_fields|nothing;
-																								            id_campo item/id|nothing;
-                                                                                                            campo item/name_field|nothing;"
-                                                                                                tal:content="python: view.convertSelect(valor,tipo,id_campo)"            
-                                                                                                tal:attributes="value valor;
-                                                                                                                selected python: (valor == request.form.get(campo,'') or
-                                                                                                                                  valor in request.form.get(campo,'')) and 'selected' or '';">
-                                                                                        </option>
-                                                                                </tal:def>
-                                                                            </select>
-                                                                      </tal:cond>  
+                                                                    <br /> 
+                                                                    <tal:cond tal:define="tipo campo/type_fields|nothing;" 
+                                                                            condition="python: tipo in ['text','bool','choice','list','hidden','radio','date']">
+                                                                        <select multiple="multiple" class="select-filter"
+                                                                                tal:attributes="id item/name_field|nothing">
+                                                                            <tal:def define="valores python:values_to_filter[campo.name_field]">
+                                                                                    <option tal:repeat="valor valores" 
+                                                                                            tal:define="tipo item/type_fields|nothing;
+																							            id_campo item/id|nothing;
+                                                                                                        campo item/name_field|nothing;"
+                                                                                            tal:content="python: view.convertSelect(valor,tipo,id_campo)"            
+                                                                                            tal:attributes="value valor;
+                                                                                                            selected python: (valor == request.form.get(campo,'') or
+                                                                                                                              valor in request.form.get(campo,'')) and 'selected' or '';">
+                                                                                    </option>
+                                                                            </tal:def>
+                                                                        </select>
+                                                                    </tal:cond>  
                                                                     </td>    
                                                                 </tal:rep>
                                                             </tr>
@@ -175,8 +170,7 @@
                                                 Data de Criação
                                                 <br />
                                                 <select multiple="multiple" class="select-filter" id="date_creation">
-                                                    <tal:def define="valores_b python:[ i[0].instancia for i in values ];
-                                                                     valores python:view.find_group_by_data(valores_b) ">
+                                                    <tal:def define="valores python:values_to_filter['creation']">
                                                         <option tal:repeat="valor valores" 
                                                                     tal:content="valor"
                                                                     tal:attributes="value valor;
