@@ -196,18 +196,19 @@ class VindulaManageContentForm(grok.View, BaseFunc):
                         form.pop('form.config.save')
 
         elif importacao:
-#            import pdb;pdb.set_trace()
             if 'arquivo' in form.keys():
                 file = form.get('arquivo').read().splitlines()
-
+                
                 for linha in file[1:]:
+                    chave_form = self.context.campo_chave
+                    if not chave_form:
+                        continue
                     colunas = linha.split(';')
                     dados = {}
 
                     for campo in self.configuracao:
                         dados[self.Convert_utf8(campo.fields)] = self.Convert_utf8(colunas[int(campo.campo_csv)-1])
 
-                    chave_form = self.context.campo_chave
                     result = ModelsFormValues().get_FormValues_byForm_and_Field_and_Value(id_form,chave_form,dados[chave_form])
 
                     if result.count():
@@ -493,7 +494,20 @@ class VindulaExportRegisterView(grok.View, BaseFunc):
                                     valor = str(data.value).replace('\n', '').replace('\r', '').replace(';', ',')
 
                             else:
-                                valor = ''
+                                try:
+                                    # Montando a url que exportara um link de download dos anexos salvos no formulario
+                                    all_url = self.url()
+                                    url_list = all_url.split('/')
+                                    item1 = '/%s' % (url_list[-1])
+                                    item2 = '/%s' % (url_list[-2])
+
+                                    url_image_or_file = all_url.replace(item1, '')
+                                    url_image_or_file = url_image_or_file.replace(item2, '')
+
+                                    url_download_image_or_file = '%s/form-file?id=%s' % (url_image_or_file,data.id)
+                                    valor = url_download_image_or_file
+                                except:
+                                    valor = ''
                             
                         if isinstance(valor, str):
                             valor = valor.decode('utf-8')
